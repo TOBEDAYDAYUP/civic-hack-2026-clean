@@ -114,3 +114,41 @@
     line-height: 1.8;
   }
 }
+
+.notice-page-jump {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+.notice-page-jump label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #536575;
+}
+.notice-page-jump input {
+  width: 72px;
+  min-width: 0;
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  padding: 10px;
+  background: white;
+  color: #185784;
+  font: inherit;
+}
+.notice-page-jump button {
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  padding: 10px 16px;
+  background: white;
+  color: #185784;
+  font: inherit;
+}
+@media (max-width: 650px) {
+  .notice-page-jump {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

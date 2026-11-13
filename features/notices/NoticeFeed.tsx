@@ -10,10 +10,13 @@ export default function NoticeFeed() {
     [total, setTotal] = useState(0);
   const [input, setInput] = useState(''),
     [query, setQuery] = useState(''),
-    [error, setError] = useState(''),
+    [unavailable, setUnavailable] = useState(false),
     [loading, setLoading] = useState(false);
-  const [synced, setSynced] = useState(''),
-    [syncWarning, setSyncWarning] = useState('');
+  const [jumpPage, setJumpPage] = useState('1');
+  const maxPage = Math.max(1, Math.ceil(total / 12));
+  useEffect(() => {
+    setJumpPage(String(page));
+  }, [page]);
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const current = ++generation.current;
@@ -29,23 +32,11 @@ export default function NoticeFeed() {
       if (current !== generation.current) return;
       setItems(data.items);
       setTotal(data.total);
-      setError('');
+      setUnavailable(false);
       if (page > 1 && page > Math.max(1, Math.ceil(data.total / 12))) setPage(1);
-      const status = await fetch('/api/sync/status', {
-        cache: 'no-store',
-        signal: AbortSignal.timeout(15000),
-      })
-        .then((r) => r.json())
-        .catch(() => null);
-      if (current === generation.current && status?.ok) {
-        setSynced(status.last_success_at || '');
-        setSyncWarning(
-          status.last_error ? 'Latest source sync failed; showing last successful data.' : '',
-        );
-      }
-    } catch (e) {
-      if (current === generation.current)
-        setError(e instanceof Error ? e.message : 'Refresh failed');
+    } catch {
+      // Keep already displayed records when a background refresh cannot complete.
+      if (current === generation.current) setUnavailable(true);
     } finally {
       if (current === generation.current) setLoading(false);
     }
@@ -56,34 +47,22 @@ export default function NoticeFeed() {
       generation.current++;
     };
   }, [refresh]);
-  const connection = useNoticeUpdates(() => void refresh());
+  useNoticeUpdates(() => void refresh());
   return (
     <section className="notice-feed" aria-label="Shared Toronto notices">
       <div className="live-panel-head">
         <div>
           <div className="eyebrow">SHARED OFFICIAL NOTICES</div>
-          <h2>Latest Toronto public notices.</h2>
+          <h2>Toronto public notices.</h2>
           <p>
-            Official records are shared across the team. Available AI explanations are marked
-            separately.
+            Browse public notices, read the explanation, and follow links to the original City
+            records.
           </p>
         </div>
-        <button className="primary" onClick={() => void refresh()} disabled={loading}>
-          {loading ? 'Refreshing…' : 'Refresh notices'}
-        </button>
       </div>
-      <div className="live-status" aria-live="polite">
-        <span>
-          {total} records · {connection}
-        </span>
-        <span>
-          {synced
-            ? `Source checked: ${new Date(synced).toLocaleString()}`
-            : 'Waiting for sync status'}
-        </span>
+      <div className="live-status">
+        <span>{total} records</span>
       </div>
-      {error && <p role="alert">{error}</p>}
-      {syncWarning && <p role="status">{syncWarning}</p>}
       <form
         className="toolbox"
         onSubmit={(e) => {
@@ -110,7 +89,7 @@ export default function NoticeFeed() {
             <span className="notice-category">{n.topics?.[0] || 'Public notice'}</span>
             <h3>
               <Link href={`/notices/${encodeURIComponent(n.id)}`}>
-                {n.aiReady ? n.simple?.plainTitle || n.title : n.title}
+                {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
               </Link>
             </h3>
             <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>
@@ -124,17 +103,48 @@ export default function NoticeFeed() {
           </article>
         ))}
       </div>
-      {!items.length && !loading && !error && <p>No notices match this search.</p>}
+      {!items.length && loading && <p>Loading notices…</p>}
+      {!items.length && !loading && unavailable && (
+        <p>Public notices are temporarily unavailable. Please try again later.</p>
+      )}
+      {!items.length && !loading && !unavailable && <p>No notices match this search.</p>}
       <div className="toolbox">
         <button onClick={() => setPage((p) => p - 1)} disabled={loading || page <= 1}>
           Previous
         </button>
         <span>
-          Page {page} of {Math.max(1, Math.ceil(total / 12))}
+          Page {page} of {maxPage}
         </span>
         <button onClick={() => setPage((p) => p + 1)} disabled={loading || page * 12 >= total}>
           Next
         </button>
+        <form
+          className="notice-page-jump"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const requested = Number(jumpPage);
+            if (!loading && Number.isInteger(requested) && requested >= 1 && requested <= maxPage)
+              setPage(requested);
+          }}
+        >
+          <label>
+            Go to page{' '}
+            <input
+              aria-label="Go to page"
+              type="number"
+              min="1"
+              max={maxPage}
+              step="1"
+              required
+              value={jumpPage}
+              onChange={(e) => setJumpPage(e.target.value)}
+              disabled={loading || !total}
+            />
+          </label>
+          <button type="submit" disabled={loading || !total}>
+            Go
+          </button>
+        </form>
       </div>
     </section>
   );

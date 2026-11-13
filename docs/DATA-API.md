@@ -2,7 +2,7 @@
 
 ## 给队友
 
-运行 `npm ci`、`npm run dev` 即可读取同一份 Supabase 公告，不需要管理员密钥或本地 Ollama。项目的公开只读 URL 和 publishable key 位于 `lib/supabase/config.ts`；RLS 和权限禁止访客写入。
+先将 `.env.local.example` 复制为 `.env.local`，填入团队项目的 `NEXT_PUBLIC_SUPABASE_URL` 和 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`，再运行 `npm ci`、`npm run dev`。普通浏览只需要公开读取配置，不需要管理员密钥或 Ollama。源码不包含默认项目地址或密钥；RLS 和权限禁止访客写入。修改环境配置后需要重启服务。
 
 数据库的公告或 AI 摘要发生变化时，页面通过 Supabase Realtime 收到通知并重新查询 API；断线或页面重新可见时，30 秒轮询作为补充。不要把“数据库变化实时显示”理解成“官方源一直在自动抓取”。
 

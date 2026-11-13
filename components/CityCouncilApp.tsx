@@ -3,8 +3,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { decisions } from '@/data/decisions';
 
-import type { PublicNotice as LiveNotice } from '@/lib/public-notices';
-import { useNoticeUpdates } from '@/features/notices/useNoticeUpdates';
 import type { View } from '@/components/navigation/types';
 import Shell from '@/components/navigation/Shell';
 import SecondaryTopics from '@/features/decisions/TopicFilters';
@@ -20,7 +18,6 @@ export default function CityCouncilApp() {
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
   const [saved, setSaved] = useState<number[]>([]);
   const [savedLoaded, setSavedLoaded] = useState(false);
-  const [live, setLive] = useState<LiveNotice[]>([]);
 
   useEffect(() => {
     try {
@@ -37,7 +34,6 @@ export default function CityCouncilApp() {
     };
     updateView();
     window.addEventListener('popstate', updateView);
-    loadLive();
     return () => window.removeEventListener('popstate', updateView);
   }, []);
   useEffect(() => {
@@ -46,16 +42,6 @@ export default function CityCouncilApp() {
       localStorage.setItem('yc-saved', JSON.stringify(saved));
     } catch {}
   }, [saved, savedLoaded]);
-
-  async function loadLive() {
-    try {
-      const r = await fetch('/api/notices?limit=48', { cache: 'no-store' });
-      const j = await r.json();
-      if (j.ok && Array.isArray(j.items)) setLive(j.items);
-    } catch {}
-  }
-
-  useNoticeUpdates(() => void loadLive());
 
   function go(v: View) {
     setView(v);
@@ -82,17 +68,6 @@ export default function CityCouncilApp() {
     );
   }, [view, saved, topic, query, sort]);
 
-  const mapReadyLive = useMemo(
-    () =>
-      live.filter(
-        (n) =>
-          (n.addresses || []).some((a) => a.latitude !== null && a.longitude !== null) &&
-          (topic === 'All topics' ||
-            (n.topics || []).some((t) => t.toLowerCase().includes(topic.toLowerCase()))),
-      ),
-    [live, topic],
-  );
-
   if (view === 'Participate')
     return (
       <Shell view={view} saved={saved.length} go={go}>
@@ -102,8 +77,7 @@ export default function CityCouncilApp() {
   if (view === 'Map')
     return (
       <Shell view={view} saved={saved.length} go={go}>
-        <SecondaryTopics topic={topic} setTopic={setTopic} />
-        <MapView live={live} mapReadyLive={mapReadyLive} />
+        <MapView />
       </Shell>
     );
 
@@ -138,12 +112,6 @@ export default function CityCouncilApp() {
               ? 'Keep important local decisions in one place.'
               : 'The decisions shaping your neighbourhood, made easier to understand.'}
         </p>
-        {view === 'Home' && (
-          <p className="disclaimer">
-            Selected Toronto decisions · 2024–2026. Archive summaries are curated; live records are
-            fetched from Toronto Public Notices.
-          </p>
-        )}
       </section>
 
       {(view === 'Home' || view === 'Decisions') && <NoticeFeed />}

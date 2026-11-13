@@ -20,6 +20,8 @@ The detail pages now explain facts, relevance, missing evidence and next steps. 
 ## Run locally
 
 ```bash
+cp .env.local.example .env.local
+# Fill in NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY first.
 npm ci
 npm run dev
 ```
@@ -53,3 +55,5 @@ GitHub Actions runs the same checks on PRs and main. Branch protection must be e
 ## Working with teammates and AI
 
 Start with [the team Git workflow](docs/GIT-WORKFLOW.md). Use one short-lived branch per task and a reviewed PR to main. AI agents must read [AGENTS.md](AGENTS.md) before editing.
+
+Database connection settings come exclusively from environment variables. Source code includes no project-specific URL or key fallback. See `.env.local.example`; keep actual values in ignored `.env.local`.

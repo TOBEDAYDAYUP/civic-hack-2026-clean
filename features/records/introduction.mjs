@@ -2,6 +2,7 @@ const count = (text) => text.trim().split(/\s+/).filter(Boolean).length;
 const plain = (text) =>
   String(text || '')
     .replace(/<[^>]*>/g, ' ')
+    .replace(/https?:\/\/\S+/gi, '')
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/amend(?:ment to)? the Official Plan/gi, "change the City's long-term planning rules")
@@ -21,7 +22,7 @@ export function introduction({ title, summary, location, status }) {
       result.push(sentence(text));
   };
   const summaryText = plain(summary);
-  const sentences = summaryText.match(/[^.!?]+(?:[.!?]+|$)/g) || [];
+  const sentences = summaryText.split(/(?<=[.!?])\s+(?=[A-Z])/);
   for (const text of sentences) add(text, 42);
   if (!result.length)
     add(`This record concerns ${plain(title) || 'a City of Toronto public notice'}`, 42);

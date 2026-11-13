@@ -37,16 +37,27 @@ try {
   assert.ok(home.includes('/decisions/3'), 'Home must link to the housing detail route');
   const housing = await page('/decisions/3');
   for (const text of [
-    'What do we actually know?',
-    'Why could this matter to residents?',
-    'Which project milestones does this notice establish?',
-    'Brief introduction',
-    'Where can I check the status?',
-    'How to check the five development stages',
+    'What’s happening?',
+    'What this means for you',
+    'Planning approval',
+    'record-introduction',
+    'Check the project status',
+    'Completion / occupancy',
     '/?view=Decisions',
   ])
     assert.ok(housing.includes(text), `Missing housing content: ${text}`);
-  assert.ok(!housing.includes('What is missing, and why?'));
+  for (const label of [
+    'What is missing, and why?',
+    'IN PLAIN ENGLISH',
+    'Brief introduction',
+    'Evidence first.',
+    'AI-generated interpretation',
+    'Project progress',
+    'No delay calculation:',
+    'housing-caution',
+    'milestone-guide',
+  ])
+    assert.ok(!housing.includes(label), label);
   const transport = await page('/decisions/0');
   for (const text of [
     'What did Council decide?',
@@ -67,6 +78,8 @@ try {
   await page('/api/notices?page=0', 400);
   await page('/api/notices?limit=49', 400);
   await page('/api/notices?q=construction');
+  await page('/api/map/notices');
+  await page('/api/map/geocode');
   for (const endpoint of ['/api/sync', '/api/ai/simplify']) {
     const denied = await fetch(base + endpoint, { method: 'POST' });
     assert.equal(denied.status, 401);

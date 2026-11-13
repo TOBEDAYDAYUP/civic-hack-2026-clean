@@ -91,12 +91,8 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
           <Fact label="Record date" value={decision.date} />
           <Fact label="Area mentioned" value={decision.area} />
           <Fact label="Decision status" value={decision.status} />
-          <Fact label="Source type" value="Curated municipal decision summary" />
+          <Fact label="Source type" value="Council decision" />
         </div>
-        <p className="record-note">
-          This is a short curated summary. It does not contain the full agenda item, implementation
-          timeline or project-level evidence.
-        </p>
       </section>
       <section className="record-section">
         <div className="record-eyebrow">02 / RELEVANCE</div>
@@ -105,7 +101,6 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
           {context?.significance ||
             'The decision may affect public services or planning. Check the Council report before assuming a particular outcome.'}
         </p>
-        <p className="record-footnote">Interpretive context, not a measured or confirmed impact.</p>
       </section>
       <section className="record-section">
         <div className="record-eyebrow">03 / WHAT IS NOT YET CLEAR</div>
@@ -134,9 +129,6 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
         >
           Browse City of Toronto Council records ↗
         </a>
-        <p className="record-footnote">
-          This link opens the Council records hub, not a direct link to this particular decision.
-        </p>
       </section>
     </div>
   );
@@ -151,8 +143,8 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
         <HousingPipelineDetail
           sourceType="public notice"
           summary={s.whatIsHappening}
-          interpretation={s.whyItMatters}
-          interpretationSource="AI-generated interpretation; check original source"
+          interpretation={s.whyItMatters || undefined}
+
           recordDate={notice.noticeDate}
           area={s.where}
           noticeStage={s.decisionStage}
@@ -176,7 +168,7 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
               }
             />
             <Fact
-              label="Who may be affected (AI summary)"
+              label="Who may be affected"
               value={notSpecified(s.whoMayBeAffected) ? 'Not specified' : s.whoMayBeAffected}
             />
           </div>
@@ -185,10 +177,6 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
             {notSpecified(s.uncertainty)
               ? 'Project-level milestones and outcomes are not established here.'
               : s.uncertainty}
-          </p>
-          <p className="record-footnote">
-            AI summary generated with {notice.generatedBy}. Please check the linked official notice
-            before acting.
           </p>
         </section>
       </div>
@@ -203,7 +191,7 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
         <ShortPoints text={s.whatIsHappening} />
         <div className="record-facts">
           <Fact
-            label="Stage described (AI summary)"
+            label="Stage described"
             value={notSpecified(s.decisionStage) ? 'Not specified' : s.decisionStage}
           />
           <Fact
@@ -223,10 +211,6 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
         <div className="record-eyebrow">02 / PERSONAL RELEVANCE</div>
         <h3>Why might this matter?</h3>
         <ShortPoints text={s.whyItMatters} />
-        <p className="record-footnote">
-          This is an AI explanation of the public notice, not an independently verified impact
-          prediction.
-        </p>
       </section>
       <section className="record-section">
         <div className="record-eyebrow">03 / NEXT ACTION</div>
@@ -265,10 +249,6 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
             <p>{notice.description}</p>
           </details>
         )}
-        <p className="record-footnote">
-          AI summarized with {notice.generatedBy}. A notice is not automatically a final Council
-          decision.
-        </p>
       </section>
     </div>
   );
