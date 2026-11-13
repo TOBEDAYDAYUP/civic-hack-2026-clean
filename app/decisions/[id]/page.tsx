@@ -1,3 +1,4 @@
+import { introduction } from '@/features/records/introduction.mjs';
 import { notFound } from 'next/navigation';
 import { decisions } from '@/data/decisions';
 import { CuratedRecordDetails } from '@/features/records/RecordDetails';
@@ -17,6 +18,12 @@ export default async function DecisionPage({ params }: PageProps) {
 
   return (
     <RecordPageFrame
+      introduction={introduction({
+        title: decision.title,
+        summary: decision.summary,
+        location: decision.area,
+        status: decision.status,
+      })}
       category={decision.topic === 'Housing' ? 'Housing & real estate' : decision.topic}
       title={decision.title}
       status={decision.status}

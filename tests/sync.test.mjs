@@ -46,3 +46,18 @@ test('display address strips coordinates, duplicate city metadata and repeated s
  assert.equal(addressLabel('Toronto · Ontario · 43.700474895 · -79.518505404 · M9N 1W2 · Canada · 1956 Weston Road · 1956 Weston Road Toronto Ontario'),'1956 Weston Road');
  assert.equal(addressLabel('1 Little Avenue'),'1 Little Avenue');
 });
+
+test('plain-language introduction uses 50–80 words and retains application status',async()=>{
+ const {introduction}=await import('../features/records/introduction.mjs');
+ for(const item of [
+  {title:'Planning application',summary:'The City received a planning application.',location:'10, 20 and 36 York Mills Road',status:'This is a notice of application. It has not been adopted by Council.'},
+  {title:'Council budget',summary:'Council adopted the annual budget.',status:'Council adopted'},
+  {title:'Public meeting'},
+  {title:'Long source',summary:'One very long sentence '+ 'details '.repeat(150)},
+ ]){
+  const text=introduction(item),words=text.split(/\s+/).length;
+  assert.ok(words>=50&&words<=80,`${words}: ${text}`);
+ }
+ const text=introduction({title:'Application',summary:'The City received an application.',status:'It has not been adopted by Council.'});
+ assert.ok(text.includes('not been adopted by Council'));
+});

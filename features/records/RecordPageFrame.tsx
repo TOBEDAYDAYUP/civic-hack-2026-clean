@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Link from 'next/link';
 
 type RecordPageFrameProps = {
+  introduction?: string;
   category: string;
   title: string;
   status: string;
@@ -13,6 +14,7 @@ type RecordPageFrameProps = {
 };
 
 export default function RecordPageFrame({
+  introduction,
   category,
   title,
   status,
@@ -51,6 +53,14 @@ export default function RecordPageFrame({
           <h1>{title}</h1>
           <p>{[date, area].filter(Boolean).join(' · ')}</p>
         </div>
+
+        {introduction && (
+          <section className="record-introduction" aria-labelledby="brief-introduction">
+            <div className="record-eyebrow">IN PLAIN ENGLISH</div>
+            <h2 id="brief-introduction">Brief introduction</h2>
+            <p>{introduction}</p>
+          </section>
+        )}
 
         <div className="record-page-columns">
           <article className="record-page-body modal">{children}</article>
