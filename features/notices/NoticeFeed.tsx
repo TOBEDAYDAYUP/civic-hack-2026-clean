@@ -12,6 +12,11 @@ export default function NoticeFeed() {
     [query, setQuery] = useState(''),
     [unavailable, setUnavailable] = useState(false),
     [loading, setLoading] = useState(false);
+  const [jumpPage, setJumpPage] = useState('1');
+  const maxPage = Math.max(1, Math.ceil(total / 12));
+  useEffect(() => {
+    setJumpPage(String(page));
+  }, [page]);
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const current = ++generation.current;
@@ -108,11 +113,38 @@ export default function NoticeFeed() {
           Previous
         </button>
         <span>
-          Page {page} of {Math.max(1, Math.ceil(total / 12))}
+          Page {page} of {maxPage}
         </span>
         <button onClick={() => setPage((p) => p + 1)} disabled={loading || page * 12 >= total}>
           Next
         </button>
+        <form
+          className="notice-page-jump"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const requested = Number(jumpPage);
+            if (!loading && Number.isInteger(requested) && requested >= 1 && requested <= maxPage)
+              setPage(requested);
+          }}
+        >
+          <label>
+            Go to page{' '}
+            <input
+              aria-label="Go to page"
+              type="number"
+              min="1"
+              max={maxPage}
+              step="1"
+              required
+              value={jumpPage}
+              onChange={(e) => setJumpPage(e.target.value)}
+              disabled={loading || !total}
+            />
+          </label>
+          <button type="submit" disabled={loading || !total}>
+            Go
+          </button>
+        </form>
       </div>
     </section>
   );
