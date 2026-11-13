@@ -25,7 +25,7 @@ const previous = {
   },
 };
 
-async function run({ dry = false, changed = false, skip = false } = {}) {
+async function run({ dry = false, changed = false, skip = false, all = false } = {}) {
   const writes = [];
   let chatCalls = 0;
   const server = createServer(async (req, res) => {
@@ -43,7 +43,9 @@ async function run({ dry = false, changed = false, skip = false } = {}) {
       answer =
         url.searchParams.get('select') === 'source_hash'
           ? [{ source_hash: changed ? 'new-source-hash' : row.source_hash }]
-          : [row];
+          : all
+            ? [row, { ...row, id: '8007' }, { ...row, id: '8008' }]
+            : [row];
     } else {
       answer = skip
         ? [{ ...previous, payload: { ...previous.payload, analysisVersion: 'impact-v5' } }]
@@ -56,7 +58,7 @@ async function run({ dry = false, changed = false, skip = false } = {}) {
   await once(server, 'listening');
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
   try {
-    const args = ['--id=8006', ...(dry ? ['--dry-run'] : [])];
+    const args = [...(all ? ['--all', '--max=1'] : ['--id=8006']), ...(dry ? ['--dry-run'] : [])];
     const child = spawn(process.execPath, [script, ...args], {
       env: {
         ...process.env,
@@ -82,6 +84,13 @@ test('preview can use a public key and never writes', async () => {
   assert.equal(outcome.chatCalls, 2);
   assert.deepEqual(outcome.writes, []);
   assert.match(outcome.output, /dry run, no database writes/);
+});
+
+test('batch preview honors its maximum number of attempts', async () => {
+  const outcome = await run({ dry: true, all: true });
+  assert.equal(outcome.chatCalls, 2);
+  assert.deepEqual(outcome.writes, []);
+  assert.match(outcome.output, /attempted 1/);
 });
 
 test('administrator publishes only to the existing AI table without replacing existing summary fields', async () => {

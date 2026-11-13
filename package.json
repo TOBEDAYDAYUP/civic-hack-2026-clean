@@ -21,8 +21,9 @@
     "predev": "node scripts/setup-env.mjs",
     "prebuild": "node scripts/setup-env.mjs",
     "test:setup": "node --test tests/setup-env.test.mjs",
-    "test:impact": "node --test tests/impact.test.mjs tests/impact-publish.test.mjs",
-    "data:analyze": "node --env-file=.env.local scripts/summarize-notices.mjs"
+    "test:impact": "node --test tests/impact.test.mjs tests/impact-publish.test.mjs tests/notice-ai-worker.test.mjs",
+    "data:analyze": "node --env-file=.env.local scripts/summarize-notices.mjs",
+    "data:watch": "node --env-file=.env.local scripts/watch-notice-ai.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.119.0",

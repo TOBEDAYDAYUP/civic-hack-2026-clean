@@ -111,6 +111,7 @@ let skipped = 0;
 let attempted = 0;
 let seen = 0;
 for await (const row of sourceRecords()) {
+  if (attempted >= max) break;
   seen++;
   const encoded = encodeURIComponent(row.id);
   try {
@@ -208,10 +209,9 @@ for await (const row of sourceRecords()) {
     // A failed AI call must never replace the original source or an existing summary.
     process.exitCode = 1;
   }
-  if (attempted >= max) {
-    console.log(`Reached --max=${max}. Rerun without --force to continue with other records.`);
-    break;
-  }
+}
+if (attempted >= max) {
+  console.log(`Reached --max=${max}. Rerun without --force to continue with other records.`);
 }
 console.log(
   `Done: examined ${seen}, attempted ${attempted}, published ${published}, skipped ${skipped}${dryRun ? ' (dry run, no database writes)' : ''}.`,
