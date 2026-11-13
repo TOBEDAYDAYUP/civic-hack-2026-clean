@@ -58,6 +58,18 @@ node --env-file=../.env.local scripts/sync-notices.mjs
 
 AI 数据仅在哈希与原始公告相同时合入 `civic_notice_feed`，避免把旧摘要展示成新事实。没有启动后台 AI 生成任务。
 
+### 居民影响分析
+
+公告详情页读取已有的 `payload.simple.impacts`，展示相关类别、解释和可展开的原文摘录。如果没有可用的 AI 分析，页面只用公告原文给出谨慎说明，或注明资料不足。访问页面不会调用 Ollama。
+
+如需预览某条公告的新分析，先启动本地 Ollama 并下载默认模型 `qwen3.5:4b`，然后运行：
+
+```sh
+npm run data:analyze -- --id=8006 --dry-run
+```
+
+预览不写数据库，可使用团队公开配置。管理员确认结果后，移除 `--dry-run` 发布到现有 `civic_notices` 表。默认分析最近三条；可用 `--all --max=10` 分批处理，并跳过同一原文版本下已经分析的公告。用 `--force` 可重新分析指定公告。不会改写官方原文，也不需要迁移。
+
 Edge Function `civic-sync` 已部署，使用 `apikey` 中的管理员 secret key 显式鉴权，拒绝公开请求；它当前不被定时任务调用。由于 Toronto 云端访问超时，日常使用本地管理员脚本。
 
 ## 验证

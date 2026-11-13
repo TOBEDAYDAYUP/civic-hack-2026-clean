@@ -1,4 +1,5 @@
 import {addressLabel} from './address-label.mjs';
+import type { ImpactItem } from './impact-analysis.mjs';
 // Public, read-only notice archive. The database view joins raw official data
 // with AI summaries only when their source hashes are still identical.
 export type PublicNotice = {
@@ -13,10 +14,12 @@ export type PublicNotice = {
   planningApplicationNumbers?: string[];
   generatedBy?: string;
   generatedAt?: string;
+  analysisVersion?: string;
   simple?: {
     plainTitle:string;
     whatIsHappening:string;
     whyItMatters:string;
+    impacts?: ImpactItem[];
     whoMayBeAffected:string;
     where:string;
     decisionStage:string;

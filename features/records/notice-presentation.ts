@@ -1,5 +1,6 @@
 import type { PublicNotice } from '@/lib/public-notices';
 import type { DetailedNotice } from './RecordDetails';
+import { noticeImpactPresentation } from '@/lib/impact-analysis.mjs';
 
 export function noticePresentation(notice: PublicNotice & { aiReady?: boolean }): DetailedNotice {
   const current = notice.aiReady && notice.simple;
@@ -31,6 +32,7 @@ export function noticePresentation(notice: PublicNotice & { aiReady?: boolean })
     sourceUrl: notice.sourceUrl || 'https://secure.toronto.ca/nm/notices/current.do',
     generatedBy: notice.generatedBy || 'Official source',
     generatedAt: notice.generatedAt || '',
+    residentImpact: noticeImpactPresentation(notice),
     simple: current || {
       plainTitle: title,
       whatIsHappening: summary,

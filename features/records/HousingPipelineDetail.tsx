@@ -12,6 +12,7 @@ type HousingDetailProps = {
   sourceText?: string;
   sourceTitle?: string;
   interpretation?: string;
+  residentImpactSection?: React.ReactNode;
   interpretationSource?: string;
   followUpQuestions?: readonly string[];
   references?: string[];
@@ -89,6 +90,7 @@ export default function HousingPipelineDetail({
   sourceText = '',
   sourceTitle = '',
   interpretation,
+  residentImpactSection,
   references = [],
   addresses = [],
 }: HousingDetailProps) {
@@ -147,13 +149,14 @@ export default function HousingPipelineDetail({
         </div>
       </section>
 
-      {interpretation && (
-        <section className="housing-panel">
-          <div className="housing-section-label">WHY THIS MAY MATTER</div>
-          <h3>What this means for you</h3>
-          <p>{interpretation}</p>
-        </section>
-      )}
+      {residentImpactSection ??
+        (interpretation && (
+          <section className="housing-panel">
+            <div className="housing-section-label">WHY THIS MAY MATTER</div>
+            <h3>What this means for you</h3>
+            <p>{interpretation}</p>
+          </section>
+        ))}
 
       <section className="housing-panel" aria-label="Development stages">
         <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
