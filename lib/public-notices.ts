@@ -36,6 +36,7 @@ async function localNotices():Promise<PublicNotice[]> {
 }
 
 async function queryView(params:URLSearchParams, count=false) {
+  if(!projectUrl||!apiKey)throw new Error('Supabase environment configuration is missing');
   const response = await fetch(`${projectUrl}/rest/v1/civic_notice_feed?${params.toString()}`, {
     headers: {
       apikey: apiKey,
