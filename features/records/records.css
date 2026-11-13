@@ -455,6 +455,57 @@
   border-top: 0;
   padding-top: 0;
 }
+.resident-impact-list {
+  display: grid;
+  gap: 15px;
+  list-style: none;
+  margin: 15px 0 10px;
+  padding: 0;
+}
+.resident-impact-card {
+  padding: clamp(12px, 3vw, 21px);
+  border: 1px solid #d4e2ee;
+  border-radius: 7px;
+  background: #f5f8fa;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.resident-impact-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 12px;
+  color: #185784;
+}
+.resident-impact-label span,
+.resident-impact-source,
+.modal .resident-impact-note {
+  color: #526575;
+  font-size: 12px;
+}
+.resident-impact-label span,
+.resident-impact-source summary {
+  font-weight: 700;
+}
+.modal .resident-impact-card p {
+  margin: 9px 0 12px;
+  color: #334b5d;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.resident-impact-source summary {
+  cursor: pointer;
+}
+.resident-impact-source blockquote {
+  margin: 8px 0 0;
+  border-left: 2px solid #b8cada;
+  padding-left: 10px;
+  line-height: 1.65;
+}
+.modal .resident-impact-intro {
+  color: #526575;
+}
 .record-page-aside {
   position: sticky;
   top: 24px;

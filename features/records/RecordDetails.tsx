@@ -1,6 +1,8 @@
 import type { Decision } from '@/data/decisions';
 import { recordContext } from '@/features/records/recordContext';
 import HousingPipelineDetail from './HousingPipelineDetail';
+import ResidentImpactSection from './ResidentImpactSection';
+import type { NoticeImpactPresentation } from '@/lib/impact-analysis.mjs';
 
 export type DetailedNotice = {
   id: string;
@@ -13,6 +15,7 @@ export type DetailedNotice = {
   sourceUrl: string;
   generatedBy: string;
   generatedAt: string;
+  residentImpact: NoticeImpactPresentation;
   simple: {
     plainTitle: string;
     whatIsHappening: string;
@@ -137,6 +140,7 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
 export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
   const housing = notice.topics.some((t) => /housing|planning|development/i.test(t));
   const s = notice.simple;
+  const residentImpactSection = <ResidentImpactSection {...notice.residentImpact} />;
   if (housing) {
     return (
       <div className="record-details">
@@ -145,8 +149,7 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
           sourceText={notice.description}
           sourceTitle={notice.title}
           summary={s.whatIsHappening}
-          interpretation={s.whyItMatters || undefined}
-
+          residentImpactSection={residentImpactSection}
           recordDate={notice.noticeDate}
           area={s.where}
           noticeStage={s.decisionStage}
@@ -209,11 +212,7 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
           )}
         </div>
       </section>
-      <section className="record-section">
-        <div className="record-eyebrow">02 / PERSONAL RELEVANCE</div>
-        <h3>Why might this matter?</h3>
-        <ShortPoints text={s.whyItMatters} />
-      </section>
+      {residentImpactSection}
       <section className="record-section">
         <div className="record-eyebrow">03 / NEXT ACTION</div>
         <h3>How can residents participate?</h3>
