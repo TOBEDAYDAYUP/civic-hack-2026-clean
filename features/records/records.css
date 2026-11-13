@@ -662,3 +662,24 @@ a.map-record:focus-visible,
     font-size: 15px;
   }
 }
+
+/* Compact article titles leave room for the introduction. */
+.record-page-heading {
+  max-width: 100%;
+}
+.record-page-heading h1 {
+  font-size: clamp(26px, 3vw, 40px);
+  line-height: 1.25;
+  letter-spacing: -0.6px;
+}
+@media (min-width: 960px) {
+  .record-page-heading h1 {
+    white-space: nowrap;
+    overflow-x: auto;
+  }
+}
+@media (max-width: 730px) {
+  .record-page-heading h1 {
+    font-size: 28px;
+  }
+}
