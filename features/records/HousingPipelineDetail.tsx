@@ -1,4 +1,5 @@
 import React from 'react';
+import { addressLabel } from '@/lib/address-label.mjs';
 
 type HousingDetailProps = {
   sourceType: 'council decision' | 'public notice';
@@ -90,7 +91,7 @@ export default function HousingPipelineDetail({
 }: HousingDetailProps) {
   const isLive = sourceType === 'public notice';
   const listedReferences = references.filter(Boolean);
-  const listedAddresses = addresses.filter(Boolean);
+  const listedAddresses = addresses.map(addressLabel).filter(Boolean);
   return (
     <div className="housing-detail">
       <section
@@ -126,7 +127,11 @@ export default function HousingPipelineDetail({
           {listedAddresses.length > 0 && (
             <div>
               <strong>Addresses listed</strong>
-              <span>{listedAddresses.join(' · ')}</span>
+              <ul className="address-list">
+                {listedAddresses.map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
             </div>
           )}
           {listedReferences.length > 0 && (
@@ -159,27 +164,28 @@ export default function HousingPipelineDetail({
 
       <section className="housing-panel" aria-labelledby="housing-stages-heading">
         <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
-        <h3 id="housing-stages-heading">Where is this project in the pipeline?</h3>
+        <h3 id="housing-stages-heading">Which project milestones does this notice establish?</h3>
         <p className="housing-subtext">
-          Project-specific progress cannot be verified from this record alone. These five events
-          must be checked independently before showing a confirmed stage or calculating elapsed
-          time.
+          This record does not include verified project milestone dates. The steps below explain
+          what evidence to look for; they are not a progress report for this address.
         </p>
-        <ol className="housing-timeline">
-          {stages.map((stage, index) => (
-            <li key={stage.name}>
-              <div className="housing-step-number">{index + 1}</div>
-              <div className="housing-step-content">
-                <div className="housing-step-head">
-                  <strong>{stage.name}</strong>
-                  <span className="housing-unverified">Not verified</span>
+        <details className="milestone-guide">
+          <summary>How to check the five development stages</summary>
+          <ol className="housing-timeline">
+            {stages.map((stage, index) => (
+              <li key={stage.name}>
+                <div className="housing-step-number">{index + 1}</div>
+                <div className="housing-step-content">
+                  <div className="housing-step-head">
+                    <strong>{stage.name}</strong>
+                  </div>
+                  <p>{stage.meaning}</p>
+                  <small>Evidence needed: {stage.check}</small>
                 </div>
-                <p>{stage.meaning}</p>
-                <small>Evidence needed: {stage.check}</small>
-              </div>
-            </li>
-          ))}
-        </ol>
+              </li>
+            ))}
+          </ol>
+        </details>
         <p className="housing-caution">
           <strong>No delay calculation:</strong> Without two documented dates for the same
           project/phase, we cannot calculate time between stages or say the project has stalled.

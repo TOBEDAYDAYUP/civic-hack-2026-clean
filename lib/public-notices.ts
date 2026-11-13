@@ -1,3 +1,4 @@
+import {addressLabel} from './address-label.mjs';
 // Public, read-only notice archive. The database view joins raw official data
 // with AI summaries only when their source hashes are still identical.
 export type PublicNotice = {
@@ -46,6 +47,7 @@ async function queryView(params:URLSearchParams, count=false) {
   });
   if (!response.ok) throw new Error(`Public notices unavailable: HTTP ${response.status}`);
   const records = await response.json() as Row[];
+  for(const row of records){row.payload={...row.payload,addresses:row.payload.addresses?.map(a=>({...a,label:addressLabel(a.label)}))};}
   const range = response.headers.get('content-range') || '';
   const countText = range.split('/')[1];
   const total = countText && /^\d+$/.test(countText) ? Number(countText) : records.length;

@@ -39,10 +39,10 @@ try {
   for (const text of [
     'What do we actually know?',
     'Why could this matter to residents?',
-    'Where is this project in the pipeline?',
+    'Which project milestones does this notice establish?',
     'What is missing, and why?',
     'Where can I check the status?',
-    'Not verified',
+    'How to check the five development stages',
     '/?view=Decisions',
   ])
     assert.ok(housing.includes(text), `Missing housing content: ${text}`);

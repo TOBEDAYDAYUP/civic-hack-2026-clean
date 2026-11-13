@@ -40,3 +40,9 @@ test('upstream failure releases only own lease and never commits',async()=>{
  }}),/Toronto source unavailable/);
  assert.ok(!requests.some(r=>r.url.includes('civic_commit_source_sync')));
 });
+
+test('display address strips coordinates, duplicate city metadata and repeated street',async()=>{
+ const {addressLabel}=await import('../lib/address-label.mjs');
+ assert.equal(addressLabel('Toronto · Ontario · 43.700474895 · -79.518505404 · M9N 1W2 · Canada · 1956 Weston Road · 1956 Weston Road Toronto Ontario'),'1956 Weston Road');
+ assert.equal(addressLabel('1 Little Avenue'),'1 Little Avenue');
+});

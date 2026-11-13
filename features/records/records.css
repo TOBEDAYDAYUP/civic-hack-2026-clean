@@ -621,3 +621,26 @@ a.map-record:focus-visible,
     padding: 22px 5%;
   }
 }
+.address-list {
+  margin: 0;
+  padding-left: 18px;
+}
+.address-list li {
+  overflow-wrap: anywhere;
+}
+.milestone-guide > summary {
+  cursor: pointer;
+  color: #185784;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 14px 0;
+}
+.record-page-tags .status {
+  white-space: normal;
+  line-height: 1.6;
+  max-width: 620px;
+}
+.record-page-tags .topic {
+  display: inline-block;
+  line-height: 1.6;
+}

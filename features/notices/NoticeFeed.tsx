@@ -58,7 +58,7 @@ export default function NoticeFeed() {
   }, [refresh]);
   const connection = useNoticeUpdates(() => void refresh());
   return (
-    <section className="live-panel" aria-label="Shared Toronto notices">
+    <section className="notice-feed" aria-label="Shared Toronto notices">
       <div className="live-panel-head">
         <div>
           <div className="eyebrow">SHARED OFFICIAL NOTICES</div>
@@ -104,21 +104,23 @@ export default function NoticeFeed() {
           Search
         </button>
       </form>
-      <div className="live-grid">
+      <div className="notice-feed-grid">
         {items.map((n) => (
-          <article className="live-card" key={n.id}>
-            <span className="topic">{n.topics?.[0] || 'Public notice'}</span>
+          <article className="notice-feed-card" key={n.id}>
+            <span className="notice-category">{n.topics?.[0] || 'Public notice'}</span>
             <h3>
               <Link href={`/notices/${encodeURIComponent(n.id)}`}>
                 {n.aiReady ? n.simple?.plainTitle || n.title : n.title}
               </Link>
             </h3>
             <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>
-            <div className="live-card-meta">
+            <div className="notice-feed-meta">
               {n.noticeDate?.slice(0, 10) || 'Date not specified'} ·{' '}
               {n.aiReady ? 'AI explanation available' : 'Official source'}
             </div>
-            <Link href={`/notices/${encodeURIComponent(n.id)}`}>Read full notice →</Link>
+            <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>
+              Read full notice →
+            </Link>
           </article>
         ))}
       </div>

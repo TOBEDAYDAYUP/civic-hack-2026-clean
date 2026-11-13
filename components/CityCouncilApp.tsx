@@ -146,7 +146,17 @@ export default function CityCouncilApp() {
         )}
       </section>
 
-      {view === 'Home' && <NoticeFeed />}
+      {(view === 'Home' || view === 'Decisions') && <NoticeFeed />}
+      {view === 'Decisions' && (
+        <div className="archive-intro">
+          <h2>Selected Council decisions</h2>
+          <p>
+            The shared records above update from the database. The 14 summaries below are a curated
+            archive; public notices may describe applications or meetings rather than adopted
+            decisions.
+          </p>
+        </div>
+      )}
 
       {showDecisionTools && (
         <>
