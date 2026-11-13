@@ -4,6 +4,7 @@ import {addressLabel} from './address-label.mjs';
 export type PublicNotice = {
   id: string;
   title: string;
+  displayTitle?: string;
   description?: string;
   noticeDate?: string | null;
   topics?: string[];
@@ -36,6 +37,7 @@ async function localNotices():Promise<PublicNotice[]> {
 }
 
 async function queryView(params:URLSearchParams, count=false) {
+  if(!projectUrl||!apiKey)throw new Error('Supabase environment configuration is missing');
   const response = await fetch(`${projectUrl}/rest/v1/civic_notice_feed?${params.toString()}`, {
     headers: {
       apikey: apiKey,
@@ -48,6 +50,17 @@ async function queryView(params:URLSearchParams, count=false) {
   if (!response.ok) throw new Error(`Public notices unavailable: HTTP ${response.status}`);
   const records = await response.json() as Row[];
   for(const row of records){row.payload={...row.payload,addresses:row.payload.addresses?.map(a=>({...a,label:addressLabel(a.label)}))};}
+  // Derived titles never overwrite the official source title.
+  if(records.length){
+    const ids=records.map(r=>r.id).filter(id=>/^[\w-]{1,128}$/.test(id));
+    if(ids.length)try{
+      const params=new URLSearchParams({select:'notice_id,original_title,short_title',notice_id:`in.(${ids.join(',')})`});
+      const titles=await fetch(`${projectUrl}/rest/v1/civic_notice_titles?${params}`,{headers:{apikey:apiKey},cache:'no-store',signal:AbortSignal.timeout(4000)});
+      if(titles.ok){const rows=await titles.json() as {notice_id:string;original_title:string;short_title:string}[];
+        for(const row of records){const match=rows.find(t=>t.notice_id===row.id&&t.original_title===row.payload.title);if(match)row.payload={...row.payload,displayTitle:match.short_title};}
+      }
+    }catch{/* Keep the original title when the optional title store is unavailable. */}
+  }
   const range = response.headers.get('content-range') || '';
   const countText = range.split('/')[1];
   const total = countText && /^\d+$/.test(countText) ? Number(countText) : records.length;
@@ -89,4 +102,16 @@ export async function getSyncStatus(){
  const res=await fetch(`${projectUrl}/rest/v1/civic_sync_state?select=last_started_at,last_success_at,last_error,fetched,changed&id=eq.toronto-notices`,{headers:{apikey:apiKey},cache:'no-store',signal:AbortSignal.timeout(12000)});
  if(!res.ok)throw new Error('Sync status unavailable');
  const rows=await res.json();return {mode:'shared',...(rows[0]||{}),automaticSourceSync:false};
+}
+
+
+export async function getMapNotices(){
+ if(localMode())return await localNotices();
+ const items:PublicNotice[]=[];
+ for(let offset=0;offset<20000;offset+=1000){
+  const {records}=await queryView(new URLSearchParams({select:'id,payload,ai_ready',order:'notice_date.desc.nullslast,id.asc',limit:'1000',offset:String(offset)}));
+  items.push(...records.map(r=>({id:r.id,title:r.payload.title,description:r.payload.description?.slice(0,600),noticeDate:r.payload.noticeDate,topics:r.payload.topics,addresses:r.payload.addresses,sourceUrl:r.payload.sourceUrl,...(r.ai_ready&&r.payload.simple?{simple:r.payload.simple}:{})})));
+  if(records.length<1000)return items;
+ }
+ throw new Error('Map record limit exceeded');
 }

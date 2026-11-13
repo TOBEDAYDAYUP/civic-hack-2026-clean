@@ -1,0 +1,556 @@
+/* Toronto municipal notice map, isolated from the older map placeholder styles. */
+.civic-map-intro {
+  padding-top: 39px;
+  padding-bottom: 16px;
+}
+.civic-map-intro h1 {
+  font-size: clamp(37px, 4.5vw, 58px);
+  margin: 13px 0;
+}
+.civic-map-intro em {
+  font-style: normal;
+  color: #185784;
+}
+.civic-map-intro p {
+  max-width: 820px;
+  font-size: 13px;
+}
+.civic-area-controls {
+  background: #fff;
+  border: 1px solid #e1e8ee;
+  border-radius: 12px;
+  padding: 17px 20px;
+  margin: 14px 0 18px;
+}
+.civic-area-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 13px;
+}
+.civic-area-heading strong {
+  font-size: 13px;
+  color: #185784;
+}
+.civic-area-heading span {
+  font-size: 10px;
+  color: #70808b;
+}
+.civic-area-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.civic-area-pill {
+  border: 1px solid #d7e1ea;
+  background: #f6f8fa;
+  color: #395d78;
+  font-size: 11px;
+  border-radius: 40px;
+  font-weight: 700;
+  padding: 9px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.civic-area-pill:hover {
+  border-color: #185784;
+  background: #eef4f9;
+}
+.civic-area-pill.active {
+  background: #185784;
+  color: #fff;
+  border-color: #185784;
+}
+.civic-area-pill span {
+  border-radius: 20px;
+  background: #ffffff2b;
+  padding: 2px 6px;
+  min-width: 19px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.civic-area-pill:not(.active) span {
+  background: #e4ebf0;
+}
+.civic-map-workspace {
+  display: grid;
+  grid-template-columns: minmax(285px, 335px) minmax(0, 1fr);
+  align-items: start;
+  gap: 16px;
+  margin-bottom: 52px;
+}
+.civic-map-sidebar {
+  background: #fff;
+  border: 1px solid #dce5ec;
+  border-radius: 11px;
+  overflow: hidden;
+  min-width: 0;
+}
+.civic-map-sidehead {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid #e7edf2;
+}
+.civic-map-sidehead h2 {
+  font:
+    600 23px/1.15 'Playfair Display',
+    Georgia,
+    serif;
+  color: #185784;
+  margin: 10px 0 6px;
+}
+.civic-map-update-status {
+  font-size: 10px;
+  color: #61778b;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.civic-map-refresh {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #185784;
+  font-size: 11px;
+  font-weight: 800;
+  margin: 0 0 17px;
+}
+.civic-map-refresh:disabled {
+  color: #8b9da9;
+}
+.civic-map-search-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: #4b647a;
+  margin-bottom: 7px;
+}
+.civic-map-search {
+  width: 100%;
+  border: 1px solid #d7e1e9;
+  border-radius: 7px;
+  padding: 12px 13px;
+  font-size: 12px;
+  color: #26495f;
+  background: #f9fafb;
+}
+.civic-map-alert {
+  background: #fff5ed;
+  border-left: 3px solid #b45c2a;
+  font-size: 11px;
+  line-height: 1.7;
+  padding: 9px 12px;
+  color: #8d482c;
+}
+.civic-map-notice-list {
+  overflow-y: auto;
+  max-height: 430px;
+  min-height: 100px;
+}
+.civic-map-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid #edf1f4;
+  background: #fff;
+  padding: 15px 18px;
+  color: inherit;
+}
+.civic-map-row:hover,
+.civic-map-row.selected {
+  background: #eef5fa;
+}
+.civic-map-row.selected {
+  border-left: 4px solid #185784;
+  padding-left: 14px;
+}
+.civic-map-row-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #32708d;
+}
+.civic-map-row strong {
+  display: block;
+  font:
+    600 17px/1.34 'Playfair Display',
+    Georgia,
+    serif;
+  margin: 8px 0;
+  color: #26475c;
+}
+.civic-map-row small {
+  font-size: 10px;
+  color: #6d8292;
+  line-height: 1.5;
+  display: block;
+}
+.civic-map-row-link {
+  font-size: 10px;
+  color: #185784;
+  font-weight: 800;
+  display: block;
+  margin-top: 9px;
+}
+.civic-map-more {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #eef5f9;
+  border: 0;
+  color: #185784;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 14px;
+}
+.civic-map-empty {
+  padding: 22px 18px;
+  font-size: 12px;
+  color: #6a7f8c;
+  line-height: 1.75;
+}
+.civic-map-unknown {
+  border-top: 1px solid #dae5ea;
+  background: #f8fafb;
+}
+.civic-map-unknown-toggle {
+  border: 0;
+  padding: 17px 18px;
+  width: 100%;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 800;
+  color: #35586c;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.civic-map-unknown-toggle b {
+  border-radius: 30px;
+  background: #e7edf2;
+  padding: 3px 8px;
+  margin-left: 6px;
+  font-size: 10px;
+}
+.civic-map-unknown-list {
+  padding: 0 18px 17px;
+  max-height: 260px;
+  overflow: auto;
+}
+.civic-map-unknown-list p {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #647988;
+}
+.civic-map-unknown-list a {
+  font-size: 11px;
+  line-height: 1.55;
+  display: block;
+  color: #185784;
+  padding: 10px 0;
+  border-top: 1px solid #e6edf2;
+  text-decoration: none;
+}
+.civic-map-right {
+  min-width: 0;
+}
+.civic-map-frame {
+  position: relative;
+  border-radius: 11px;
+  overflow: hidden;
+  border: 1px solid #d4e1e8;
+  box-shadow: 0 6px 24px #18415d12;
+  background: #dce6ed;
+  height: 610px;
+}
+.civic-map-canvas {
+  height: 100%;
+  width: 100%;
+  z-index: 0;
+  outline: none;
+}
+.civic-map-loading {
+  position: absolute;
+  z-index: 1010;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #f0f3f3d9;
+  font-weight: 800;
+  font-size: 13px;
+  color: #31546c;
+  padding: 28px;
+  flex-direction: column;
+}
+.civic-map-error {
+  background: #fff7ef;
+  color: #8f4925;
+}
+.civic-map-error p {
+  font-size: 11px;
+  font-weight: 500;
+}
+.civic-map-legend {
+  position: absolute;
+  bottom: 21px;
+  left: 12px;
+  z-index: 490;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 1px solid #d5e2e8;
+  border-radius: 7px;
+  padding: 9px 11px;
+  background: #fffffff2;
+  box-shadow: 0 3px 16px #1d476220;
+}
+.civic-map-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  color: #385d74;
+  font-weight: 700;
+}
+.civic-map-legend i {
+  width: 12px;
+  height: 12px;
+  display: block;
+  border-radius: 50%;
+}
+.civic-legend-exact {
+  background: #185784;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #185784;
+}
+.civic-legend-approx {
+  background: #eca000;
+  border: 2px dashed #8b5710;
+}
+.civic-pin-wrapper {
+  border: 0;
+  background: transparent;
+}
+.civic-pin {
+  width: 39px;
+  height: 39px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 13px #12384b60;
+  position: relative;
+  cursor: pointer;
+}
+.civic-pin-exact {
+  background: #185784;
+  color: white;
+}
+.civic-pin-approx {
+  background: #f2b12d;
+  border: 2px dashed #7c5b19;
+  color: #2d291d;
+  box-shadow: 0 2px 13px #12384b50;
+}
+.civic-pin-dot {
+  background: #fff;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+.civic-pin-approx .civic-pin-dot {
+  background: #7c5b19;
+}
+.civic-pin-count {
+  font-weight: 800;
+  font-size: 12px;
+  font-family: 'DM Sans', sans-serif;
+}
+.civic-marker-popup {
+  width: min(250px, 65vw);
+  font-family: 'DM Sans', sans-serif;
+  color: #253e4d;
+}
+.civic-marker-popup > strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 9px;
+  color: #185784;
+}
+.civic-marker-popup .civic-popup-warning {
+  color: #97610b;
+}
+.civic-marker-popup ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.civic-marker-popup li {
+  padding: 9px 0;
+  border-top: 1px solid #e7edf2;
+}
+.civic-marker-popup li a {
+  display: block;
+  color: #185784;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.civic-marker-popup li a:hover {
+  text-decoration: underline;
+}
+.civic-marker-popup li small {
+  font-size: 10px;
+  color: #6b7e8b;
+  display: block;
+  margin-top: 4px;
+}
+.civic-marker-popup p {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #647b88;
+}
+.civic-popup-footer {
+  border-top: 1px solid #e7edf2;
+  padding-top: 8px;
+}
+.civic-map-disclosure {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid #e1e9ec;
+  border-radius: 8px;
+  padding: 15px 19px;
+}
+.civic-map-disclosure strong {
+  font-size: 12px;
+  color: #185784;
+}
+.civic-map-disclosure p {
+  font-size: 11px;
+  color: #657d8d;
+  line-height: 1.7;
+  margin: 5px 0 0;
+}
+@media (max-width: 1000px) {
+  .civic-map-workspace {
+    grid-template-columns: 290px minmax(0, 1fr);
+  }
+  .civic-map-frame {
+    height: 570px;
+  }
+}
+@media (max-width: 850px) {
+  .civic-map-workspace {
+    grid-template-columns: 1fr;
+  }
+  .civic-map-right {
+    order: -1;
+  }
+  .civic-map-frame {
+    height: 480px;
+  }
+  .civic-map-notice-list {
+    max-height: 370px;
+  }
+  .civic-area-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+@media (max-width: 730px) {
+  .civic-map-frame {
+    height: 440px;
+  }
+  .civic-map-intro {
+    padding-top: 28px;
+  }
+  .civic-map-intro h1 {
+    font-size: 39px;
+  }
+  .civic-area-controls {
+    padding: 16px 12px;
+  }
+  .civic-area-buttons {
+    gap: 7px;
+  }
+  .civic-area-pill {
+    font-size: 10px;
+    padding: 9px;
+  }
+  .civic-map-legend {
+    bottom: 12px;
+    left: 8px;
+    gap: 7px;
+    padding: 8px;
+  }
+  .civic-map-legend span {
+    font-size: 9px;
+  }
+}
+
+/* Zoom-dependent marker clusters + matched-street accuracy legend. */
+.civic-dynamic-cluster {
+  width: 49px;
+  height: 49px;
+  border-radius: 50%;
+  background: #f3b82e;
+  border: 3px dashed #8b651a;
+  box-shadow: 0 2px 14px #1c405a50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #362707;
+  font-weight: 900;
+  font-size: 17px;
+  font-family: 'DM Sans', Arial, sans-serif;
+  cursor: pointer;
+  transition: transform 0.16s;
+}
+.civic-dynamic-cluster:hover {
+  transform: scale(1.08);
+}
+.civic-pin-geocoded {
+  background: #0a8b84;
+  color: #fff;
+}
+.civic-legend-geocoded {
+  background: #0a8b84;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px #0a8b84;
+}
+.civic-map-geocode-state {
+  font-size: 10px;
+  line-height: 1.55;
+  color: #668092;
+  margin-top: 12px;
+  padding: 9px 10px;
+  background: #f2f8f8;
+  border-radius: 6px;
+}
+.civic-map-geocode-state button {
+  border: 0;
+  background: none;
+  color: #096861;
+  text-decoration: underline;
+  font-weight: 800;
+  display: block;
+  padding: 7px 0 0;
+  font-size: 10px;
+}
+.civic-map-frame .marker-cluster {
+  background: transparent;
+}
+.civic-map-frame .marker-cluster div {
+  background: transparent;
+}
+.civic-map-canvas .leaflet-div-icon {
+  border: 0;
+  background: transparent;
+}

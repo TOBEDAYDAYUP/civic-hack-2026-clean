@@ -61,3 +61,10 @@ test('plain-language introduction uses 50–80 words and retains application sta
  const text=introduction({title:'Application',summary:'The City received an application.',status:'It has not been adopted by Council.'});
  assert.ok(text.includes('not been adopted by Council'));
 });
+
+
+test('introduction keeps dotted references intact and removes URL fragments',async()=>{
+ const {introduction}=await import('../features/records/introduction.mjs');
+ const text=introduction({title:'Notice of passing',summary:'The City passed the by-law. Please see item PH31.2 at https://secure.toronto.ca/council/agenda-item.do?item=2026.PH31.2.'});
+ assert.ok(!text.includes('https:'));assert.ok(!text.includes('at https://secure.'));assert.ok(!text.includes('PH31. 2'));
+});

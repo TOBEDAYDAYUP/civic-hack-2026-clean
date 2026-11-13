@@ -8,6 +8,7 @@ export function useNoticeUpdates(refresh: () => void) {
   callback.current = refresh;
   const [connection, setConnection] = useState('Connecting');
   useEffect(() => {
+    if (!publicDataConfig.url || !publicDataConfig.key) return;
     const client = createClient(publicDataConfig.url, publicDataConfig.key, {
       auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
     });

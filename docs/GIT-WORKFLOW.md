@@ -11,6 +11,8 @@
 ```sh
 git clone https://github.com/TOBEDAYDAYUP/civic-hack-2026-clean.git
 cd civic-hack-2026-clean
+cp .env.local.example .env.local
+# 先填写团队提供的公开 URL 和 publishable key
 npm ci
 npm run dev
 ```

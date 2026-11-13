@@ -13,7 +13,7 @@ npm ci
 npm run dev
 ```
 
-普通队友无需配置密钥或 Ollama；公告从共享数据库只读获取。只有管理员运行手动源同步，详见 docs/DATA-API.md。不要让每个队友各自抓取和改数据库。
+普通队友需在 .env.local 配置公开项目 URL 和 publishable key；无需管理员密钥或 Ollama。公告从共享数据库只读获取。只有管理员运行手动源同步，详见 docs/DATA-API.md。不要让每个队友各自抓取和改数据库。
 
 ## 每个任务
 

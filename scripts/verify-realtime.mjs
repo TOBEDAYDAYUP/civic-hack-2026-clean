@@ -1,7 +1,7 @@
 // Administrator diagnostic: writes an existing updated_at value back unchanged.
 import assert from 'node:assert/strict';
 import {createClient} from '@supabase/supabase-js';
-const url=process.env.SUPABASE_URL, pub=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY||'sb_publishable_fcPeKnXAFMGzkq37iWvAdQ_H5_g8VwT', secret=process.env.SUPABASE_SECRET_KEY;
+const url=process.env.SUPABASE_URL, pub=process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, secret=process.env.SUPABASE_SECRET_KEY;
 assert.ok(url&&pub&&secret,'Configure administrator environment first');
 const read=await fetch(`${url}/rest/v1/civic_source_notices?select=id,updated_at&limit=1`,{headers:{apikey:pub},signal:AbortSignal.timeout(15000)});
 assert.equal(read.status,200);

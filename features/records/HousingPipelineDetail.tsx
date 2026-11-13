@@ -84,7 +84,6 @@ export default function HousingPipelineDetail({
   noticeStage,
   sourceUrl,
   interpretation,
-  interpretationSource,
   references = [],
   addresses = [],
 }: HousingDetailProps) {
@@ -98,12 +97,12 @@ export default function HousingPipelineDetail({
         aria-labelledby="housing-record-heading"
       >
         <div className="housing-section-label">01 / WHAT THE RECORD SAYS</div>
-        <h3 id="housing-record-heading">What do we actually know?</h3>
+        <h3 id="housing-record-heading">What’s happening?</h3>
         <p>{summary || 'This record does not include a plain-language description.'}</p>
         <div className="housing-facts">
           <div>
             <strong>Record type</strong>
-            <span>{isLive ? 'City public notice' : 'Curated Council decision summary'}</span>
+            <span>{isLive ? 'City public notice' : 'Council decision'}</span>
           </div>
           {recordDate && (
             <div>
@@ -119,7 +118,7 @@ export default function HousingPipelineDetail({
           )}
           {noticeStage && (
             <div>
-              <strong>Notice decision stage (AI summary)</strong>
+              <strong>Status</strong>
               <span>{noticeStage}</span>
             </div>
           )}
@@ -140,60 +139,37 @@ export default function HousingPipelineDetail({
             </div>
           )}
         </div>
-        <p className="housing-caution">
-          <strong>Important:</strong>{' '}
-          {isLive
-            ? 'This is a public notice, not a verified development-to-construction history.'
-            : 'This is a Council policy/decision summary, not a verified record of an individual housing project.'}{' '}
-          A notice date or Council decision date is not automatically a planning approval date.
-        </p>
       </section>
 
       {interpretation && (
         <section className="housing-panel">
           <div className="housing-section-label">WHY THIS MAY MATTER</div>
-          <h3>Why could this matter to residents?</h3>
+          <h3>What this means for you</h3>
           <p>{interpretation}</p>
-          <p className="record-footnote">
-            {interpretationSource ||
-              'Interpretive context, not a measured or confirmed project outcome.'}
-          </p>
         </section>
       )}
 
-      <section className="housing-panel" aria-labelledby="housing-stages-heading">
+      <section className="housing-panel" aria-label="Development stages">
         <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
-        <h3 id="housing-stages-heading">Which project milestones does this notice establish?</h3>
-        <p className="housing-subtext">
-          This record does not include verified project milestone dates. The steps below explain
-          what evidence to look for; they are not a progress report for this address.
-        </p>
-        <details className="milestone-guide">
-          <summary>How to check the five development stages</summary>
-          <ol className="housing-timeline">
-            {stages.map((stage, index) => (
-              <li key={stage.name}>
-                <div className="housing-step-number">{index + 1}</div>
-                <div className="housing-step-content">
-                  <div className="housing-step-head">
-                    <strong>{stage.name}</strong>
-                  </div>
-                  <p>{stage.meaning}</p>
-                  <small>Evidence needed: {stage.check}</small>
+        <ol className="housing-timeline">
+          {stages.map((stage, index) => (
+            <li key={stage.name}>
+              <div className="housing-step-number">{index + 1}</div>
+              <div className="housing-step-content">
+                <div className="housing-step-head">
+                  <strong>{stage.name}</strong>
                 </div>
-              </li>
-            ))}
-          </ol>
-        </details>
-        <p className="housing-caution">
-          <strong>No delay calculation:</strong> Without two documented dates for the same
-          project/phase, we cannot calculate time between stages or say the project has stalled.
-        </p>
+                <p>{stage.meaning}</p>
+                <small>Evidence needed: {stage.check}</small>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
         <div className="housing-section-label">03 / VERIFY THE NEXT STEP</div>
-        <h3 id="housing-next-heading">Where can I check the status?</h3>
+        <h3 id="housing-next-heading">Check the project status</h3>
         <p>
           Search the official project and permit systems, then match records using the address,
           application number and phase before drawing conclusions.
@@ -216,11 +192,6 @@ export default function HousingPipelineDetail({
             </a>
           </p>
         )}
-        <p className="housing-disclaimer">
-          Challenge 5 prototype · These are verification steps, not a claim that the records have
-          already been linked. Construction and occupancy require their own evidence. AI summaries
-          are not a substitute for original records.
-        </p>
       </section>
     </div>
   );
