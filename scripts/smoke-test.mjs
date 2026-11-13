@@ -39,10 +39,10 @@ try {
   for (const text of [
     'What’s happening?',
     'What this means for you',
-    'Project progress',
+    'Planning approval',
     'record-introduction',
     'Check the project status',
-    'How to check the five development stages',
+    'Completion / occupancy',
     '/?view=Decisions',
   ])
     assert.ok(housing.includes(text), `Missing housing content: ${text}`);
@@ -52,6 +52,10 @@ try {
     'Brief introduction',
     'Evidence first.',
     'AI-generated interpretation',
+    'Project progress',
+    'No delay calculation:',
+    'housing-caution',
+    'milestone-guide',
   ])
     assert.ok(!housing.includes(label), label);
   const transport = await page('/decisions/0');
