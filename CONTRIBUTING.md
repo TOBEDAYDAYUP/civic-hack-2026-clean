@@ -1,5 +1,7 @@
 # 团队开发约定
 
+完整新手步骤和给其他 AI 的指令见 [docs/GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md)。AI 开工前必须阅读根目录 [AGENTS.md](AGENTS.md)。默认不得直接推送 main；由指定集成人员审核并逐个合并 PR。
+
 `main` 是大家共同使用的稳定版本。每次做一个小任务，使用短期分支，完成后通过 Pull Request 合并。不要每个人长期维护一套完整网站，也不要直接把旧项目整个覆盖进来。
 
 ## 第一次启动

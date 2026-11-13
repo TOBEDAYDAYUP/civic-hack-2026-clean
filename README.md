@@ -49,3 +49,7 @@ npm run check
 ```
 
 GitHub Actions runs the same checks on PRs and main. Branch protection must be enabled separately by a repository administrator; see CONTRIBUTING.md.
+
+## Working with teammates and AI
+
+Start with [the team Git workflow](docs/GIT-WORKFLOW.md). Use one short-lived branch per task and a reviewed PR to main. AI agents must read [AGENTS.md](AGENTS.md) before editing.
