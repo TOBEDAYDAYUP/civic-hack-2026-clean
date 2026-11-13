@@ -20,8 +20,6 @@ The detail pages now explain facts, relevance, missing evidence and next steps. 
 ## Run locally
 
 ```bash
-cp .env.local.example .env.local
-# Fill in NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY first.
 npm ci
 npm run dev
 ```
@@ -56,4 +54,4 @@ GitHub Actions runs the same checks on PRs and main. Branch protection must be e
 
 Start with [the team Git workflow](docs/GIT-WORKFLOW.md). Use one short-lived branch per task and a reviewed PR to main. AI agents must read [AGENTS.md](AGENTS.md) before editing.
 
-Database connection settings come exclusively from environment variables. Source code includes no project-specific URL or key fallback. See `.env.local.example`; keep actual values in ignored `.env.local`.
+Database connection settings are read from environment variables. `npm run dev` and `npm run build` automatically fill missing public read-only settings from `.env.local.example` into the ignored `.env.local`. Existing valid custom settings and all administrator settings are preserved. Ordinary teammates do not need their own Supabase project or administrator key. See [team setup](docs/TEAM-SETUP.md).
