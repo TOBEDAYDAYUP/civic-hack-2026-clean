@@ -11,10 +11,16 @@ A Next.js civic-information prototype for making Toronto municipal information e
 - Manual **Update data** workflow that fetches new/changed records, simplifies them and stores the processed JSON locally
 - Official-source links remain the source of truth
 
+## Team workflow
+
+Use Node 22 (`nvm use`). Read [CONTRIBUTING.md](CONTRIBUTING.md) for module ownership, short task branches and PR checks. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the code map.
+
+The detail pages now explain facts, relevance, missing evidence and next steps. Housing records retain the five-stage verification guide. Open a card or visit `/decisions/3`. These curated pages work without a database or Ollama.
+
 ## Run locally
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -52,3 +58,11 @@ Toronto Public Notices are not automatically equivalent to final Council decisio
 ## CIVIC Hack disclosure
 
 This project uses open municipal data, open-source libraries, and AI-assisted development. AI assistance and model usage should be disclosed in the final Devpost submission.
+
+## Validate before merging
+
+```bash
+npm run check
+```
+
+GitHub Actions runs the same checks on PRs and main. Branch protection must be enabled separately by a repository administrator; see CONTRIBUTING.md.

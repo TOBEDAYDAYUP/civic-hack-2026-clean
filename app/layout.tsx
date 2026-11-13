@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '@/features/decisions/decisions.css';
 
 export const metadata: Metadata = {
   title: 'Your City Council — Toronto Edition',

@@ -1,0 +1,623 @@
+/* Challenge 5: evidence-first housing pipeline detail, without altering site-wide colors. */
+.housing-detail {
+  margin-top: 24px;
+}
+.housing-panel {
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+}
+.housing-record-panel {
+  border-top: 0;
+  padding-top: 0;
+}
+.housing-section-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #185784;
+}
+.modal .housing-panel h3 {
+  font:
+    600 23px/1.3 'Playfair Display',
+    Georgia,
+    serif;
+  margin: 9px 0 9px;
+}
+.housing-subtext {
+  margin-top: 5px;
+}
+.housing-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 18px 0;
+}
+.housing-facts > div {
+  background: #f5f6f7;
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  padding: 12px;
+  min-width: 0;
+}
+.housing-facts strong {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  color: #63717c;
+  margin-bottom: 5px;
+}
+.housing-facts span {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #253c50;
+  overflow-wrap: anywhere;
+}
+.modal .housing-caution {
+  font-size: 12px;
+  color: #725b27;
+  line-height: 1.65;
+  background: #fff8ea;
+  border-left: 3px solid #eca000;
+  padding: 11px 13px;
+  margin: 16px 0;
+}
+.housing-timeline {
+  list-style: none;
+  margin: 22px 0;
+  padding: 0;
+}
+.housing-timeline li {
+  display: flex;
+  gap: 13px;
+  position: relative;
+  padding-bottom: 19px;
+}
+.housing-timeline li:not(:last-child):before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 33px;
+  bottom: 0;
+  border-left: 2px solid #d9e4ee;
+}
+.housing-step-number {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #b8cada;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 800;
+  color: #185784;
+  background: #eaf1f7;
+}
+.housing-step-content {
+  min-width: 0;
+  flex: 1;
+  padding-top: 4px;
+}
+.housing-step-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.housing-step-head strong {
+  font-size: 14px;
+  color: #185784;
+}
+.housing-unverified {
+  font-size: 10px;
+  color: #80601f;
+  background: #fff4d9;
+  padding: 4px 8px;
+  border-radius: 50px;
+  font-weight: 700;
+}
+.modal .housing-step-content p {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 7px 0;
+}
+.housing-step-content small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #63717c;
+}
+.housing-two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin: 16px 0;
+}
+.housing-two-columns > div {
+  background: #f5f6f7;
+  border: 1px solid #d9e4ee;
+  padding: 15px;
+  border-radius: 5px;
+}
+.housing-two-columns strong {
+  font-size: 12px;
+  color: #185784;
+}
+.modal .housing-two-columns p {
+  font-size: 12px;
+  margin-bottom: 0;
+}
+.modal .housing-questions {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+.modal .housing-questions li {
+  font-size: 12px;
+  line-height: 1.8;
+  margin-bottom: 5px;
+}
+.housing-resources {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0;
+}
+.housing-resources a {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  text-decoration: none;
+  background: #eaf1f7;
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  padding: 13px 15px;
+}
+.housing-resources a:hover {
+  background: #dce9f3;
+}
+.housing-resources strong {
+  font-size: 13px;
+}
+.housing-resources span {
+  color: #63717c;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.modal .housing-original {
+  font-size: 12px;
+}
+.modal .housing-disclaimer {
+  font-size: 11px;
+  color: #63717c;
+}
+@media (max-width: 730px) {
+  .housing-facts,
+  .housing-two-columns {
+    grid-template-columns: 1fr;
+  }
+  .housing-panel {
+    padding: 19px 0;
+  }
+  .housing-resources a {
+    padding: 12px;
+  }
+}
+
+/* All topics: evidence, meaning, follow-up and source */
+.record-details {
+  margin-top: 19px;
+}
+.record-section {
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+}
+.record-eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: #185784;
+}
+.modal .record-section h3 {
+  font:
+    600 23px/1.3 'Playfair Display',
+    Georgia,
+    serif;
+  margin: 10px 0;
+}
+.modal .record-section p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.record-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+.record-facts > div {
+  background: #f5f6f7;
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  padding: 12px;
+  min-width: 0;
+}
+.record-facts strong {
+  display: block;
+  font-size: 10px;
+  color: #63717c;
+  margin-bottom: 5px;
+}
+.record-facts span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #253c50;
+  overflow-wrap: anywhere;
+}
+.modal .record-note {
+  padding: 11px 14px;
+  background: #fff8ea;
+  border-left: 3px solid #eca000;
+  color: #80601f;
+  font-size: 12px;
+}
+.modal .record-footnote {
+  font-size: 11px;
+  color: #63717c;
+  line-height: 1.6;
+  margin-top: 12px;
+}
+.record-points {
+  padding-left: 21px;
+  margin: 12px 0;
+}
+.modal .record-points li {
+  font-size: 13px;
+  line-height: 1.75;
+  margin: 7px 0;
+}
+.record-source-link {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  margin: 4px 0 8px;
+}
+.record-source-excerpt {
+  border: 1px solid #d9e4ee;
+  border-radius: 5px;
+  margin-top: 14px;
+  padding: 12px;
+  font-size: 12px;
+  color: #536575;
+}
+.record-source-excerpt summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+@media (max-width: 1100px) {
+  .housing-feature-stages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 730px) {
+  .housing-feature {
+    padding: 20px 18px;
+  }
+  .housing-feature-top {
+    display: block;
+  }
+  .housing-feature-flag {
+    display: inline-block;
+    max-width: none;
+    margin-top: 8px;
+  }
+  .housing-feature h2 {
+    font-size: 25px;
+  }
+  .housing-feature-stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .record-facts {
+    grid-template-columns: 1fr;
+  }
+  .record-section {
+    padding: 17px 0;
+  }
+}
+
+/* Standalone, shareable detail pages for decisions and public notices. */
+.record-page {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+}
+.record-page-navbar {
+  height: 78px;
+  padding: 0 max(5%, calc((100vw - 1320px) / 2));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #eaf1f7;
+  border-bottom: 1px solid var(--line);
+  gap: 20px;
+}
+.record-page-brand {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-decoration: none;
+  color: #185784;
+  font-size: 13px;
+  font-weight: 800;
+}
+.record-page-logo {
+  font-size: 34px;
+  letter-spacing: -3px;
+  font-weight: 800;
+  line-height: 1;
+}
+.record-page-logo span {
+  color: #e1c06b;
+}
+.record-page-navbar nav {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.record-page-navbar nav a {
+  color: #536575;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 12px;
+}
+.record-page-navbar nav a:hover,
+.record-page-breadcrumb a:hover {
+  color: #185784;
+  text-decoration: underline;
+}
+.record-page-main {
+  width: min(1180px, 90%);
+  margin: 0 auto;
+  padding: 37px 0 85px;
+  flex: 1;
+  min-width: 0;
+}
+.record-page-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+  color: #63717c;
+  font-size: 12px;
+  margin-bottom: 30px;
+}
+.record-page-breadcrumb a {
+  text-decoration: none;
+  font-weight: 800;
+  color: #185784;
+}
+.record-page-heading {
+  max-width: 970px;
+  margin-bottom: 40px;
+}
+.record-page-tags {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.record-page-heading h1 {
+  font:
+    500 clamp(39px, 5.1vw, 66px)/1.14 'Playfair Display',
+    Georgia,
+    serif;
+  letter-spacing: -1.7px;
+  color: var(--ink);
+  margin: 20px 0 17px;
+  overflow-wrap: anywhere;
+}
+.record-page-heading p {
+  font-size: 13px;
+  color: #63717c;
+  line-height: 1.6;
+  margin: 0;
+}
+.record-page-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 248px;
+  align-items: start;
+  gap: 24px;
+}
+.record-page-body.modal {
+  position: static;
+  max-height: none;
+  overflow: visible;
+  width: 100%;
+  padding: 38px 44px;
+  background: #fff;
+  border: 1px solid #d9e4ee;
+  border-radius: 9px;
+  box-shadow: none;
+  min-width: 0;
+}
+.record-page-body .record-details {
+  margin: 0;
+}
+.record-page-body .housing-detail {
+  margin: 0;
+}
+.record-page-body .housing-record-panel {
+  padding-top: 0;
+}
+.record-page-body .record-section:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+.record-page-aside {
+  position: sticky;
+  top: 24px;
+}
+.record-page-guide {
+  padding: 25px 24px;
+  background: #eaf1f7;
+  border-radius: 8px;
+  border: 1px solid #d9e4ee;
+}
+.record-page-guide-label {
+  font-size: 10px;
+  color: #39749f;
+  letter-spacing: 0.14em;
+  font-weight: 800;
+}
+.record-page-guide h2 {
+  font:
+    600 26px/1.2 'Playfair Display',
+    Georgia,
+    serif;
+  margin: 15px 0 10px;
+}
+.record-page-guide p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #536575;
+  margin: 0 0 15px;
+}
+.record-page-guide-divider {
+  height: 1px;
+  background: #d9e4ee;
+  margin: 17px 0;
+}
+.record-page-back {
+  display: block;
+  margin-top: 21px;
+  font-size: 12px;
+  text-decoration: none;
+  font-weight: 800;
+  color: #185784;
+}
+.record-page-footer {
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 23px 5%;
+  color: #63717c;
+  font-size: 11px;
+}
+/* Links now open detail routes, not modal windows. */
+.story h3 a {
+  border: 0;
+  text-align: left;
+  background: none;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  text-decoration: none;
+}
+.story h3 a:hover {
+  color: #185784;
+}
+.story-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 11px;
+  flex-wrap: wrap;
+}
+.story-actions .save {
+  margin-top: 0;
+}
+.story-open-link {
+  font-size: 12px;
+  font-weight: 800;
+  color: #185784;
+  text-decoration: none;
+}
+.story-open-link:hover {
+  text-decoration: underline;
+}
+.live-card h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+.live-card h3 a:hover {
+  color: #185784;
+}
+.live-open-link {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  color: #185784;
+  text-decoration: none;
+  margin-top: 13px;
+}
+.live-open-link:hover {
+  text-decoration: underline;
+}
+a.map-record {
+  color: inherit;
+  text-decoration: none;
+}
+a.map-record:focus-visible,
+.story h3 a:focus-visible,
+.live-card h3 a:focus-visible {
+  outline: 2px solid #eca000;
+  outline-offset: 3px;
+}
+@media (max-width: 960px) {
+  .record-page-columns {
+    grid-template-columns: 1fr;
+  }
+  .record-page-aside {
+    position: static;
+  }
+  .record-page-guide {
+    max-width: none;
+  }
+  .record-page-body.modal {
+    padding: 34px;
+  }
+}
+@media (max-width: 730px) {
+  .record-page-navbar {
+    padding: 0 5%;
+    height: 69px;
+  }
+  .record-page-navbar nav {
+    gap: 13px;
+  }
+  .record-page-brand {
+    gap: 9px;
+  }
+  .record-page-brand > span:last-child {
+    font-size: 11px;
+  }
+  .record-page-navbar nav a {
+    font-size: 11px;
+  }
+  .record-page-main {
+    width: 92%;
+    padding: 25px 0 45px;
+  }
+  .record-page-heading {
+    margin-bottom: 24px;
+  }
+  .record-page-heading h1 {
+    font-size: 39px;
+    letter-spacing: -1px;
+  }
+  .record-page-body.modal {
+    padding: 24px 20px;
+    border-radius: 7px;
+  }
+  .record-page-guide {
+    padding: 21px;
+  }
+  .record-page-footer {
+    padding: 22px 5%;
+  }
+}
