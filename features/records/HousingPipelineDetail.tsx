@@ -139,13 +139,6 @@ export default function HousingPipelineDetail({
             </div>
           )}
         </div>
-        <p className="housing-caution">
-          <strong>Important:</strong>{' '}
-          {isLive
-            ? 'This is a public notice, not a verified development-to-construction history.'
-            : 'This is a Council policy/decision summary, not a verified record of an individual housing project.'}{' '}
-          A notice date or Council decision date is not automatically a planning approval date.
-        </p>
       </section>
 
       {interpretation && (
@@ -156,34 +149,22 @@ export default function HousingPipelineDetail({
         </section>
       )}
 
-      <section className="housing-panel" aria-labelledby="housing-stages-heading">
+      <section className="housing-panel" aria-label="Development stages">
         <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
-        <h3 id="housing-stages-heading">Project progress</h3>
-        <p className="housing-subtext">
-          This record does not include verified project milestone dates. The steps below explain
-          what evidence to look for; they are not a progress report for this address.
-        </p>
-        <details className="milestone-guide">
-          <summary>How to check the five development stages</summary>
-          <ol className="housing-timeline">
-            {stages.map((stage, index) => (
-              <li key={stage.name}>
-                <div className="housing-step-number">{index + 1}</div>
-                <div className="housing-step-content">
-                  <div className="housing-step-head">
-                    <strong>{stage.name}</strong>
-                  </div>
-                  <p>{stage.meaning}</p>
-                  <small>Evidence needed: {stage.check}</small>
+        <ol className="housing-timeline">
+          {stages.map((stage, index) => (
+            <li key={stage.name}>
+              <div className="housing-step-number">{index + 1}</div>
+              <div className="housing-step-content">
+                <div className="housing-step-head">
+                  <strong>{stage.name}</strong>
                 </div>
-              </li>
-            ))}
-          </ol>
-        </details>
-        <p className="housing-caution">
-          <strong>No delay calculation:</strong> Without two documented dates for the same
-          project/phase, we cannot calculate time between stages or say the project has stalled.
-        </p>
+                <p>{stage.meaning}</p>
+                <small>Evidence needed: {stage.check}</small>
+              </div>
+            </li>
+          ))}
+        </ol>
       </section>
 
       <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
