@@ -85,7 +85,6 @@ export default function HousingPipelineDetail({
   sourceUrl,
   interpretation,
   interpretationSource,
-  followUpQuestions = [],
   references = [],
   addresses = [],
 }: HousingDetailProps) {
@@ -192,45 +191,8 @@ export default function HousingPipelineDetail({
         </p>
       </section>
 
-      <section className="housing-panel" aria-labelledby="housing-gap-heading">
-        <div className="housing-section-label">03 / EVIDENCE VS. INFERENCE</div>
-        <h3 id="housing-gap-heading">What is missing, and why?</h3>
-        <div className="housing-two-columns">
-          <div>
-            <strong>Supported by this record</strong>
-            <p>
-              The summary, date and references shown above are attributable to the current record.
-              Use the official source to confirm the details.
-            </p>
-          </div>
-          <div>
-            <strong>Not established by this record</strong>
-            <p>
-              A matched project/phase ID, verified permit milestones, construction start, completion
-              date, and cause of any gap.
-            </p>
-          </div>
-        </div>
-        <p>
-          Financing, pre-sales, servicing capacity, labour and construction costs can influence a
-          project, but a missing permit or a long interval does <strong>not</strong> prove any of
-          these caused a delay.
-        </p>
-        <ul className="housing-questions">
-          {followUpQuestions.map((question, i) => (
-            <li key={i}>{question}</li>
-          ))}
-          <li>
-            Do multiple addresses or permit revisions belong to the same project or different
-            phases?
-          </li>
-          <li>Are proposed units counted once, rather than added across overlapping permits?</li>
-          <li>Which missing date or identifier should municipal staff follow up on?</li>
-        </ul>
-      </section>
-
       <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
-        <div className="housing-section-label">04 / VERIFY THE NEXT STEP</div>
+        <div className="housing-section-label">03 / VERIFY THE NEXT STEP</div>
         <h3 id="housing-next-heading">Where can I check the status?</h3>
         <p>
           Search the official project and permit systems, then match records using the address,

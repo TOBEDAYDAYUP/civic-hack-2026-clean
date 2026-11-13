@@ -40,12 +40,13 @@ try {
     'What do we actually know?',
     'Why could this matter to residents?',
     'Which project milestones does this notice establish?',
-    'What is missing, and why?',
+    'Brief introduction',
     'Where can I check the status?',
     'How to check the five development stages',
     '/?view=Decisions',
   ])
     assert.ok(housing.includes(text), `Missing housing content: ${text}`);
+  assert.ok(!housing.includes('What is missing, and why?'));
   const transport = await page('/decisions/0');
   for (const text of [
     'What did Council decide?',

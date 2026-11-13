@@ -1,3 +1,4 @@
+import { introduction } from '@/features/records/introduction.mjs';
 import NoticeRefresh from '@/features/notices/NoticeRefresh';
 import { notFound } from 'next/navigation';
 import { getPublicNoticeById } from '@/lib/public-notices';
@@ -18,6 +19,14 @@ export default async function NoticePage({ params }: PageProps) {
   const summary = notice.simple;
   return (
     <RecordPageFrame
+      introduction={introduction({
+        title: notice.title,
+        summary: aiReady
+          ? [summary?.whatIsHappening, summary?.whyItMatters].filter(Boolean).join(' ')
+          : notice.description,
+        location: aiReady ? summary?.where : notice.addresses?.map((a) => a.label).join('; '),
+        status: aiReady ? summary?.decisionStage : undefined,
+      })}
       category={notice.topics?.[0] || 'Public notice'}
       title={aiReady ? summary?.plainTitle || notice.title : notice.title}
       status={
