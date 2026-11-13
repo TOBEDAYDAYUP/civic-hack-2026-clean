@@ -67,6 +67,8 @@ try {
   await page('/api/notices?page=0', 400);
   await page('/api/notices?limit=49', 400);
   await page('/api/notices?q=construction');
+  await page('/api/map/notices');
+  await page('/api/map/geocode');
   for (const endpoint of ['/api/sync', '/api/ai/simplify']) {
     const denied = await fetch(base + endpoint, { method: 'POST' });
     assert.equal(denied.status, 401);

@@ -4,6 +4,7 @@ import {addressLabel} from './address-label.mjs';
 export type PublicNotice = {
   id: string;
   title: string;
+  displayTitle?: string;
   description?: string;
   noticeDate?: string | null;
   topics?: string[];
@@ -89,4 +90,16 @@ export async function getSyncStatus(){
  const res=await fetch(`${projectUrl}/rest/v1/civic_sync_state?select=last_started_at,last_success_at,last_error,fetched,changed&id=eq.toronto-notices`,{headers:{apikey:apiKey},cache:'no-store',signal:AbortSignal.timeout(12000)});
  if(!res.ok)throw new Error('Sync status unavailable');
  const rows=await res.json();return {mode:'shared',...(rows[0]||{}),automaticSourceSync:false};
+}
+
+
+export async function getMapNotices(){
+ if(localMode())return await localNotices();
+ const items:PublicNotice[]=[];
+ for(let offset=0;offset<20000;offset+=1000){
+  const {records}=await queryView(new URLSearchParams({select:'id,payload,ai_ready',order:'notice_date.desc.nullslast,id.asc',limit:'1000',offset:String(offset)}));
+  items.push(...records.map(r=>({id:r.id,title:r.payload.title,description:r.payload.description?.slice(0,600),noticeDate:r.payload.noticeDate,topics:r.payload.topics,addresses:r.payload.addresses,sourceUrl:r.payload.sourceUrl,...(r.ai_ready&&r.payload.simple?{simple:r.payload.simple}:{})})));
+  if(records.length<1000)return items;
+ }
+ throw new Error('Map record limit exceeded');
 }
