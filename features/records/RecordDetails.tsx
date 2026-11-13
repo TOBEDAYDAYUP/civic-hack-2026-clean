@@ -143,7 +143,7 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
         <HousingPipelineDetail
           sourceType="public notice"
           summary={s.whatIsHappening}
-          interpretation={s.whyItMatters}
+          interpretation={s.whyItMatters || undefined}
 
           recordDate={notice.noticeDate}
           area={s.where}

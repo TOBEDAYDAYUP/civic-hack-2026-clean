@@ -683,3 +683,16 @@ a.map-record:focus-visible,
     font-size: 28px;
   }
 }
+
+.record-source-excerpt > p {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+  max-width: 80ch;
+}
+/* Long official titles must remain readable rather than being clipped. */
+.record-page-heading h1 {
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
