@@ -37,16 +37,23 @@ try {
   assert.ok(home.includes('/decisions/3'), 'Home must link to the housing detail route');
   const housing = await page('/decisions/3');
   for (const text of [
-    'What do we actually know?',
-    'Why could this matter to residents?',
-    'Which project milestones does this notice establish?',
-    'Brief introduction',
-    'Where can I check the status?',
+    'What’s happening?',
+    'What this means for you',
+    'Project progress',
+    'record-introduction',
+    'Check the project status',
     'How to check the five development stages',
     '/?view=Decisions',
   ])
     assert.ok(housing.includes(text), `Missing housing content: ${text}`);
-  assert.ok(!housing.includes('What is missing, and why?'));
+  for (const label of [
+    'What is missing, and why?',
+    'IN PLAIN ENGLISH',
+    'Brief introduction',
+    'Evidence first.',
+    'AI-generated interpretation',
+  ])
+    assert.ok(!housing.includes(label), label);
   const transport = await page('/decisions/0');
   for (const text of [
     'What did Council decide?',

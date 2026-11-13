@@ -29,11 +29,7 @@ export default async function NoticePage({ params }: PageProps) {
       })}
       category={notice.topics?.[0] || 'Public notice'}
       title={aiReady ? summary?.plainTitle || notice.title : notice.title}
-      status={
-        aiReady
-          ? summary?.decisionStage || 'Stage not specified'
-          : 'Original public notice · AI explanation pending'
-      }
+      status={aiReady ? summary?.decisionStage || 'Stage not specified' : 'Public notice'}
       date={notice.noticeDate?.slice(0, 10) || 'Date not specified'}
       area={aiReady ? summary?.where : notice.addresses?.[0]?.label || ''}
       backHref="/?view=Decisions"
@@ -57,11 +53,6 @@ export default async function NoticePage({ params }: PageProps) {
                   .join(' · ')}
               </p>
             ) : null}
-            <p className="record-footnote">
-              This record is displayed from the City's public data. An AI explanation has not yet
-              been generated or is awaiting an update. This is not evidence of an adopted Council
-              decision.
-            </p>
           </section>
           <section className="record-section">
             <div className="record-eyebrow">SOURCE & PARTICIPATION</div>

@@ -55,38 +55,29 @@ export default function RecordPageFrame({
         </div>
 
         {introduction && (
-          <section className="record-introduction" aria-labelledby="brief-introduction">
-            <div className="record-eyebrow">IN PLAIN ENGLISH</div>
-            <h2 id="brief-introduction">Brief introduction</h2>
+          <div className="record-introduction">
             <p>{introduction}</p>
-          </section>
+          </div>
         )}
 
         <div className="record-page-columns">
           <article className="record-page-body modal">{children}</article>
-          <aside className="record-page-aside" aria-label="Reading guide">
-            <div className="record-page-guide">
-              <div className="record-page-guide-label">READING THIS RECORD</div>
-              <h2>Evidence first.</h2>
-              <p>
-                Look for what the source actually confirms, what it might mean, and what still needs
-                to be checked.
-              </p>
-              <div className="record-page-guide-divider" />
-              <p>
-                A Council decision, building permit and construction start are different events. A
-                missing record is not proof of a delay.
-              </p>
+          <aside className="record-page-aside" aria-label="Explore more">
+            <nav className="record-page-guide" aria-label="Related pages">
+              <h2>Explore Toronto</h2>
               <Link href={backHref} className="record-page-back">
                 ← {backLabel}
               </Link>
-            </div>
+              <Link href="/?view=Participate" className="record-page-back">
+                Have your say →
+              </Link>
+            </nav>
           </aside>
         </div>
       </main>
 
       <footer className="record-page-footer">
-        <span>Your City Council · Independent civic prototype</span>
+        <span>Your City Council · Toronto</span>
         <span>Not affiliated with the City of Toronto.</span>
       </footer>
     </div>
