@@ -1,0 +1,11 @@
+import type { Metadata } from 'next';
+import './globals.css';
+
+export const metadata: Metadata = {
+  title: 'Your City Council — Toronto Edition',
+  description: 'Independent civic information prototype for Toronto municipal decisions.'
+};
+
+export default function RootLayout({children}:{children:React.ReactNode}) {
+  return <html lang="en"><body>{children}</body></html>;
+}
