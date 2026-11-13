@@ -62,6 +62,7 @@ export function stripHtml(input: unknown): string {
 
 function firstNumber(obj: Record<string, unknown>, keys: string[]): number | null {
   for (const key of keys) {
+    if(obj[key]===null||obj[key]===undefined||obj[key]==='')continue;
     const n = Number(obj[key]);
     if (Number.isFinite(n)) return n;
   }
@@ -132,20 +133,26 @@ export function normalizeTorontoNotice(rawInput: unknown): TorontoNotice {
   };
 }
 
-function extractNoticeArray(payload: unknown): unknown[] {
-  if (Array.isArray(payload)) return payload;
-  if (!payload || typeof payload !== 'object') return [];
-  const obj = payload as Record<string, unknown>;
-  for (const key of ['notices', 'noticeList', 'results', 'records', 'data']) {
-    if (Array.isArray(obj[key])) return obj[key] as unknown[];
-  }
-  return [];
+function extractNoticeArray(payload:unknown):unknown[]{
+ const stack=[{value:payload,depth:0}],seen=new WeakSet<object>(),result:unknown[]=[];
+ let count=0;
+ while(stack.length&&count++<250000){
+  const {value,depth}=stack.pop()!;
+  if(!value||typeof value!=='object'||seen.has(value)||depth>8)continue;
+  seen.add(value);
+  const record=value as Record<string,unknown>;
+  if(!Array.isArray(value)&&(record.noticeId!=null||record.id!=null)&&(record.title!=null||record.noticeDescription!=null)){result.push(value);continue;}
+  for(const child of Object.values(value))stack.push({value:child,depth:depth+1});
+ }
+ if(!result.length)throw new Error('Toronto source returned no recognizable notices');
+ return result;
 }
 
 export async function fetchTorontoNotices(): Promise<TorontoNotice[]> {
   const response = await fetch(TORONTO_NOTICES_URL, {
     headers: { 'Accept': 'application/json', 'User-Agent': 'CIVIC-Hack-2026-prototype/1.0' },
     cache: 'no-store',
+    signal:AbortSignal.timeout(45000),
   });
   if (!response.ok) throw new Error(`Toronto Public Notices API returned HTTP ${response.status}`);
   const payload: unknown = await response.json();

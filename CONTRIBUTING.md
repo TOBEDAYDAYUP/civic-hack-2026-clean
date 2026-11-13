@@ -11,7 +11,7 @@ npm ci
 npm run dev
 ```
 
-普通页面和示例详情不需要数据库、密钥或 Ollama。`Update data` 才需要本地 Ollama 和 Toronto API；数据库集成不在这一版的范围内。
+普通队友无需配置密钥或 Ollama；公告从共享数据库只读获取。只有管理员运行手动源同步，详见 docs/DATA-API.md。不要让每个队友各自抓取和改数据库。
 
 ## 每个任务
 

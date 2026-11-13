@@ -10,11 +10,14 @@
     "data:update": "node scripts/update-notices.mjs --limit=3",
     "typecheck": "tsc --noEmit",
     "test:smoke": "node scripts/smoke-test.mjs",
-    "check": "npm run format:check && npm run typecheck && npm run build && npm run test:smoke",
+    "check": "npm run format:check && npm run test:sync && npm run typecheck && npm run build && npm run test:smoke",
     "format": "prettier --write components features app/decisions app/notices scripts/smoke-test.mjs",
-    "format:check": "prettier --check components features app/decisions app/notices scripts/smoke-test.mjs"
+    "format:check": "prettier --check components features app/decisions app/notices scripts/smoke-test.mjs",
+    "data:sync": "node --env-file=.env.local scripts/sync-notices.mjs",
+    "test:sync": "node --test tests/sync.test.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.119.0",
     "next": "15.5.6",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -24,6 +27,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "prettier": "3.10.1",
+    "supabase": "2.122.1",
     "typescript": "^5.7.0"
   },
   "engines": {

@@ -26,30 +26,13 @@ npm run dev
 
 Open http://localhost:3000.
 
-For AI-powered updates, have Ollama running and install the model:
+## Shared data and updates
 
-```bash
-ollama pull qwen3.5:4b
-```
+The notice feed reads the shared Supabase database. Everyone sees the same stored notices; database changes trigger realtime refresh, with a 30-second fallback. No secret key or Ollama is required to browse.
 
-Then click **Update data** on the homepage, or run:
+Source ingestion is **administrator-triggered**, as requested. Run `npm run data:sync` with private local administrator settings. No unattended schedule is enabled. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
 
-```bash
-npm run data:update
-```
-
-## API routes
-
-- `GET /api/toronto/notices?limit=5`
-- `GET /api/processed-notices`
-- `POST /api/ai/simplify`
-- `POST /api/sync`
-
-## Prototype architecture
-
-Toronto public data → normalization → local Qwen/Ollama simplification → structured JSON → Next.js UI.
-
-The AI layer is intentionally decoupled from normal website viewing: processed content can be displayed without requiring visitors or judges to install Ollama.
+AI explanations remain optional and are displayed only when their source hash is current. Raw official notices remain readable without them.
 
 ## Important data note
 

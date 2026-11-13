@@ -7,3 +7,6 @@ npm-debug.log*
 
 !.env.local.example
 *.tsbuildinfo
+
+supabase/.temp/
+supabase/.branches/

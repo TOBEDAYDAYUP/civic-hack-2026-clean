@@ -10,7 +10,7 @@ await new Promise((resolve) => probe.close(resolve));
 const server = spawn(
   process.execPath,
   ['node_modules/next/dist/bin/next', 'start', '--hostname', '127.0.0.1', '--port', String(port)],
-  { stdio: ['ignore', 'pipe', 'pipe'] },
+  { stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, NOTICE_DATA_MODE: 'local' } },
 );
 let logs = '';
 server.stdout.on('data', (data) => (logs += data));
@@ -63,6 +63,13 @@ try {
   assert.equal(response.status, 200);
   const result = await response.json();
   assert.ok(result.ok && Array.isArray(result.notices));
+  await page('/api/notices?page=0', 400);
+  await page('/api/notices?limit=49', 400);
+  await page('/api/notices?q=construction');
+  for (const endpoint of ['/api/sync', '/api/ai/simplify']) {
+    const denied = await fetch(base + endpoint, { method: 'POST' });
+    assert.equal(denied.status, 401);
+  }
   console.log(
     'Smoke checks passed: home links, 14 detail pages, explanation sections, missing records, local notices API.',
   );

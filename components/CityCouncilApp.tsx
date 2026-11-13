@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { decisions } from '@/data/decisions';
 
-import type { DetailedNotice as LiveNotice } from '@/features/records/RecordDetails';
+import type { PublicNotice as LiveNotice } from '@/lib/public-notices';
+import { useNoticeUpdates } from '@/features/notices/useNoticeUpdates';
 import type { View } from '@/components/navigation/types';
 import Shell from '@/components/navigation/Shell';
 import SecondaryTopics from '@/features/decisions/TopicFilters';
@@ -20,8 +21,6 @@ export default function CityCouncilApp() {
   const [saved, setSaved] = useState<number[]>([]);
   const [savedLoaded, setSavedLoaded] = useState(false);
   const [live, setLive] = useState<LiveNotice[]>([]);
-  const [syncing, setSyncing] = useState(false);
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     try {
@@ -50,31 +49,13 @@ export default function CityCouncilApp() {
 
   async function loadLive() {
     try {
-      const r = await fetch('/api/processed-notices', { cache: 'no-store' });
+      const r = await fetch('/api/notices?limit=48', { cache: 'no-store' });
       const j = await r.json();
-      if (j.ok && Array.isArray(j.notices)) setLive(j.notices);
+      if (j.ok && Array.isArray(j.items)) setLive(j.items);
     } catch {}
   }
 
-  async function sync() {
-    setSyncing(true);
-    setMessage('Fetching Toronto data and simplifying new records…');
-    try {
-      const r = await fetch('/api/sync', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ limit: 5 }),
-      });
-      const j = await r.json();
-      if (!r.ok || !j.ok) throw new Error(j.error || 'Update failed');
-      await loadLive();
-      setMessage(`Updated: ${j.generated} new/changed; ${j.reused} already current.`);
-    } catch (e) {
-      setMessage(e instanceof Error ? e.message : 'Update failed');
-    } finally {
-      setSyncing(false);
-    }
-  }
+  useNoticeUpdates(() => void loadLive());
 
   function go(v: View) {
     setView(v);
@@ -105,9 +86,9 @@ export default function CityCouncilApp() {
     () =>
       live.filter(
         (n) =>
-          n.addresses.some((a) => a.latitude !== null && a.longitude !== null) &&
+          (n.addresses || []).some((a) => a.latitude !== null && a.longitude !== null) &&
           (topic === 'All topics' ||
-            n.topics.some((t) => t.toLowerCase().includes(topic.toLowerCase()))),
+            (n.topics || []).some((t) => t.toLowerCase().includes(topic.toLowerCase()))),
       ),
     [live, topic],
   );
@@ -165,9 +146,7 @@ export default function CityCouncilApp() {
         )}
       </section>
 
-      {view === 'Home' && (
-        <NoticeFeed live={live} sync={sync} syncing={syncing} message={message} />
-      )}
+      {view === 'Home' && <NoticeFeed />}
 
       {showDecisionTools && (
         <>

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { DetailedNotice } from '@/features/records/RecordDetails';
+import type { PublicNotice as DetailedNotice } from '@/lib/public-notices';
 export default function MapView({
   live,
   mapReadyLive,
@@ -31,11 +31,11 @@ export default function MapView({
           {mapReadyLive.length ? (
             mapReadyLive.slice(0, 8).map((n) => (
               <Link key={n.id} className="map-record" href={`/notices/${encodeURIComponent(n.id)}`}>
-                <span className="topic">{n.topics[0] || 'Public notice'}</span>
-                <b>{n.simple.plainTitle || n.title}</b>
+                <span className="topic">{n.topics?.[0] || 'Public notice'}</span>
+                <b>{n.simple?.plainTitle || n.title}</b>
                 <small>
-                  {n.addresses.find((a) => a.latitude !== null && a.longitude !== null)?.label ||
-                    n.simple.where}
+                  {n.addresses?.find((a) => a.latitude !== null && a.longitude !== null)?.label ||
+                    n.simple?.where}
                 </small>
               </Link>
             ))
