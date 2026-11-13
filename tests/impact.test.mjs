@@ -412,3 +412,29 @@ test('mixed-use heights are not automatically assigned to a residential building
   });
   assert.doesNotMatch(impacts[0].explanation, /55|40/);
 });
+
+test('adopted zoning fallback preserves adoption without claiming construction', () => {
+  const impacts = sourceGroundedFallbackImpacts({
+    title: 'Notice of Passing of Zoning By-law',
+    description: 'City Council passed a zoning by-law to permit 155 residential units.',
+  });
+  assert.deepEqual(
+    impacts.map((item) => item.category),
+    ['Housing & Affordability', 'Other Impacts'],
+  );
+  for (const item of impacts) {
+    assert.match(item.explanation, /adopted/);
+    assert.doesNotMatch(item.explanation, /if approved|this is a proposal/i);
+    assert.equal(item.certainty, 'potential');
+  }
+});
+
+test('a merely proposed approval is not treated as an adoption', () => {
+  const impacts = sourceGroundedFallbackImpacts({
+    title: 'Notice of Application for Zoning By-law Amendment',
+    description:
+      'If City Council approved the zoning by-law, the applicant could build 155 residential units.',
+  });
+  assert.match(impacts[0].explanation, /if approved and built/i);
+  assert.doesNotMatch(impacts[0].explanation, /adopted/i);
+});

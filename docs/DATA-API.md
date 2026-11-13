@@ -6,7 +6,7 @@
 
 数据库的公告或 AI 摘要发生变化时，页面通过 Supabase Realtime 收到通知并重新查询 API；断线或页面重新可见时，30 秒轮询作为补充。不要把“数据库变化实时显示”理解成“官方源一直在自动抓取”。
 
-用户选择只保留管理员手动同步。没有启用云端定时抓取，也没有将管理员密钥保存到 Vault。手动同步成功后，队友页面会自动看到变化。
+默认由管理员手动同步。没有启用云端定时抓取，也没有将管理员密钥保存到 Vault。需要短时间自动同步或分析时，可在管理员电脑上显式启动下方进程。数据库写入成功后，队友页面会自动看到变化。
 
 ## 管理员手动同步
 
@@ -56,7 +56,7 @@ node --env-file=../.env.local scripts/sync-notices.mjs
 - `supabase/schema.sql`：原有两张公告表与只读视图的基础结构。
 - `supabase/migrations/`：本次已应用到现有项目的增量迁移；不要由每个队友重复应用。
 
-AI 数据仅在哈希与原始公告相同时合入 `civic_notice_feed`，避免把旧摘要展示成新事实。没有启动后台 AI 生成任务。
+AI 数据仅在哈希与原始公告相同时合入 `civic_notice_feed`，避免把旧摘要展示成新事实。后台 AI 进程默认不启动。
 
 ### 居民影响分析
 
@@ -69,6 +69,19 @@ npm run data:analyze -- --id=8006 --dry-run
 ```
 
 预览不写数据库，可使用团队公开配置。管理员确认结果后，移除 `--dry-run` 发布到现有 `civic_notices` 表。默认分析最近三条；可用 `--all --max=10` 分批处理，并跳过同一原文版本下已经分析的公告。用 `--force` 可重新分析指定公告。不会改写官方原文，也不需要迁移。
+
+### 评审期间在 Mac 上自动分析
+
+管理员在已经配置 `SUPABASE_SECRET_KEY` 的电脑上启动 Ollama。默认使用本机的 `qwen3.5:4b`，没有安装时先运行 `ollama pull qwen3.5:4b`。
+
+```sh
+caffeinate -i npm run data:watch -- --sync-source --since-minutes=120
+```
+
+- 每约 30 秒查询一次写入 Supabase 的原文版本，串行生成并发布未处理的新版影响分析。这里回看过去 120 分钟内同步过的记录，不跑整个历史库。相同原文和分析版本不会重复调用模型。失败会重试；重启后可用 `--since-minutes` 补上停机窗口。
+- `--sync-source` 让同一个进程启动时和随后每约 15 分钟尝试同步 Toronto API。不加该选项只处理已经入库的原文，不抓取 Toronto。Toronto API 超时不会阻止处理已入库公告。
+- `--once --dry-run` 可只预览一轮，不写数据库。不能和 `--sync-source` 一起用。程序不需要启动 Next.js，也不会开放 Ollama 到公网。
+- Mac 接电、保持开盖，Ollama 和该终端保持运行。评审结束后在这个终端按 Ctrl+C 即可停止。已经发布的分析仍可从共享数据库读取。
 
 Edge Function `civic-sync` 已部署，使用 `apikey` 中的管理员 secret key 显式鉴权，拒绝公开请求；它当前不被定时任务调用。由于 Toronto 云端访问超时，日常使用本地管理员脚本。
 
