@@ -1,0 +1,52 @@
+/* Floating navigation and a quiet blue rule above the content. */
+.app-shell .topbar {
+  background: #fff;
+  color: #185784;
+  border-bottom: 2px solid #185784;
+}
+.app-shell .topbar .top-right,
+.app-shell .topbar i {
+  color: #185784;
+}
+@media (min-width: 731px) {
+  .app-shell {
+    gap: 18px;
+    padding: 18px;
+  }
+  .app-shell .sidebar {
+    top: 18px;
+    height: calc(100vh - 36px);
+    border-radius: 22px;
+    background: #185784;
+    box-shadow: 0 12px 30px #123c6024;
+    border: 0;
+    overflow-y: auto;
+  }
+  .app-shell .main-wrap {
+    min-width: 0;
+  }
+}
+.notice-feed .notice-feed-card h3 {
+  font-size: 20px;
+  line-height: 1.35;
+  color: #202020;
+}
+.notice-feed .notice-feed-card h3 a:link,
+.notice-feed .notice-feed-card h3 a:visited,
+.notice-feed .notice-feed-card h3 a:hover {
+  color: #202020;
+}
+.story h3,
+.story h3 a:link,
+.story h3 a:visited {
+  font-size: 21px;
+  color: #202020;
+}
+@media (max-width: 730px) {
+  .app-shell .sidebar {
+    border-radius: 0 20px 20px 0;
+  }
+  .notice-feed .notice-feed-card h3 {
+    font-size: 20px;
+  }
+}

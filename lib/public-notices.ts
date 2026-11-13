@@ -4,6 +4,7 @@ import {addressLabel} from './address-label.mjs';
 export type PublicNotice = {
   id: string;
   title: string;
+  displayTitle?: string;
   description?: string;
   noticeDate?: string | null;
   topics?: string[];
@@ -48,6 +49,17 @@ async function queryView(params:URLSearchParams, count=false) {
   if (!response.ok) throw new Error(`Public notices unavailable: HTTP ${response.status}`);
   const records = await response.json() as Row[];
   for(const row of records){row.payload={...row.payload,addresses:row.payload.addresses?.map(a=>({...a,label:addressLabel(a.label)}))};}
+  // Derived titles never overwrite the official source title.
+  if(records.length){
+    const ids=records.map(r=>r.id).filter(id=>/^[\w-]{1,128}$/.test(id));
+    if(ids.length)try{
+      const params=new URLSearchParams({select:'notice_id,original_title,short_title',notice_id:`in.(${ids.join(',')})`});
+      const titles=await fetch(`${projectUrl}/rest/v1/civic_notice_titles?${params}`,{headers:{apikey:apiKey},cache:'no-store',signal:AbortSignal.timeout(4000)});
+      if(titles.ok){const rows=await titles.json() as {notice_id:string;original_title:string;short_title:string}[];
+        for(const row of records){const match=rows.find(t=>t.notice_id===row.id&&t.original_title===row.payload.title);if(match)row.payload={...row.payload,displayTitle:match.short_title};}
+      }
+    }catch{/* Keep the original title when the optional title store is unavailable. */}
+  }
   const range = response.headers.get('content-range') || '';
   const countText = range.split('/')[1];
   const total = countText && /^\d+$/.test(countText) ? Number(countText) : records.length;

@@ -89,7 +89,7 @@ export default function NoticeFeed() {
             <span className="notice-category">{n.topics?.[0] || 'Public notice'}</span>
             <h3>
               <Link href={`/notices/${encodeURIComponent(n.id)}`}>
-                {n.aiReady ? n.simple?.plainTitle || n.title : n.title}
+                {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
               </Link>
             </h3>
             <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>

@@ -14,7 +14,8 @@
     "format": "prettier --write components features app/decisions app/notices scripts/smoke-test.mjs",
     "format:check": "prettier --check components features app/decisions app/notices scripts/smoke-test.mjs",
     "data:sync": "node --env-file=.env.local scripts/sync-notices.mjs",
-    "test:sync": "node --test tests/sync.test.mjs"
+    "test:sync": "node --test tests/sync.test.mjs",
+    "titles:shorten": "node --env-file=.env.local scripts/shorten-titles.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.119.0",
