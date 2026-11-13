@@ -1,4 +1,5 @@
 import React from 'react';
+import { stageEvidence } from './stage-evidence.mjs';
 import { addressLabel } from '@/lib/address-label.mjs';
 
 type HousingDetailProps = {
@@ -8,6 +9,8 @@ type HousingDetailProps = {
   area?: string | null;
   noticeStage?: string | null;
   sourceUrl?: string;
+  sourceText?: string;
+  sourceTitle?: string;
   interpretation?: string;
   interpretationSource?: string;
   followUpQuestions?: readonly string[];
@@ -83,10 +86,13 @@ export default function HousingPipelineDetail({
   area,
   noticeStage,
   sourceUrl,
+  sourceText = '',
+  sourceTitle = '',
   interpretation,
   references = [],
   addresses = [],
 }: HousingDetailProps) {
+  const progress = stageEvidence({ text: sourceText, title: sourceTitle, sourceUrl });
   const isLive = sourceType === 'public notice';
   const listedReferences = references.filter(Boolean);
   const listedAddresses = addresses.map(addressLabel).filter(Boolean);
@@ -151,19 +157,64 @@ export default function HousingPipelineDetail({
 
       <section className="housing-panel" aria-label="Development stages">
         <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
+        <p className="housing-current-stage">
+          <strong>
+            {progress.latest >= 0
+              ? `Latest recorded stage: ${stages[progress.latest].name}`
+              : progress.review
+                ? 'Planning application received · approval not recorded'
+                : 'Project stage not recorded'}
+          </strong>
+        </p>
+        <div className="housing-stage-legend">
+          <span>✓ Recorded</span>
+          <span>● Latest recorded stage</span>
+          <span>○ No record</span>
+        </div>
         <ol className="housing-timeline">
-          {stages.map((stage, index) => (
-            <li key={stage.name}>
-              <div className="housing-step-number">{index + 1}</div>
-              <div className="housing-step-content">
-                <div className="housing-step-head">
-                  <strong>{stage.name}</strong>
+          {stages.map((stage, index) => {
+            const evidence = progress.milestones[index];
+            return (
+              <li
+                key={stage.name}
+                className={`housing-stage-${evidence.status}`}
+                aria-current={evidence.status === 'latest' ? 'step' : undefined}
+              >
+                <div className="housing-step-number">
+                  {evidence.status === 'recorded' ? '✓' : index + 1}
                 </div>
-                <p>{stage.meaning}</p>
-                <small>Evidence needed: {stage.check}</small>
-              </div>
-            </li>
-          ))}
+                <div className="housing-step-content">
+                  <div className="housing-step-head">
+                    <strong>{stage.name}</strong>
+                    <span className="housing-stage-badge">
+                      {evidence.status === 'latest'
+                        ? 'Latest recorded'
+                        : evidence.status === 'recorded'
+                          ? 'Recorded'
+                          : 'No record'}
+                    </span>
+                  </div>
+                  <p>{stage.meaning}</p>
+                  <div className="housing-stage-date">
+                    {evidence.date ? (
+                      <time dateTime={evidence.date}>{readableDate(evidence.date)}</time>
+                    ) : (
+                      'Date not recorded'
+                    )}
+                  </div>
+                  {evidence.quote && (
+                    <details className="housing-stage-source">
+                      <summary>View source</summary>
+                      <blockquote>{evidence.quote}</blockquote>
+                      <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">
+                        Read original notice ↗
+                      </a>
+                    </details>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </section>
 

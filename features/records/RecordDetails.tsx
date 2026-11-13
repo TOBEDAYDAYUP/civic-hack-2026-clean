@@ -142,6 +142,8 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
       <div className="record-details">
         <HousingPipelineDetail
           sourceType="public notice"
+          sourceText={notice.description}
+          sourceTitle={notice.title}
           summary={s.whatIsHappening}
           interpretation={s.whyItMatters || undefined}
 

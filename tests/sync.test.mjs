@@ -68,3 +68,36 @@ test('introduction keeps dotted references intact and removes URL fragments',asy
  const text=introduction({title:'Notice of passing',summary:'The City passed the by-law. Please see item PH31.2 at https://secure.toronto.ca/council/agenda-item.do?item=2026.PH31.2.'});
  assert.ok(!text.includes('https:'));assert.ok(!text.includes('at https://secure.'));assert.ok(!text.includes('PH31. 2'));
 });
+
+// Stage evidence must come from the original record, never publication or AI dates.
+import { stageEvidence } from '../features/records/stage-evidence.mjs';
+const sourceUrl = 'https://secure.toronto.ca/nm/notices/1';
+test('stage dates are taken from explicit source events and preserve gaps', () => {
+ const p = stageEvidence({sourceUrl, title:'15 Poyntz Avenue',text:'The City of Toronto passed Zoning By-law 1260-2026, on July 30, 2026. A building permit was issued on August 12, 2026.'});
+ assert.equal(p.latest,2);
+ assert.equal(p.milestones[0].date,'2026-07-30');
+ assert.equal(p.milestones[1].status,'unknown');
+ assert.equal(p.milestones[2].date,'2026-08-12');
+ assert.equal(p.milestones[2].sourceUrl,sourceUrl);
+ assert.match(p.milestones[0].quote,/July 30/);
+});
+test('planning applications are not building permit applications or approvals', () => {
+ const p=stageEvidence({sourceUrl,title:'Notice of Application',text:'The City received a planning application on November 6, 2026.'});
+ assert.equal(p.review,true);
+ assert.equal(p.latest,-1);
+ assert.ok(p.milestones.every(m=>!m.date&&m.status==='unknown'));
+});
+test('proposed, negated and hypothetical events do not establish milestones', () => {
+ for(const text of ['Construction will commence on August 1, 2026.','Construction has not started.','If a building permit was issued on August 1, 2026, work could begin.','Planning approval was granted on August 1, 2026, but was not final.']) {
+  assert.equal(stageEvidence({sourceUrl,text}).latest,-1);
+ }
+});
+test('citywide bylaw changes do not establish a building approval milestone',()=>{
+ assert.equal(stageEvidence({sourceUrl,title:'City-wide low-carbon technologies',text:'The City of Toronto passed Zoning By-law 1075-2026 on July 30, 2026.'}).latest,-1);
+});
+test('unknown, invalid and ambiguous dates stay unknown; unsafe sources are not evidence',()=>{
+ for(const text of ['Construction has started.','Construction has started on 2026-02-31.','Construction has started between August 1, 2026 and August 5, 2026.']) {
+  assert.equal(stageEvidence({sourceUrl,text}).milestones[3].date,null);
+ }
+ assert.equal(stageEvidence({sourceUrl:'javascript:alert(1)',text:'Construction has started on August 1, 2026.'}).latest,-1);
+});

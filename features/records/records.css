@@ -696,3 +696,71 @@ a.map-record:focus-visible,
   overflow: visible;
   overflow-wrap: anywhere;
 }
+
+.housing-stage-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 11px;
+  color: #63717c;
+  margin: 12px 0;
+}
+.housing-stage-legend span:first-child {
+  color: #18704e;
+}
+.housing-stage-legend span:nth-child(2) {
+  color: #185784;
+}
+.housing-stage-badge {
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 20px;
+  padding: 4px 9px;
+  color: #53616b;
+  background: #edf0f2;
+}
+.housing-stage-unknown .housing-step-number {
+  background: #f4f6f7;
+  color: #6a7780;
+  border-color: #ccd4da;
+}
+.housing-stage-recorded .housing-step-number {
+  background: #18704e;
+  border-color: #18704e;
+  color: white;
+}
+.housing-stage-recorded .housing-stage-badge {
+  background: #e8f5ee;
+  color: #18704e;
+}
+.housing-stage-latest .housing-step-number {
+  background: #185784;
+  color: white;
+  border-color: #185784;
+  box-shadow: 0 0 0 4px #eaf1f7;
+}
+.housing-stage-latest .housing-stage-badge {
+  background: #185784;
+  color: white;
+}
+.housing-stage-date {
+  font-size: 12px;
+  color: #53616b;
+  margin: 8px 0;
+}
+.housing-stage-source {
+  font-size: 12px;
+  margin-top: 10px;
+}
+.housing-stage-source summary {
+  cursor: pointer;
+  color: #185784;
+  font-weight: 700;
+}
+.housing-stage-source blockquote {
+  margin: 12px 0;
+  padding: 10px 14px;
+  border-left: 3px solid #b8cada;
+  color: #53616b;
+  line-height: 1.7;
+}
