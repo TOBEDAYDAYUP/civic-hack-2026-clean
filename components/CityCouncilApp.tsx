@@ -138,12 +138,6 @@ export default function CityCouncilApp() {
               ? 'Keep important local decisions in one place.'
               : 'The decisions shaping your neighbourhood, made easier to understand.'}
         </p>
-        {view === 'Home' && (
-          <p className="disclaimer">
-            Selected Toronto decisions · 2024–2026. Archive summaries are curated; live records are
-            fetched from Toronto Public Notices.
-          </p>
-        )}
       </section>
 
       {(view === 'Home' || view === 'Decisions') && <NoticeFeed />}
