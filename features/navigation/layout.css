@@ -55,3 +55,7 @@
   min-width: 0;
   padding: 38px 0 60px;
 }
+
+.app-shell a.nav {
+  text-decoration: none;
+}
