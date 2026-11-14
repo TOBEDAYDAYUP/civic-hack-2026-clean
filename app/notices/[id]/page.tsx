@@ -30,8 +30,8 @@ export default async function NoticePage({ params }: PageProps) {
       status={summary.decisionStage}
       date={notice.noticeDate?.slice(0, 10) || 'Date not specified'}
       area={summary.where}
-      backHref="/?view=Decisions"
-      backLabel="All records"
+      backHref="/"
+      backLabel="All notices"
     >
       <NoticeRefresh />
       <LiveRecordDetails notice={displayed} />

@@ -1,5 +1,3 @@
-import type { Decision } from '@/data/decisions';
-import { recordContext } from '@/features/records/recordContext';
 import HousingPipelineDetail from './HousingPipelineDetail';
 import ResidentImpactSection from './ResidentImpactSection';
 import type { NoticeImpactPresentation } from '@/lib/impact-analysis.mjs';
@@ -55,85 +53,6 @@ function ShortPoints({ text }: { text: string }) {
         <li key={i}>{point}</li>
       ))}
     </ul>
-  );
-}
-
-function Questions({ items }: { items: readonly string[] }) {
-  return (
-    <ul className="record-points">
-      {items.map((item, i) => (
-        <li key={i}>{item}</li>
-      ))}
-    </ul>
-  );
-}
-
-export function CuratedRecordDetails({ decision }: { decision: Decision }) {
-  const context = recordContext[decision.id];
-  if (decision.topic === 'Housing') {
-    return (
-      <HousingPipelineDetail
-        sourceType="council decision"
-        summary={decision.summary}
-        recordDate={decision.sortDate}
-        area={decision.area}
-        interpretation={context?.significance}
-        followUpQuestions={context?.followUpQuestions}
-        sourceUrl="https://www.toronto.ca/city-government/council/"
-      />
-    );
-  }
-
-  return (
-    <div className="record-details">
-      <section className="record-section">
-        <div className="record-eyebrow">01 / THE RECORD</div>
-        <h3>What did Council decide?</h3>
-        <p>{decision.summary}</p>
-        <div className="record-facts">
-          <Fact label="Record date" value={decision.date} />
-          <Fact label="Area mentioned" value={decision.area} />
-          <Fact label="Decision status" value={decision.status} />
-          <Fact label="Source type" value="Council decision" />
-        </div>
-      </section>
-      <section className="record-section">
-        <div className="record-eyebrow">02 / RELEVANCE</div>
-        <h3>Why might it matter?</h3>
-        <p>
-          {context?.significance ||
-            'The decision may affect public services or planning. Check the Council report before assuming a particular outcome.'}
-        </p>
-      </section>
-      <section className="record-section">
-        <div className="record-eyebrow">03 / WHAT IS NOT YET CLEAR</div>
-        <h3>What should we check next?</h3>
-        <Questions
-          items={
-            context?.followUpQuestions || [
-              'Which follow-up report documents implementation?',
-              'Are any outcomes or deadlines confirmed by an official source?',
-            ]
-          }
-        />
-      </section>
-      <section className="record-section">
-        <div className="record-eyebrow">04 / SOURCE & NEXT STEPS</div>
-        <h3>Where can I verify this?</h3>
-        <p>
-          Locate the original item using the title and date in the City's Council and committee
-          records.
-        </p>
-        <a
-          className="record-source-link"
-          href="https://www.toronto.ca/city-government/council/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Browse City of Toronto Council records ↗
-        </a>
-      </section>
-    </div>
   );
 }
 

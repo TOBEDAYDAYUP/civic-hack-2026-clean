@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import '@/features/map/map.css';
 import '@/features/notices/notices.css';
-import '@/features/decisions/decisions.css';
 import '@/features/navigation/layout.css';
 
 export const metadata: Metadata = {

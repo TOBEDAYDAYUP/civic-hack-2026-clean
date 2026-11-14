@@ -1,4 +1,5 @@
 import {addressLabel} from './address-label.mjs';
+import {filterAndSortNotices} from './notice-browser.mjs';
 import type { ImpactItem } from './impact-analysis.mjs';
 // Public, read-only notice archive. The database view joins raw official data
 // with AI summaries only when their source hashes are still identical.
@@ -6,7 +7,6 @@ export type PublicNotice = {
   id: string;
   title: string;
   displayTitle?: string;
-  streetMatches?: import('./map-geocode.mjs').StreetGeocode[];
   description?: string;
   noticeDate?: string | null;
   topics?: string[];
@@ -40,7 +40,7 @@ async function localNotices():Promise<PublicNotice[]> {
  return Array.isArray(parsed)?parsed:[];
 }
 
-async function queryView(params:URLSearchParams, count=false) {
+async function queryView(params:URLSearchParams, count=false, withTitles=true) {
   if(!projectUrl||!apiKey)throw new Error('Supabase environment configuration is missing');
   const response = await fetch(`${projectUrl}/rest/v1/civic_notice_feed?${params.toString()}`, {
     headers: {
@@ -55,7 +55,7 @@ async function queryView(params:URLSearchParams, count=false) {
   const records = await response.json() as Row[];
   for(const row of records){row.payload={...row.payload,addresses:row.payload.addresses?.map(a=>({...a,label:addressLabel(a.label)}))};}
   // Derived titles never overwrite the official source title.
-  if(records.length){
+  if(records.length&&withTitles){
     const ids=records.map(r=>r.id).filter(id=>/^[\w-]{1,128}$/.test(id));
     if(ids.length)try{
       const params=new URLSearchParams({select:'notice_id,original_title,short_title',notice_id:`in.(${ids.join(',')})`});
@@ -70,22 +70,81 @@ async function queryView(params:URLSearchParams, count=false) {
   const total = countText && /^\d+$/.test(countText) ? Number(countText) : records.length;
   return {records,total};
 }
-export async function getPublicNoticePage(page:number, pageSize:number, query:string) {
-  if(localMode()){const all=(await localNotices()).filter(n=>n.title.toLowerCase().includes(query.toLowerCase()));return {items:all.slice((page-1)*pageSize,page*pageSize).map(n=>({...n,aiReady:!!n.simple})),total:all.length,page,pageSize};}
-  const size = Math.max(1,Math.min(48,Math.trunc(pageSize)||24));
-  const index = Math.max(1,Math.trunc(page)||1);
-  const params = new URLSearchParams({
-    select:'id,notice_date,payload,ai_ready',
-    order:'notice_date.desc.nullslast,id.desc',
-    limit:String(size),
-    offset:String((index-1)*size),
-  });
-  // Search across all records on the server, not only the currently visible page.
-  // Strip PostgREST filter punctuation rather than allowing raw filter expressions.
-  const term = query.trim().slice(0,70).replace(/[^\p{L}\p{N} -]/gu,'').trim();
-  if (term) params.set('payload->>title', `ilike.*${term.replace(/\s+/g,'*')}*`);
-  const {records,total} = await queryView(params,true);
-  return {items:records.map(r=>({...r.payload,id:r.id,aiReady:r.ai_ready})),total,page:index,pageSize:size};
+type BrowseItem = PublicNotice & {aiReady:boolean};
+let browseCache: {expires:number; rows: BrowseItem[]} | null = null;
+let browsePending: Promise<BrowseItem[]> | null = null;
+
+// Filtering by derived categories must happen *before* pagination. Because the
+// historical Supabase view has no normalized category column, fetch the archive
+// on the server, scan its official metadata, then return the requested 12 rows.
+// A small short-lived cache avoids a full archive read on every filter click.
+async function fullNoticeArchive():Promise<BrowseItem[]> {
+  if (browseCache && browseCache.expires>Date.now()) return browseCache.rows;
+  if (browsePending) return browsePending;
+  browsePending=(async()=>{
+    const result:BrowseItem[]=[];
+    for(let offset=0;offset<20000;offset+=1000){
+      const params=new URLSearchParams({select:'id,notice_date,payload,ai_ready',order:'notice_date.desc.nullslast,id.desc',limit:'1000',offset:String(offset)});
+      const {records}=await queryView(params,false,false);
+      result.push(...records.map(r=>({...r.payload,id:r.id,noticeDate:r.payload.noticeDate||r.notice_date,aiReady:r.ai_ready})));
+      if(records.length<1000){browseCache={rows:result,expires:Date.now()+15_000};return result;}
+    }
+    throw new Error('Notice archive exceeded the supported browsing limit');
+  })();
+  try{return await browsePending;}finally{browsePending=null;}
+}
+
+// Only the current visible page needs the optional short titles lookup.
+async function loadDisplayTitles(items:BrowseItem[]):Promise<void>{
+  const ids=items.map(n=>n.id).filter(id=>/^[\w-]{1,128}$/.test(id));
+  if(!ids.length||!projectUrl||!apiKey)return;
+  try{
+    const params=new URLSearchParams({select:'notice_id,original_title,short_title',notice_id:`in.(${ids.join(',')})`});
+    const response=await fetch(`${projectUrl}/rest/v1/civic_notice_titles?${params}`,{
+      headers:{apikey:apiKey},cache:'no-store',signal:AbortSignal.timeout(4000),
+    });
+    if(response.ok){
+      const titles=await response.json() as {notice_id:string;original_title:string;short_title:string}[];
+      for(const item of items){
+        const match=titles.find(t=>t.notice_id===item.id&&t.original_title===item.title);
+        if(match)item.displayTitle=match.short_title;
+      }
+    }
+  }catch{/* Optional title service is not required for browsing. */}
+}
+
+export async function getPublicNoticePage(
+  page:number,pageSize:number,query:string,sort:'newest'|'oldest'='newest',category='all',savedIds?:string[],
+) {
+  const size=Math.max(1,Math.min(48,Math.trunc(pageSize)||24));
+  const index=Math.max(1,Math.trunc(page)||1);
+  const term=query.trim().slice(0,100);
+  if(localMode()){
+    const all=(await localNotices()).map(n=>({...n,aiReady:!!n.simple}));
+    const matches=filterAndSortNotices(all,{query:term,sort,category,savedIds});
+    return {items:matches.slice((index-1)*size,index*size),total:matches.length,page:index,pageSize:size};
+  }
+  // Default browsing can use indexed PostgREST pagination and exact count.
+  if(!term&&category==='all'&&savedIds===undefined){
+    const order=sort==='oldest'?'notice_date.asc.nullslast,id.asc':'notice_date.desc.nullslast,id.desc';
+    const params=new URLSearchParams({select:'id,notice_date,payload,ai_ready',order,limit:String(size),offset:String((index-1)*size)});
+    const {records,total}=await queryView(params,true);
+    return {items:records.map(r=>({...r.payload,id:r.id,aiReady:r.ai_ready})),total,page:index,pageSize:size};
+  }
+  if(savedIds?.length===0)return {items:[],total:0,page:index,pageSize:size};
+  let items:BrowseItem[];
+  if(savedIds){
+    // Read only the user's selected public IDs; never use the old numeric static index.
+    const valid=[...new Set(savedIds)].filter(id=>/^[\w-]{1,128}$/.test(id)).slice(0,200);
+    if(!valid.length)return {items:[],total:0,page:index,pageSize:size};
+    const params=new URLSearchParams({select:'id,notice_date,payload,ai_ready',id:`in.(${valid.join(',')})`,limit:String(valid.length)});
+    const {records}=await queryView(params,false,false);
+    items=records.map(r=>({...r.payload,id:r.id,aiReady:r.ai_ready}));
+  }else items=await fullNoticeArchive();
+  const matched=filterAndSortNotices(items,{query:term,sort,category,savedIds});
+  const pageItems=matched.slice((index-1)*size,index*size).map(n=>({...n}));
+  await loadDisplayTitles(pageItems);
+  return {items:pageItems,total:matched.length,page:index,pageSize:size};
 }
 export async function getPublicNoticeById(id:string) {
   if(localMode()){const n=(await localNotices()).find(n=>n.id===id);return n?{...n,aiReady:!!n.simple}:null;}

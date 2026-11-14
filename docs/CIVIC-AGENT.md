@@ -15,7 +15,7 @@ To run the public voting source independently, use `node scripts/civic-agent.mjs
 
 ## Run on GitHub Actions
 
-The Civic Source Agent workflow runs a read-only collection at minute 17 of every hour once the workflow is on the default branch. Open **Actions → Civic Source Agent → Run workflow** to trigger a run manually after merge. Each run logs the number of notices, vote rows, and agenda items pending review. The workflow uses the public notice configuration from the repository template.
+When the migration and GitHub Actions repository secret CIVIC_AGENT_SUPABASE_SECRET_KEY are in place, the Civic Source Agent workflow on main imports records to Supabase every hour at minute 17. Select main in Actions → Civic Source Agent → Run workflow to run the same import manually. Pull requests run the tests and a read-only collection using the public notice configuration.
 
 ## Source coverage and review
 
@@ -43,7 +43,7 @@ group by source
 order by source;
 ```
 
-A changed source sends confirmed links back for review. An agenda identifier correction removes the previous automatic link and timeline entry. The GitHub Actions schedule continues to run in read-only mode. Historical backfill, run history, and a review interface remain future work.
+A changed source sends confirmed links back for review. An agenda identifier correction removes the previous automatic link and timeline entry. Historical backfill, run history, and a review interface remain future work.
 
 ## Agent tests
 

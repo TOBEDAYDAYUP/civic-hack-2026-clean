@@ -5,12 +5,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { PublicNotice } from '@/lib/public-notices';
 import type { StreetGeocode } from '@/lib/map-geocode.mjs';
 import type { Viewport } from '@/lib/map-viewport.mjs';
-import { streetAddressCandidates, prioritizeStreetNotices } from '@/lib/map-geocode.mjs';
-import {
-  MAP_REGIONS,
-  normalizeMapEntries,
-  estimatedRegionFromCoordinates,
-} from '@/lib/map-regions.mjs';
+import { streetAddressCandidates } from '@/lib/map-geocode.mjs';
+import { MAP_REGIONS, normalizeMapEntries } from '@/lib/map-regions.mjs';
 import { uniqueNoticesInViewport } from '@/lib/map-viewport.mjs';
 import { useNoticeUpdates } from '@/features/notices/useNoticeUpdates';
 import InteractiveMap from './InteractiveMap';
@@ -117,7 +113,7 @@ export default function MapView() {
   }, [revision]);
 
   const candidates = useMemo(
-    () => notices.filter((n) => !n.streetMatches?.length && streetAddressCandidates(n).length > 0),
+    () => notices.filter((n) => streetAddressCandidates(n).length > 0),
     [notices],
   );
   const outstanding = useMemo(
@@ -139,22 +135,12 @@ export default function MapView() {
     [notices, stored],
   );
 
-  const targetRegion =
-    region !== 'all'
-      ? region
-      : viewport && viewport.zoom >= 12
-        ? estimatedRegionFromCoordinates(
-            (viewport.north + viewport.south) / 2,
-            (viewport.east + viewport.west) / 2,
-          )?.id || 'all'
-        : 'all';
   useEffect(() => {
     if (!cacheLoaded || !geocodingEnabled || loading || !outstanding.length) return;
     let stopped = false;
-    // Prioritize the selected/zoomed area; do not spend the whole batch on the
-    // first archive page while the user is exploring another district.
-    const group = prioritizeStreetNotices(outstanding, targetRegion).slice(0, geocodingLimit);
+    const group = outstanding.slice(0, geocodingLimit);
     const work = async () => {
+      let completed = 0;
       for (const notice of group) {
         if (stopped) break;
         if (inFlight.current.has(notice.id)) continue;
@@ -178,10 +164,11 @@ export default function MapView() {
         } catch (cause) {
           if (!stopped) {
             // Keep existing source pins if optional address matching is unavailable.
-            continue;
+            break;
           }
         } finally {
           inFlight.current.delete(notice.id);
+          completed++;
         }
       }
     };
@@ -192,7 +179,7 @@ export default function MapView() {
     // Deliberately exclude outstanding/stored: geocode each bounded batch, not
     // restart requests every time one result enters the cache.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cacheLoaded, geocodingEnabled, loading, notices, geocodingLimit, targetRegion]);
+  }, [cacheLoaded, geocodingEnabled, loading, notices, geocodingLimit]);
 
   const { entries, unknown } = useMemo(
     () => normalizeMapEntries(notices, geocodedById),
@@ -337,7 +324,7 @@ export default function MapView() {
             {geocodingEnabled && (
               <div className="civic-map-geocode-state">
                 {shownAddressCount} street addresses matched
-                {outstanding.length > 0 && (
+                {outstanding.length > geocodingLimit && (
                   <button onClick={() => setGeocodingLimit((v) => v + 50)}>
                     Locate more addresses +
                   </button>
