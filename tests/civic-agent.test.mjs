@@ -74,6 +74,7 @@ test('agendas include only upcoming public items with official no-action status'
   };
   const item = {
     inCamera: 'N',
+    considerTypeCd: 'ACTION',
     itemStatusCd: 'NO_ACTN',
     itemReferenceNumber: '2026.PH2.1A',
     agendaItemTitle: 'Planning report',
@@ -97,6 +98,7 @@ test('agendas include only upcoming public items with official no-action status'
               item,
               { ...item, itemReferenceNumber: '2026.PH2.2', itemStatusCd: 'ADOPTED' },
               { ...item, itemReferenceNumber: '2026.PH2.3', inCamera: 'Y' },
+              { ...item, itemReferenceNumber: '2026.PH2.4', considerTypeCd: 'INFO' },
             ],
           },
         ],

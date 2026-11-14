@@ -71,7 +71,10 @@ export default async function AgendasPage() {
       <main className="record-page-main agendas">
         <div className="record-page-heading">
           <h1>Upcoming agendas</h1>
-          <p>Browse public items awaiting action in Toronto’s Meeting Monitor.</p>
+          <p>
+            See public items scheduled for action at upcoming Toronto meetings, where the city has
+            recorded no action for that meeting yet. This list uses the Toronto Meeting Monitor.
+          </p>
           <p>
             <a href={official}>See all meeting schedules on the City of Toronto website ↗</a>
           </p>
@@ -81,7 +84,7 @@ export default async function AgendasPage() {
         </div>
         {!snapshot && <p role="status">Agendas are temporarily unavailable.</p>}
         {snapshot && meetings.size === 0 && (
-          <p>The Meeting Monitor lists no upcoming items awaiting action.</p>
+          <p>The Meeting Monitor lists no upcoming items scheduled for action.</p>
         )}
         {[...meetings].map(([id, items]) => (
           <section className="agendas-meeting" key={id}>
