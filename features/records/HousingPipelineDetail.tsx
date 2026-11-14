@@ -24,32 +24,20 @@ type HousingDetailProps = {
 const stages = [
   {
     name: 'Planning approval',
-    meaning:
-      'A planning decision may allow a development to proceed, sometimes with remaining conditions.',
-    check: 'Look for the approval decision and its actual approval date.',
   },
   {
     name: 'Permit application',
-    meaning:
-      'The developer has applied for a building permit. Applying is not the same as receiving a permit.',
-    check: 'Look for a building-permit application ID and application date.',
   },
   {
     name: 'Permit issued',
-    meaning: 'A building permit has been issued, but this alone does not prove work has begun.',
-    check: 'Verify the permit issue date and match it to the correct project or phase.',
   },
   {
     name: 'Construction started',
-    meaning: 'Physical work has begun. This needs separate evidence, not merely a permit.',
-    check: 'Look for a documented construction-start event or other credible confirmation.',
   },
   {
     name: 'Completion / occupancy',
-    meaning: 'The completed building or phase has reached occupancy or completion.',
-    check: 'Confirm an occupancy/completion record for the same project or phase.',
   },
-] as const;
+];
 
 const sources = [
   {
@@ -99,6 +87,17 @@ export default function HousingPipelineDetail({
 }: HousingDetailProps) {
   const { t, intlLocale } = useLanguage();
   const progress = stageEvidence({ text: sourceText, title: sourceTitle, sourceUrl });
+  const recordedStages = stages.flatMap((stage, index) => {
+    const evidence = progress.milestones[index];
+    return evidence.status === 'unknown' ? [] : [{ name: stage.name, ...evidence }];
+  });
+  if (progress.planningApplication) {
+    recordedStages.unshift({
+      name: 'Planning application received',
+      status: recordedStages.length ? 'recorded' : 'latest',
+      ...progress.planningApplication,
+    });
+  }
   const isLive = sourceType === 'public notice';
   const listedReferences = references.filter(Boolean);
   const listedAddresses = addresses.map(addressLabel).filter(Boolean);
@@ -164,74 +163,44 @@ export default function HousingPipelineDetail({
           </section>
         ))}
 
-      <section className="housing-panel" aria-label={t('Development stages')}>
-        <div className="housing-section-label">{t('02 / FROM APPROVAL TO HOMES')}</div>
-        <p className="housing-current-stage">
-          <strong>
-            {t(
-              progress.latest >= 0
-                ? t('Latest recorded stage: {stage}', { stage: t(stages[progress.latest].name) })
-                : progress.review
-                  ? 'Planning application received · approval not recorded'
-                  : 'Project stage not recorded',
-            )}
-          </strong>
-        </p>
-        <div className="housing-stage-legend">
-          <span>{t('✓ Recorded')}</span>
-          <span>{t('● Latest recorded stage')}</span>
-          <span>{t('○ No record')}</span>
-        </div>
-        <ol className="housing-timeline">
-          {stages.map((stage, index) => {
-            const evidence = progress.milestones[index];
-            return (
+      {recordedStages.length > 0 && (
+        <section className="housing-panel" aria-labelledby="housing-timeline-heading">
+          <h3 id="housing-timeline-heading">{t('Recorded project milestones')}</h3>
+          <ol className="housing-timeline">
+            {recordedStages.map(({ name, status, date, quote, sourceUrl }) => (
               <li
-                key={stage.name}
-                className={`housing-stage-${evidence.status}`}
-                aria-current={evidence.status === 'latest' ? 'step' : undefined}
+                key={name}
+                className={'housing-stage-' + status}
+                aria-current={status === 'latest' ? 'step' : undefined}
               >
-                <div className="housing-step-number">
-                  {t(evidence.status === 'recorded' ? '✓' : index + 1)}
+                <div className="housing-step-number" aria-hidden="true">
+                  ✓
                 </div>
                 <div className="housing-step-content">
                   <div className="housing-step-head">
-                    <strong>{t(stage.name)}</strong>
-                    <span className="housing-stage-badge">
-                      {t(
-                        evidence.status === 'latest'
-                          ? 'Latest recorded'
-                          : evidence.status === 'recorded'
-                            ? 'Recorded'
-                            : 'No record',
-                      )}
-                    </span>
-                  </div>
-                  <p>{t(stage.meaning)}</p>
-                  <div className="housing-stage-date">
-                    {evidence.date ? (
-                      <time dateTime={evidence.date}>
-                        {readableDate(evidence.date, intlLocale)}
-                      </time>
-                    ) : (
-                      t('Date not recorded')
+                    <strong>{t(name)}</strong>
+                    {status === 'latest' && recordedStages.length > 1 && (
+                      <span className="housing-stage-badge">{t('Latest recorded')}</span>
                     )}
                   </div>
-                  {evidence.quote && (
-                    <details className="housing-stage-source">
-                      <summary>{t('View source')}</summary>
-                      <blockquote lang="en">{evidence.quote}</blockquote>
-                      <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">
-                        {t('Read original notice ↗')}
-                      </a>
-                    </details>
+                  {date && (
+                    <div className="housing-stage-date">
+                      <time dateTime={date}>{readableDate(date, intlLocale)}</time>
+                    </div>
                   )}
+                  <details className="housing-stage-source">
+                    <summary>{t('View source')}</summary>
+                    <blockquote lang="en">{quote}</blockquote>
+                    <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+                      {t('Read original notice ↗')}
+                    </a>
+                  </details>
                 </div>
               </li>
-            );
-          })}
-        </ol>
-      </section>
+            ))}
+          </ol>
+        </section>
+      )}
 
       <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
         <div className="housing-section-label">{t('03 / VERIFY THE NEXT STEP')}</div>
