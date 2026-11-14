@@ -43,6 +43,52 @@ try {
     sidebar.includes('Home') && !sidebar.includes('Decisions'),
     'Sidebar should retain Home and omit Decisions',
   );
+  const switchResponse = await fetch(base + '/api/language', {
+    method: 'POST',
+    redirect: 'manual',
+    headers: { Origin: base },
+    body: new URLSearchParams({ locale: 'fr', returnTo: '/?view=Saved#bookmarks' }),
+  });
+  assert.equal(switchResponse.status, 303);
+  assert.equal(switchResponse.headers.get('location'), base + '/?view=Saved#bookmarks');
+  const languageCookie = switchResponse.headers.get('set-cookie');
+  assert.match(languageCookie, /yc-language=fr/);
+  assert.match(languageCookie, /Path=\//i);
+  assert.match(languageCookie, /HttpOnly/i);
+  const cookie = languageCookie.split(';')[0];
+  for (const [path, label] of [
+    ['/', 'Votre ville.'],
+    ['/decisions/0', 'Que'],
+  ]) {
+    const translated = await fetch(base + path, { headers: { Cookie: cookie } });
+    assert.equal(translated.status, 200);
+    const body = (await translated.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '');
+    assert.match(body, /<html lang="fr">/);
+    assert.ok(body.includes(label), path + ' must render French on the server');
+    assert.ok(body.includes('Utiliser le français'), 'language switch remains available');
+  }
+  const isolatedEnglish = await page('/');
+  assert.match(isolatedEnglish, /<html lang="en">/);
+  assert.ok(isolatedEnglish.includes('Your city.'));
+  const invalidLanguage = await fetch(base + '/api/language', {
+    method: 'POST',
+    body: new URLSearchParams({ locale: 'de' }),
+    redirect: 'manual',
+  });
+  assert.equal(invalidLanguage.status, 400);
+  const externalRedirect = await fetch(base + '/api/language', {
+    method: 'POST',
+    body: new URLSearchParams({ locale: 'en', returnTo: 'https://example.org/' }),
+    redirect: 'manual',
+  });
+  assert.equal(externalRedirect.headers.get('location'), base + '/');
+  const crossOrigin = await fetch(base + '/api/language', {
+    method: 'POST',
+    headers: { Origin: 'https://example.org' },
+    body: new URLSearchParams({ locale: 'fr' }),
+    redirect: 'manual',
+  });
+  assert.equal(crossOrigin.status, 403);
   for (let id = 0; id < 14; id++) {
     const detail = await page(`/decisions/${id}`);
     assert.ok(
@@ -88,7 +134,7 @@ try {
     assert.equal(denied.status, 401);
   }
   console.log(
-    'Smoke checks passed: consolidated Home, all 14 curated detail routes, filtered notice API and safe local-mode defaults.',
+    'Smoke checks passed: English/French SSR and secure language switching, consolidated Home, all 14 curated detail routes, filtered notice API and safe local-mode defaults.',
   );
 } finally {
   server.kill('SIGTERM');

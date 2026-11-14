@@ -1,4 +1,5 @@
 'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 
 import { useEffect, useState } from 'react';
 import type { View } from '@/components/navigation/types';
@@ -12,6 +13,7 @@ import NoticeFeed from '@/features/notices/NoticeFeed';
 const SAVED_STORAGE_KEY = 'yc-saved-notices';
 
 export default function CityCouncilApp() {
+  const { t } = useLanguage();
   const [view, setView] = useState<View>('Home');
   const [saved, setSaved] = useState<string[]>([]);
   const [savedDecisions, setSavedDecisions] = useState<number[]>([]);
@@ -102,21 +104,24 @@ export default function CityCouncilApp() {
         <>
           <section className="hero">
             <div className="eyebrow">
-              {view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION'}
+              {t(view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION')}
             </div>
             <h1>
               {view === 'Saved' ? (
                 'Your saved notices.'
               ) : (
                 <>
-                  Your city. <em>In the open.</em>
+                  {t('Your city. ')}
+                  <em>{t('In the open.')}</em>
                 </>
               )}
             </h1>
             <p className="lead">
-              {view === 'Saved'
-                ? 'Return to public notices you bookmarked. These are stored only in this browser.'
-                : 'Find Toronto public notices, understand what is happening, and check the official source.'}
+              {t(
+                view === 'Saved'
+                  ? 'Return to public notices you bookmarked. These are stored only in this browser.'
+                  : 'Find Toronto public notices, understand what is happening, and check the official source.',
+              )}
             </p>
           </section>
           <NoticeFeed savedOnly={view === 'Saved'} savedIds={saved} onToggleSaved={toggleSaved} />

@@ -1,4 +1,7 @@
+'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 import Link from 'next/link';
+import LanguageSwitcher from '@/features/language/LanguageSwitcher';
 import type { View } from './types';
 export default function Shell({
   view,
@@ -11,6 +14,7 @@ export default function Shell({
   go: (v: View) => void;
   children: React.ReactNode;
 }) {
+  const { t } = useLanguage();
   const nav: [View, string, string][] = [
     ['Home', '⌂', 'Home'],
     ['Map', '⌖', 'Map'],
@@ -21,20 +25,21 @@ export default function Shell({
     <div className="app-shell">
       <aside className="sidebar">
         <div className="mark">
-          yc<span>.</span>
+          {t('yc')}
+          <span>.</span>
         </div>
         <div className="brand-title">
-          Your City
+          {t('Your City')}
           <br />
-          Council
+          {t('Council')}
         </div>
-        <div className="locale">◉ Toronto, Ontario</div>
-        <div className="nav-label">Explore your city</div>
+        <div className="locale">{t('◉ Toronto, Ontario')}</div>
+        <div className="nav-label">{t('Explore your city')}</div>
         <nav>
           {nav.map(([k, i, l]) => (
             <button key={k} className={`nav ${view === k ? 'active' : ''}`} onClick={() => go(k)}>
               <span>{i}</span>
-              {l}
+              {t(l)}
               {k === 'Saved' && <b className="saved-number">{saved}</b>}
             </button>
           ))}
@@ -43,35 +48,41 @@ export default function Shell({
             className={`nav ${view === 'Agendas' ? 'active' : ''}`}
             aria-current={view === 'Agendas' ? 'page' : undefined}
           >
-            <span aria-hidden="true">▦</span>Upcoming agendas
+            <span aria-hidden="true">▦</span>
+            {t('Upcoming agendas')}
           </Link>
           <Link
             href="/voting"
             className={`nav ${view === 'Voting' ? 'active' : ''}`}
             aria-current={view === 'Voting' ? 'page' : undefined}
           >
-            <span aria-hidden="true">✓</span>Voting
+            <span aria-hidden="true">✓</span>
+            {t('Voting')}
           </Link>
         </nav>
         <div className="sidebar-foot">
-          INDEPENDENT CIVIC PROTOTYPE
+          {t('INDEPENDENT CIVIC PROTOTYPE')}
           <br />
-          Not affiliated with the City of Toronto.
+          {t('Not affiliated with the City of Toronto.')}
         </div>
       </aside>
       <div className="main-wrap">
         <header className="topbar">
           <span>
-            YOUR CITY COUNCIL <i>/</i> TORONTO
+            {t('YOUR CITY COUNCIL ')}
+            <i>/</i>
+            {t(' TORONTO')}
           </span>
+          <LanguageSwitcher />
           <span className="top-right">
-            THE TORONTO EDITION <span className="dot" />
+            {t('THE TORONTO EDITION ')}
+            <span className="dot" />
           </span>
         </header>
         <main>{children}</main>
         <footer className="footer">
-          Your City Council · Independent civic information prototype{' '}
-          <span>Made for clearer local democracy.</span>
+          {t('Your City Council · Independent civic information prototype')}{' '}
+          <span>{t('Made for clearer local democracy.')}</span>
         </footer>
       </div>
     </div>

@@ -1,3 +1,5 @@
+'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 import type { Decision } from '@/data/decisions';
 import { recordContext } from '@/features/records/recordContext';
 import HousingPipelineDetail from './HousingPipelineDetail';
@@ -33,17 +35,19 @@ const notSpecified = (s: string | undefined | null) =>
   !s || /^(not specified|not provided|unknown|n\/a)/i.test(s.trim());
 
 function Fact({ label, value }: { label: string; value: string }) {
+  const { t, intlLocale } = useLanguage();
   return (
     <div>
-      <strong>{label}</strong>
-      <span>{value}</span>
+      <strong>{t(label)}</strong>
+      <span lang={t(value) === value ? 'en' : undefined}>{t(value)}</span>
     </div>
   );
 }
 
 /** Presentation only: keep every AI sentence, but make lengthy explanations scan-friendly. */
 function ShortPoints({ text }: { text: string }) {
-  if (notSpecified(text)) return <p>Not specified in the available record.</p>;
+  const { t, intlLocale } = useLanguage();
+  if (notSpecified(text)) return <p>{t('Not specified in the available record.')}</p>;
   const points = text
     .trim()
     .split(/(?<=[.!?])\s+(?=[A-Z])/)
@@ -52,7 +56,9 @@ function ShortPoints({ text }: { text: string }) {
   return (
     <ul className="record-points">
       {points.map((point, i) => (
-        <li key={i}>{point}</li>
+        <li key={i} lang="en">
+          {point}
+        </li>
       ))}
     </ul>
   );
@@ -62,13 +68,16 @@ function Questions({ items }: { items: readonly string[] }) {
   return (
     <ul className="record-points">
       {items.map((item, i) => (
-        <li key={i}>{item}</li>
+        <li key={i} lang="en">
+          {item}
+        </li>
       ))}
     </ul>
   );
 }
 
 export function CuratedRecordDetails({ decision }: { decision: Decision }) {
+  const { t, intlLocale } = useLanguage();
   const context = recordContext[decision.id];
   if (decision.topic === 'Housing') {
     return (
@@ -87,27 +96,27 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
   return (
     <div className="record-details">
       <section className="record-section">
-        <div className="record-eyebrow">01 / THE RECORD</div>
-        <h3>What did Council decide?</h3>
-        <p>{decision.summary}</p>
+        <div className="record-eyebrow">{t('01 / THE RECORD')}</div>
+        <h3>{t('What did Council decide?')}</h3>
+        <p lang="en">{decision.summary}</p>
         <div className="record-facts">
-          <Fact label="Record date" value={decision.date} />
-          <Fact label="Area mentioned" value={decision.area} />
-          <Fact label="Decision status" value={decision.status} />
-          <Fact label="Source type" value="Council decision" />
+          <Fact label={t('Record date')} value={decision.date} />
+          <Fact label={t('Area mentioned')} value={decision.area} />
+          <Fact label={t('Decision status')} value={decision.status} />
+          <Fact label={t('Source type')} value="Council decision" />
         </div>
       </section>
       <section className="record-section">
-        <div className="record-eyebrow">02 / RELEVANCE</div>
-        <h3>Why might it matter?</h3>
+        <div className="record-eyebrow">{t('02 / RELEVANCE')}</div>
+        <h3>{t('Why might it matter?')}</h3>
         <p>
           {context?.significance ||
             'The decision may affect public services or planning. Check the Council report before assuming a particular outcome.'}
         </p>
       </section>
       <section className="record-section">
-        <div className="record-eyebrow">03 / WHAT IS NOT YET CLEAR</div>
-        <h3>What should we check next?</h3>
+        <div className="record-eyebrow">{t('03 / WHAT IS NOT YET CLEAR')}</div>
+        <h3>{t('What should we check next?')}</h3>
         <Questions
           items={
             context?.followUpQuestions || [
@@ -118,11 +127,12 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
         />
       </section>
       <section className="record-section">
-        <div className="record-eyebrow">04 / SOURCE & NEXT STEPS</div>
-        <h3>Where can I verify this?</h3>
+        <div className="record-eyebrow">{t('04 / SOURCE & NEXT STEPS')}</div>
+        <h3>{t('Where can I verify this?')}</h3>
         <p>
-          Locate the original item using the title and date in the City's Council and committee
-          records.
+          {t(
+            "Locate the original item using the title and date in the City's Council and committee records.",
+          )}
         </p>
         <a
           className="record-source-link"
@@ -130,7 +140,7 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Browse City of Toronto Council records ↗
+          {t('Browse City of Toronto Council records ↗')}
         </a>
       </section>
     </div>
@@ -138,6 +148,7 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
 }
 
 export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
+  const { t, intlLocale } = useLanguage();
   const housing = notice.topics.some((t) => /housing|planning|development/i.test(t));
   const s = notice.simple;
   const residentImpactSection = <ResidentImpactSection {...notice.residentImpact} />;
@@ -158,30 +169,34 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
           sourceUrl={notice.sourceUrl}
         />
         <section className="record-section">
-          <div className="record-eyebrow">PUBLIC PARTICIPATION / NOTICE DETAILS</div>
-          <h3>What can residents do?</h3>
+          <div className="record-eyebrow">{t('PUBLIC PARTICIPATION / NOTICE DETAILS')}</div>
+          <h3>{t('What can residents do?')}</h3>
           <p>
-            {notSpecified(s.howToParticipate)
-              ? 'The available notice does not specify a participation method.'
-              : s.howToParticipate}
+            {t(
+              notSpecified(s.howToParticipate)
+                ? 'The available notice does not specify a participation method.'
+                : s.howToParticipate,
+            )}
           </p>
           <div className="record-facts">
             <Fact
-              label="Deadline stated in notice"
+              label={t('Deadline stated in notice')}
               value={
                 notSpecified(s.participationDeadline) ? 'Not specified' : s.participationDeadline
               }
             />
             <Fact
-              label="Who may be affected"
+              label={t('Who may be affected')}
               value={notSpecified(s.whoMayBeAffected) ? 'Not specified' : s.whoMayBeAffected}
             />
           </div>
-          <h3>What remains uncertain?</h3>
+          <h3>{t('What remains uncertain?')}</h3>
           <p>
-            {notSpecified(s.uncertainty)
-              ? 'Project-level milestones and outcomes are not established here.'
-              : s.uncertainty}
+            {t(
+              notSpecified(s.uncertainty)
+                ? 'Project-level milestones and outcomes are not established here.'
+                : s.uncertainty,
+            )}
           </p>
         </section>
       </div>
@@ -191,35 +206,35 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
   return (
     <div className="record-details">
       <section className="record-section">
-        <div className="record-eyebrow">01 / WHAT THE NOTICE SAYS</div>
-        <h3>What is happening?</h3>
+        <div className="record-eyebrow">{t('01 / WHAT THE NOTICE SAYS')}</div>
+        <h3>{t('What is happening?')}</h3>
         <ShortPoints text={s.whatIsHappening} />
         <div className="record-facts">
           <Fact
-            label="Stage described"
+            label={t('Stage described')}
             value={notSpecified(s.decisionStage) ? 'Not specified' : s.decisionStage}
           />
           <Fact
-            label="Location described"
+            label={t('Location described')}
             value={notSpecified(s.where) ? 'Not specified' : s.where}
           />
           <Fact
-            label="Who may be affected"
+            label={t('Who may be affected')}
             value={notSpecified(s.whoMayBeAffected) ? 'Not specified' : s.whoMayBeAffected}
           />
           {notice.noticeDate && (
-            <Fact label="Public notice date" value={notice.noticeDate.slice(0, 10)} />
+            <Fact label={t('Public notice date')} value={notice.noticeDate.slice(0, 10)} />
           )}
         </div>
       </section>
       {residentImpactSection}
       <section className="record-section">
-        <div className="record-eyebrow">03 / NEXT ACTION</div>
-        <h3>How can residents participate?</h3>
+        <div className="record-eyebrow">{t('03 / NEXT ACTION')}</div>
+        <h3>{t('How can residents participate?')}</h3>
         <ShortPoints text={s.howToParticipate} />
         <div className="record-facts">
           <Fact
-            label="Deadline"
+            label={t('Deadline')}
             value={
               notSpecified(s.participationDeadline)
                 ? 'Not specified in source'
@@ -229,12 +244,14 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
         </div>
       </section>
       <section className="record-section">
-        <div className="record-eyebrow">04 / SOURCE & UNCERTAINTY</div>
-        <h3>What remains unclear?</h3>
+        <div className="record-eyebrow">{t('04 / SOURCE & UNCERTAINTY')}</div>
+        <h3>{t('What remains unclear?')}</h3>
         <p>
-          {notSpecified(s.uncertainty)
-            ? 'The available notice may not establish implementation or outcomes.'
-            : s.uncertainty}
+          {t(
+            notSpecified(s.uncertainty)
+              ? 'The available notice may not establish implementation or outcomes.'
+              : s.uncertainty,
+          )}
         </p>
         <a
           className="record-source-link"
@@ -242,11 +259,11 @@ export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Read the original Toronto notice ↗
+          {t('Read the original Toronto notice ↗')}
         </a>
         {notice.description && (
           <details className="record-source-excerpt">
-            <summary>Show notice description provided to the system</summary>
+            <summary>{t('Show notice description provided to the system')}</summary>
             <p>{notice.description}</p>
           </details>
         )}

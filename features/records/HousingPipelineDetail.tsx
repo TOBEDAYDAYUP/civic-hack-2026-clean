@@ -1,3 +1,5 @@
+'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 import React from 'react';
 import { stageEvidence } from './stage-evidence.mjs';
 import { addressLabel } from '@/lib/address-label.mjs';
@@ -67,12 +69,12 @@ const sources = [
   },
 ];
 
-function readableDate(value: string) {
+function readableDate(value: string, locale = 'en-CA') {
   if (!/^\d{4}-\d{2}-\d{2}/.test(value)) return value;
   const parsed = new Date(value);
   return Number.isNaN(parsed.getTime())
     ? value
-    : parsed.toLocaleDateString('en-CA', {
+    : parsed.toLocaleDateString(locale, {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -95,6 +97,7 @@ export default function HousingPipelineDetail({
   references = [],
   addresses = [],
 }: HousingDetailProps) {
+  const { t, intlLocale } = useLanguage();
   const progress = stageEvidence({ text: sourceText, title: sourceTitle, sourceUrl });
   const isLive = sourceType === 'public notice';
   const listedReferences = references.filter(Boolean);
@@ -105,35 +108,37 @@ export default function HousingPipelineDetail({
         className="housing-panel housing-record-panel"
         aria-labelledby="housing-record-heading"
       >
-        <div className="housing-section-label">01 / WHAT THE RECORD SAYS</div>
-        <h3 id="housing-record-heading">What’s happening?</h3>
-        <p>{summary || 'This record does not include a plain-language description.'}</p>
+        <div className="housing-section-label">{t('01 / WHAT THE RECORD SAYS')}</div>
+        <h3 id="housing-record-heading">{t('What’s happening?')}</h3>
+        <p lang={summary ? 'en' : undefined}>
+          {summary || t('This record does not include a plain-language description.')}
+        </p>
         <div className="housing-facts">
           <div>
-            <strong>Record type</strong>
-            <span>{isLive ? 'City public notice' : 'Council decision'}</span>
+            <strong>{t('Record type')}</strong>
+            <span>{t(isLive ? 'City public notice' : 'Council decision')}</span>
           </div>
           {recordDate && (
             <div>
-              <strong>{isLive ? 'Notice published' : 'Council record date'}</strong>
-              <span>{readableDate(recordDate)}</span>
+              <strong>{t(isLive ? 'Notice published' : 'Council record date')}</strong>
+              <span>{readableDate(recordDate, intlLocale)}</span>
             </div>
           )}
           {area && (
             <div>
-              <strong>Area in record</strong>
+              <strong>{t('Area in record')}</strong>
               <span>{area}</span>
             </div>
           )}
           {noticeStage && (
             <div>
-              <strong>Status</strong>
+              <strong>{t('Status')}</strong>
               <span>{noticeStage}</span>
             </div>
           )}
           {listedAddresses.length > 0 && (
             <div>
-              <strong>Addresses listed</strong>
+              <strong>{t('Addresses listed')}</strong>
               <ul className="address-list">
                 {listedAddresses.map((a) => (
                   <li key={a}>{a}</li>
@@ -143,7 +148,7 @@ export default function HousingPipelineDetail({
           )}
           {listedReferences.length > 0 && (
             <div>
-              <strong>Planning application references listed</strong>
+              <strong>{t('Planning application references listed')}</strong>
               <span>{listedReferences.join(' · ')}</span>
             </div>
           )}
@@ -153,27 +158,29 @@ export default function HousingPipelineDetail({
       {residentImpactSection ??
         (interpretation && (
           <section className="housing-panel">
-            <div className="housing-section-label">WHY THIS MAY MATTER</div>
-            <h3>What this means for you</h3>
+            <div className="housing-section-label">{t('WHY THIS MAY MATTER')}</div>
+            <h3>{t('What this means for you')}</h3>
             <p>{interpretation}</p>
           </section>
         ))}
 
-      <section className="housing-panel" aria-label="Development stages">
-        <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
+      <section className="housing-panel" aria-label={t('Development stages')}>
+        <div className="housing-section-label">{t('02 / FROM APPROVAL TO HOMES')}</div>
         <p className="housing-current-stage">
           <strong>
-            {progress.latest >= 0
-              ? `Latest recorded stage: ${stages[progress.latest].name}`
-              : progress.review
-                ? 'Planning application received · approval not recorded'
-                : 'Project stage not recorded'}
+            {t(
+              progress.latest >= 0
+                ? t('Latest recorded stage: {stage}', { stage: t(stages[progress.latest].name) })
+                : progress.review
+                  ? 'Planning application received · approval not recorded'
+                  : 'Project stage not recorded',
+            )}
           </strong>
         </p>
         <div className="housing-stage-legend">
-          <span>✓ Recorded</span>
-          <span>● Latest recorded stage</span>
-          <span>○ No record</span>
+          <span>{t('✓ Recorded')}</span>
+          <span>{t('● Latest recorded stage')}</span>
+          <span>{t('○ No record')}</span>
         </div>
         <ol className="housing-timeline">
           {stages.map((stage, index) => {
@@ -185,33 +192,37 @@ export default function HousingPipelineDetail({
                 aria-current={evidence.status === 'latest' ? 'step' : undefined}
               >
                 <div className="housing-step-number">
-                  {evidence.status === 'recorded' ? '✓' : index + 1}
+                  {t(evidence.status === 'recorded' ? '✓' : index + 1)}
                 </div>
                 <div className="housing-step-content">
                   <div className="housing-step-head">
-                    <strong>{stage.name}</strong>
+                    <strong>{t(stage.name)}</strong>
                     <span className="housing-stage-badge">
-                      {evidence.status === 'latest'
-                        ? 'Latest recorded'
-                        : evidence.status === 'recorded'
-                          ? 'Recorded'
-                          : 'No record'}
+                      {t(
+                        evidence.status === 'latest'
+                          ? 'Latest recorded'
+                          : evidence.status === 'recorded'
+                            ? 'Recorded'
+                            : 'No record',
+                      )}
                     </span>
                   </div>
-                  <p>{stage.meaning}</p>
+                  <p>{t(stage.meaning)}</p>
                   <div className="housing-stage-date">
                     {evidence.date ? (
-                      <time dateTime={evidence.date}>{readableDate(evidence.date)}</time>
+                      <time dateTime={evidence.date}>
+                        {readableDate(evidence.date, intlLocale)}
+                      </time>
                     ) : (
-                      'Date not recorded'
+                      t('Date not recorded')
                     )}
                   </div>
                   {evidence.quote && (
                     <details className="housing-stage-source">
-                      <summary>View source</summary>
-                      <blockquote>{evidence.quote}</blockquote>
+                      <summary>{t('View source')}</summary>
+                      <blockquote lang="en">{evidence.quote}</blockquote>
                       <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">
-                        Read original notice ↗
+                        {t('Read original notice ↗')}
                       </a>
                     </details>
                   )}
@@ -223,11 +234,12 @@ export default function HousingPipelineDetail({
       </section>
 
       <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
-        <div className="housing-section-label">03 / VERIFY THE NEXT STEP</div>
-        <h3 id="housing-next-heading">Check the project status</h3>
+        <div className="housing-section-label">{t('03 / VERIFY THE NEXT STEP')}</div>
+        <h3 id="housing-next-heading">{t('Check the project status')}</h3>
         <p>
-          Search the official project and permit systems, then match records using the address,
-          application number and phase before drawing conclusions.
+          {t(
+            'Search the official project and permit systems, then match records using the address, application number and phase before drawing conclusions.',
+          )}
         </p>
         {followUpQuestions.length > 0 && (
           <ul className="record-points">
@@ -239,17 +251,19 @@ export default function HousingPipelineDetail({
         <div className="housing-resources">
           {sources.map((s) => (
             <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer">
-              <strong>{s.label} ↗</strong>
-              <span>{s.detail}</span>
+              <strong>{t(s.label)} ↗</strong>
+              <span>{t(s.detail)}</span>
             </a>
           ))}
         </div>
         {sourceUrl && (
           <p className="housing-original">
             <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
-              {isLive
-                ? 'Read the original Toronto public notice'
-                : 'Browse official City Council records'}{' '}
+              {t(
+                isLive
+                  ? 'Read the original Toronto public notice'
+                  : 'Browse official City Council records',
+              )}{' '}
               ↗
             </a>
           </p>

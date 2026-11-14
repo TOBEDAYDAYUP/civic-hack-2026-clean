@@ -1,14 +1,15 @@
 'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 
 import { useMemo, useState } from 'react';
 import { groupAgendaItems, type AgendaDisplayItem } from './agenda-view.mjs';
 
-const dateLabel = (date: string, options: Intl.DateTimeFormatOptions) =>
-  new Intl.DateTimeFormat('en-CA', { ...options, timeZone: 'UTC' }).format(
-    new Date(date + 'T00:00:00Z'),
-  );
-
 export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }) {
+  const { t, intlLocale } = useLanguage();
+  const dateLabel = (date: string, options: Intl.DateTimeFormatOptions) =>
+    new Intl.DateTimeFormat(intlLocale, { ...options, timeZone: 'UTC' }).format(
+      new Date(date + 'T00:00:00Z'),
+    );
   const [query, setQuery] = useState('');
   const [committee, setCommittee] = useState('all');
   const [date, setDate] = useState('all');
@@ -30,8 +31,8 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
           <span aria-hidden="true">⌕</span>
           <input
             type="search"
-            aria-label="Search upcoming agenda items"
-            placeholder="Search a topic, address or item…"
+            aria-label={t('Search upcoming agenda items')}
+            placeholder={t('Search a topic, address or item…')}
             value={query}
             onChange={(event) => {
               setQuery(event.target.value);
@@ -40,23 +41,23 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
           />
         </label>
         <select
-          aria-label="Filter by committee"
+          aria-label={t('Filter by committee')}
           value={committee}
           onChange={(event) => {
             setCommittee(event.target.value);
             setExpanded('auto');
           }}
         >
-          <option value="all">All committees</option>
+          <option value="all">{t('All committees')}</option>
           {committees.map((name) => (
-            <option key={name} value={name}>
+            <option key={name} value={name} lang="en">
               {name}
             </option>
           ))}
         </select>
       </div>
       {dates.length > 0 && (
-        <div className="agenda-dates" role="group" aria-label="Filter by meeting date">
+        <div className="agenda-dates" role="group" aria-label={t('Filter by meeting date')}>
           <button
             type="button"
             className={date === 'all' ? 'is-selected' : ''}
@@ -66,7 +67,7 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
               setExpanded('auto');
             }}
           >
-            All dates
+            {t('All dates')}
           </button>
           {dates.map((value) => (
             <button
@@ -86,18 +87,20 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
       )}
       <div className="agenda-results" aria-live="polite">
         <span>
-          <strong>{count}</strong> {count === 1 ? 'item' : 'items'} · {meetings.length}{' '}
-          {meetings.length === 1 ? 'meeting' : 'meetings'}
+          <strong>{count}</strong> {t(count === 1 ? 'item' : 'items')} · {meetings.length}{' '}
+          {t(meetings.length === 1 ? 'meeting' : 'meetings')}
         </span>
-        <span>Earliest meeting first</span>
+        <span>{t('Earliest meeting first')}</span>
       </div>
       {!meetings.length && (
         <div className="agenda-empty">
-          <h2>{items.length ? 'No matching agenda items' : 'No upcoming items yet'}</h2>
+          <h2>{t(items.length ? 'No matching agenda items' : 'No upcoming items yet')}</h2>
           <p>
-            {items.length
-              ? 'Try another topic, committee or date.'
-              : 'New items will appear when the City publishes them.'}
+            {t(
+              items.length
+                ? 'Try another topic, committee or date.'
+                : 'New items will appear when the City publishes them.',
+            )}
           </p>
           {items.length > 0 && (
             <button
@@ -109,7 +112,7 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
                 setExpanded('auto');
               }}
             >
-              Clear filters
+              {t('Clear filters')}
             </button>
           )}
         </div>
@@ -132,7 +135,7 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
                     <strong>{dateLabel(meeting.date, { day: 'numeric' })}</strong>
                   </span>
                   <span className="agenda-meeting-name">
-                    <strong>{meeting.committee}</strong>
+                    <strong lang="en">{meeting.committee}</strong>
                     <span>
                       <time dateTime={meeting.date}>
                         {dateLabel(meeting.date, {
@@ -142,12 +145,12 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
                         })}
                       </time>
                       <span className="agenda-item-count">
-                        {meeting.items.length} {meeting.items.length === 1 ? 'item' : 'items'}
+                        {meeting.items.length} {t(meeting.items.length === 1 ? 'item' : 'items')}
                       </span>
                     </span>
                   </span>
                   <span className="agenda-chevron" aria-hidden="true">
-                    {open ? '−' : '+'}
+                    {t(open ? '−' : '+')}
                   </span>
                 </button>
               </h2>
@@ -156,18 +159,21 @@ export default function AgendaExplorer({ items }: { items: AgendaDisplayItem[] }
                   {meeting.items.map((item) => (
                     <article className="agenda-card" key={item.reference}>
                       <div className="agenda-card-meta">
-                        <span className="agenda-topic">{item.topic}</span>
+                        <span className="agenda-topic">{t(item.topic)}</span>
                         <span>{item.reference}</span>
                       </div>
-                      <h3>{item.displayTitle}</h3>
-                      {item.summary && <p>{item.summary}</p>}
+                      <h3 lang="en">{item.displayTitle}</h3>
+                      {item.summary && <p lang="en">{item.summary}</p>}
                       <a
                         href={item.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        aria-label={`View official item ${item.reference}`}
+                        aria-label={t('View official item {reference}', {
+                          reference: item.reference,
+                        })}
                       >
-                        View official item <span aria-hidden="true">↗</span>
+                        {t('View official item ')}
+                        <span aria-hidden="true">↗</span>
                       </a>
                     </article>
                   ))}

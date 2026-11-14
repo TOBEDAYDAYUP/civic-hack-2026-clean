@@ -1,10 +1,11 @@
+import { getTranslator } from '@/features/language/server';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { readVoteResults, votesPerPage, type VoteResult } from './vote-results';
 import '@/features/records/records.css';
 import './voting.css';
+import { SourceLanguageNote } from '@/features/language/LanguageProvider';
 
-const reportDate = new Intl.DateTimeFormat('en-CA', { dateStyle: 'long', timeZone: 'UTC' });
 const voteLabels = [
   ['yes', 'Yes'],
   ['no', 'No'],
@@ -18,11 +19,14 @@ function pageLink(query: string, page: number) {
   return params.size ? '/voting?' + params.toString() : '/voting';
 }
 
-function VoteCard({ vote }: { vote: VoteResult }) {
+async function VoteCard({ vote }: { vote: VoteResult }) {
+  const { t, intlLocale } = await getTranslator();
   const text = vote.motion_text || vote.decision_text;
   const official = new URL('https://secure.toronto.ca/council/agenda-item.do');
   official.searchParams.set('item', vote.reference);
-  const date = reportDate.format(new Date(vote.vote_date + 'T00:00:00Z'));
+  const date = new Intl.DateTimeFormat(intlLocale, { dateStyle: 'long', timeZone: 'UTC' }).format(
+    new Date(vote.vote_date + 'T00:00:00Z'),
+  );
   const total = vote.yes + vote.no + vote.absent;
 
   return (
@@ -34,15 +38,15 @@ function VoteCard({ vote }: { vote: VoteResult }) {
           {vote.vote_time && ' · ' + vote.vote_time + ' ET'}
         </time>
       </div>
-      <h2>{vote.title || vote.reference}</h2>
-      <div className="vote-outcome">
+      <h2 lang="en">{vote.title || vote.reference}</h2>
+      <div className="vote-outcome" lang="en">
         {vote.motion_type && <span>{vote.motion_type}</span>}
         {vote.result && <strong>{vote.result}</strong>}
       </div>
       <dl className="vote-counts">
         {voteLabels.map(([key, label]) => (
           <div key={key} className={'vote-' + key}>
-            <dt>{label}</dt>
+            <dt>{t(label)}</dt>
             <dd>{vote[key]}</dd>
           </div>
         ))}
@@ -56,12 +60,13 @@ function VoteCard({ vote }: { vote: VoteResult }) {
       )}
       {text && (
         <details>
-          <summary>{vote.motion_text ? 'Read motion text' : 'Read decision text'}</summary>
-          <p>{text}</p>
+          <summary>{t(vote.motion_text ? 'Read motion text' : 'Read decision text')}</summary>
+          <p lang="en">{text}</p>
         </details>
       )}
       <a className="vote-source" href={official.href}>
-        Official agenda item <span aria-hidden="true">↗</span>
+        {t('Official agenda item ')}
+        <span aria-hidden="true">↗</span>
       </a>
     </article>
   );
@@ -72,6 +77,7 @@ export default async function VotingPage({
 }: {
   params: { q?: string | string[]; page?: string | string[] };
 }) {
+  const { t, intlLocale } = await getTranslator();
   const query = typeof params.q === 'string' ? params.q.trim().slice(0, 100) : '';
   const page = typeof params.page === 'string' ? Number(params.page) : 1;
   const currentPage = Number.isSafeInteger(page) && page > 0 && page <= 100_000 ? page : 1;
@@ -88,44 +94,45 @@ export default async function VotingPage({
   return (
     <section className="route-page civic-voting">
       <div className="voting-hero">
-        <h1>2026 voting records</h1>
-        <p>Explore recorded votes from Toronto City Council and its committees.</p>
+        <h1>{t('2026 voting records')}</h1>
+        <p>{t('Explore recorded votes from Toronto City Council and its committees.')}</p>
       </div>
 
+      <SourceLanguageNote />
       <form className="vote-search" action="/voting" role="search">
-        <label htmlFor="vote-query">Find a vote</label>
+        <label htmlFor="vote-query">{t('Find a vote')}</label>
         <div>
           <input
             type="search"
             id="vote-query"
             name="q"
-            placeholder="Search by agenda item or title"
+            placeholder={t('Search by agenda item or title')}
             maxLength={100}
             defaultValue={query}
           />
-          <button type="submit">Search</button>
+          <button type="submit">{t('Search')}</button>
         </div>
       </form>
       {!results && (
         <p className="vote-message" role="status">
-          Voting records are temporarily unavailable.{' '}
-          <a href={pageLink(query, currentPage)}>Try again</a>
+          {t('Voting records are temporarily unavailable.')}{' '}
+          <a href={pageLink(query, currentPage)}>{t('Try again')}</a>
         </p>
       )}
       {results?.total === 0 && (
         <p className="vote-message">
-          {query ? 'No voting records match your search. ' : 'No 2026 votes are available yet.'}
-          {query && <Link href="/voting">Clear search</Link>}
+          {t(query ? 'No voting records match your search. ' : 'No 2026 votes are available yet.')}
+          {query && <Link href="/voting">{t('Clear search')}</Link>}
         </p>
       )}
       {results && results.total > 0 && (
         <>
           <div className="vote-list-heading">
             <p>
-              {results.total.toLocaleString('en-CA')} {results.total === 1 ? 'vote' : 'votes'} ·
-              Newest first
+              {results.total.toLocaleString(intlLocale)} {t(results.total === 1 ? 'vote' : 'votes')}
+              {t(' · Newest first')}
             </p>
-            {query && <Link href="/voting">Clear search</Link>}
+            {query && <Link href="/voting">{t('Clear search')}</Link>}
           </div>
           <div className="vote-grid">
             {results.rows.map((vote) => (
@@ -133,13 +140,18 @@ export default async function VotingPage({
             ))}
           </div>
           {lastPage > 1 && (
-            <nav className="vote-pagination" aria-label="Voting results pages">
-              {currentPage > 1 && <Link href={pageLink(query, currentPage - 1)}>← Previous</Link>}
+            <nav className="vote-pagination" aria-label={t('Voting results pages')}>
+              {currentPage > 1 && (
+                <Link href={pageLink(query, currentPage - 1)}>{t('← Previous')}</Link>
+              )}
               <span>
-                Page {currentPage} of {lastPage}
+                {t('Page ')}
+                {currentPage}
+                {t(' of ')}
+                {lastPage}
               </span>
               {currentPage < lastPage && (
-                <Link href={pageLink(query, currentPage + 1)}>Next →</Link>
+                <Link href={pageLink(query, currentPage + 1)}>{t('Next →')}</Link>
               )}
             </nav>
           )}

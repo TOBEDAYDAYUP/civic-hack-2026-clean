@@ -1,0 +1,415 @@
+export const french = Object.freeze({
+  'Taxes & Budget': 'Impôts et budget',
+  'Adoption notice': 'Avis d’adoption',
+  'Application notice': 'Avis de demande',
+  'Public meeting': 'Réunion publique',
+  'Toronto Development Pipeline': 'Suivi des projets immobiliers de Toronto',
+  'Application Information Centre': 'Centre d’information sur les demandes',
+  'Active Building Permits': 'Permis de construire actifs',
+  'Find the project and compare its reported planning/permit stage.':
+    'Retrouvez le projet et comparez l’étape d’urbanisme ou de permis indiquée.',
+  'Search by address or planning application number for current planning records.':
+    'Recherchez les dossiers d’urbanisme par adresse ou numéro de demande.',
+  'Check permit application and issue dates; verify project and phase matches.':
+    'Vérifiez les dates de demande et de délivrance du permis ainsi que le projet et la phase concernés.',
+  Adopted: 'Adopté',
+  Approved: 'Approuvé',
+  Carried: 'Adopté',
+  Lost: 'Rejeté',
+  'Zoom in': 'Zoom avant',
+  'Zoom out': 'Zoom arrière',
+  'Approximate area · not a street address': 'Secteur approximatif · ce n’est pas une adresse',
+  '{count} notices at this location': '{count} avis à cet endroit',
+  'Geocoded street address': 'Adresse géocodée',
+  'Official notice': 'Avis officiel',
+  'Date not provided': 'Date non fournie',
+  'Untitled notice': 'Avis sans titre',
+  'Showing 25 of {count} notices. Use the list to see more.':
+    '25 avis sur {count} sont affichés. Consultez la liste pour en voir plus.',
+  'Only a broad district is known. This pin is NOT the event address.':
+    'Seul un secteur général est connu. Ce repère ne correspond PAS à l’adresse de l’événement.',
+  'Street address matched by Geoapify; verify the original notice for exact location.':
+    'Adresse localisée par Geoapify ; vérifiez l’avis original pour l’emplacement exact.',
+  'Coordinates supplied in the official notice.': 'Coordonnées fournies dans l’avis officiel.',
+  '{count} municipal notices': '{count} avis municipaux',
+  'Notice at {location}': 'Avis à {location}',
+  'Approximate region for {count} notices': 'Secteur approximatif pour {count} avis',
+  'Map unavailable': 'Carte indisponible',
+
+  Home: 'Accueil',
+  Map: 'Carte',
+  Participate: 'Participer',
+  Saved: 'Favoris',
+  'Your City': 'Votre conseil',
+  Council: 'municipal',
+  'Your City Council': 'Votre conseil municipal',
+  'Your city.': 'Votre ville.',
+  'In the open.': 'En toute transparence.',
+  'Explore your city': 'Explorez votre ville',
+  'Upcoming agendas': 'Ordres du jour à venir',
+  'Upcoming agendas.': 'Ordres du jour à venir.',
+  Voting: 'Votes',
+  'INDEPENDENT CIVIC PROTOTYPE': 'PROTOTYPE CITOYEN INDÉPENDANT',
+  'Not affiliated with the City of Toronto.': 'Sans affiliation avec la Ville de Toronto.',
+  'YOUR CITY COUNCIL': 'VOTRE CONSEIL MUNICIPAL',
+  'THE TORONTO EDITION': 'ÉDITION TORONTO',
+  'Your City Council · Independent civic information prototype':
+    'Votre conseil municipal · Prototype citoyen indépendant',
+  'Made for clearer local democracy.': 'Pour une démocratie locale plus claire.',
+  'YOUR BOOKMARKS': 'VOS FAVORIS',
+  'Your saved notices.': 'Vos avis enregistrés.',
+  'Return to public notices you bookmarked. These are stored only in this browser.':
+    'Retrouvez vos avis favoris. Ils sont enregistrés uniquement dans ce navigateur.',
+  'Find Toronto public notices, understand what is happening, and check the official source.':
+    'Consultez les avis publics de Toronto, comprenez les enjeux et vérifiez la source officielle.',
+  'YOUR BOOKMARKED NOTICES': 'VOS AVIS FAVORIS',
+  'SHARED OFFICIAL NOTICES': 'AVIS OFFICIELS',
+  'Saved public notices.': 'Avis publics enregistrés.',
+  'Explore Toronto decisions.': 'Explorez les avis de Toronto.',
+  'Search City of Toronto notices, read explanations and check original sources. Public notices are not necessarily final Council decisions.':
+    'Recherchez les avis de la Ville de Toronto, consultez les explications et vérifiez les sources. Un avis public ne constitue pas nécessairement une décision finale du Conseil.',
+  'Search public notices': 'Rechercher des avis publics',
+  'Search public notices, streets, or topics...': 'Rechercher un avis, une rue ou un sujet…',
+  Search: 'Rechercher',
+  Filters: 'Filtres',
+  'SORT BY': 'TRIER PAR',
+  'Sort notices by date': 'Trier les avis par date',
+  'Newest first': 'Les plus récents',
+  'Oldest first': 'Les plus anciens',
+  CATEGORY: 'CATÉGORIE',
+  'Filter notice category': 'Filtrer par catégorie',
+  'All categories': 'Toutes les catégories',
+  'All topics': 'Tous les sujets',
+  Transportation: 'Transports',
+  Housing: 'Logement',
+  Planning: 'Urbanisme',
+  Budget: 'Budget',
+  Infrastructure: 'Infrastructures',
+  News: 'Actualités',
+  Other: 'Autres',
+  'Public notice': 'Avis public',
+  Notice: 'Avis',
+  'Municipal notices': 'Avis municipaux',
+  'Saved municipal notices': 'Avis municipaux enregistrés',
+  'Saved Toronto notices': 'Avis de Toronto enregistrés',
+  'Shared Toronto notices': 'Avis publics de Toronto',
+  'Updating results…': 'Mise à jour des résultats…',
+  'Could not refresh notices. Previously loaded records are still shown.':
+    'Impossible d’actualiser les avis. Les données déjà chargées restent affichées.',
+  'Date not specified': 'Date non précisée',
+  'AI explanation available': 'Explication par IA disponible',
+  'Official source': 'Source officielle',
+  'Read full notice →': 'Lire l’avis complet →',
+  'Remove saved notice': 'Retirer des favoris',
+  'Save notice': 'Enregistrer l’avis',
+  '♥ Saved': '♥ Enregistré',
+  '♡ Save': '♡ Enregistrer',
+  'Loading notices…': 'Chargement des avis…',
+  'You have not saved any notices yet. Return to Home to bookmark one.':
+    'Vous n’avez pas encore enregistré d’avis. Ajoutez-en depuis l’accueil.',
+  'No notices match your search and filters.':
+    'Aucun avis ne correspond à votre recherche et à vos filtres.',
+  Previous: 'Précédent',
+  Next: 'Suivant',
+  Page: 'Page',
+  of: 'sur',
+  'Go to page': 'Aller à la page',
+  Go: 'Aller',
+  'YOUR VOICE MATTERS': 'VOTRE VOIX COMPTE',
+  'Have a say in': 'Faites entendre votre voix dans',
+  'your city.': 'votre ville.',
+  'Use official City of Toronto channels to find meetings, committee speaking opportunities, public consultations and your councillor.':
+    'Utilisez les services officiels de la Ville de Toronto pour trouver les réunions, prendre la parole devant un comité, participer aux consultations ou joindre votre conseiller municipal.',
+  '/ GET INVOLVED': '/ PARTICIPEZ',
+  'Find an upcoming meeting': 'Trouver une prochaine réunion',
+  'Contact your councillor': 'Joindre votre conseiller municipal',
+  'Explore public consultations': 'Découvrir les consultations publiques',
+  'Check the official City source for current dates, rules and deadlines.':
+    'Vérifiez les dates, les modalités et les échéances sur le site officiel de la Ville.',
+  'Official City page ↗': 'Site officiel de la Ville ↗',
+  'COUNCIL & COMMITTEES': 'CONSEIL ET COMITÉS',
+  'A clearer look at what Toronto is considering next.':
+    'Découvrez plus clairement les prochaines questions à l’étude à Toronto.',
+  'upcoming meetings': 'réunions à venir',
+  'agenda items': 'points à l’ordre du jour',
+  'Official meeting calendar': 'Calendrier officiel des réunions',
+  'Summaries are simplified with AI. Follow the official item for the full record.':
+    'Les résumés sont simplifiés par IA. Consultez le point officiel pour le dossier complet.',
+  'Meeting updates are temporarily unavailable':
+    'Les mises à jour des réunions sont temporairement indisponibles',
+  'Search upcoming agenda items': 'Rechercher dans les ordres du jour à venir',
+  'Search a topic, address or item…': 'Rechercher un sujet, une adresse ou un point…',
+  'Filter by committee': 'Filtrer par comité',
+  'All committees': 'Tous les comités',
+  'Filter by meeting date': 'Filtrer par date de réunion',
+  'All dates': 'Toutes les dates',
+  'Earliest meeting first': 'Prochaines réunions en premier',
+  'Clear filters': 'Effacer les filtres',
+  'View official item': 'Consulter le point officiel',
+  'No matching agenda items': 'Aucun point ne correspond à votre recherche',
+  'No upcoming items yet': 'Aucun point à venir pour le moment',
+  'Try another topic, committee or date.': 'Essayez un autre sujet, comité ou date.',
+  'New items will appear when the City publishes them.':
+    'Les nouveaux points apparaîtront dès leur publication par la Ville.',
+  item: 'point',
+  items: 'points',
+  meeting: 'réunion',
+  meetings: 'réunions',
+  'Property standards': 'Normes foncières',
+  Heritage: 'Patrimoine',
+  'City business': 'Affaires municipales',
+  'CITY EXPLORER · TORONTO': 'EXPLORER LA VILLE · TORONTO',
+  'What is happening': 'Que se passe-t-il',
+  'near you?': 'près de chez vous ?',
+  'Zoom in to reveal individual street-level notices. Move the map to see the list update automatically. Choose an area or search for an address to explore nearby notices.':
+    'Zoomez pour voir chaque avis à l’échelle de la rue. La liste se met à jour quand vous déplacez la carte. Choisissez un secteur ou recherchez une adresse pour découvrir les avis à proximité.',
+  'Toronto area filters': 'Filtres par secteur de Toronto',
+  'Explore by area': 'Explorer par secteur',
+  'Broad geographic groupings · approximate boundaries':
+    'Regroupements géographiques · limites approximatives',
+  'All Toronto': 'Tout Toronto',
+  'Downtown & Central': 'Centre-ville et centre',
+  'Toronto municipal notice map': 'Carte des avis municipaux de Toronto',
+  'VISIBLE ON YOUR MAP': 'VISIBLES SUR VOTRE CARTE',
+  'notices in view': 'avis visibles',
+  'Previously loaded records are kept.': 'Les données déjà chargées sont conservées.',
+  'Filter visible notices': 'Filtrer les avis visibles',
+  'Search title or address': 'Rechercher un titre ou une adresse',
+  'street addresses matched': 'adresses localisées',
+  'Locate more addresses +': 'Localiser plus d’adresses +',
+  'Source coordinates': 'Coordonnées de la source',
+  'Source coordinate': 'Coordonnées de la source',
+  'Matched street': 'Rue localisée',
+  'Approximate area': 'Secteur approximatif',
+  'No date': 'Date inconnue',
+  'Show on map →': 'Voir sur la carte →',
+  'Loading…': 'Chargement…',
+  '↻ Refresh map data': '↻ Actualiser la carte',
+  'Loading notice locations…': 'Chargement des emplacements…',
+  'No notices in the visible map area. Pan or zoom out to see more.':
+    'Aucun avis dans la zone visible. Déplacez la carte ou dézoomez.',
+  'Location unknown': 'Emplacement inconnu',
+  'These notices lack a reliable map position, or their street address could not be verified. They are not placed at invented coordinates.':
+    'Ces avis n’ont pas de position fiable ou leur adresse n’a pas pu être vérifiée. Aucun emplacement n’est inventé.',
+  'How to read this map': 'Comment lire cette carte',
+  'Numbered circles automatically split into street pins as you zoom; click a tightly overlapping cluster to fan out individual notices. The list contains only notices within the visible map rectangle.':
+    'Les cercles numérotés se séparent en repères lorsque vous zoomez. Cliquez sur un groupe de repères superposés pour les déployer. La liste présente uniquement les avis de la zone visible.',
+  Blue: 'Le bleu',
+  'uses source coordinates;': 'indique les coordonnées de la source ;',
+  teal: 'le turquoise',
+  'is a high-confidence street-address match from Geoapify;':
+    'indique une adresse localisée avec un degré élevé de confiance par Geoapify ;',
+  'amber dashed': 'le contour orange en pointillés',
+  'is a broad-area representative point, not the actual address. Toronto area filters are approximate, not official boundaries. Missing markers do not establish that nothing is happening.':
+    'représente un secteur général et non une adresse exacte. Les filtres de secteur sont approximatifs et ne sont pas des limites officielles. L’absence de repère ne signifie pas l’absence d’activité.',
+  'Geocoding:': 'Géocodage :',
+  'Powered by Geoapify': 'Avec Geoapify',
+  '; basemap © OpenStreetMap contributors. For matches, verify the source record before treating the street location as definitive.':
+    '; fond de carte © contributeurs OpenStreetMap. Vérifiez la source avant de considérer un emplacement comme définitif.',
+  'Interactive Toronto municipal notice map; zoom to separate nearby pins':
+    'Carte interactive des avis municipaux de Toronto ; zoomez pour séparer les repères proches',
+  'Loading Toronto map and clustering…': 'Chargement de la carte de Toronto et des groupes…',
+  'The notice list remains available.': 'La liste des avis reste accessible.',
+  '2026 voting records': 'Votes enregistrés en 2026',
+  'Explore recorded votes from Toronto City Council and its committees.':
+    'Consultez les votes enregistrés du Conseil municipal de Toronto et de ses comités.',
+  'Find a vote': 'Trouver un vote',
+  'Search by agenda item or title': 'Rechercher un point ou un titre',
+  Yes: 'Pour',
+  No: 'Contre',
+  Absent: 'Absent',
+  'Read motion text': 'Lire le texte de la motion',
+  'Read decision text': 'Lire le texte de la décision',
+  'Official agenda item': 'Point officiel à l’ordre du jour',
+  'Voting records are temporarily unavailable.': 'Les votes sont temporairement indisponibles.',
+  'Try again': 'Réessayer',
+  'No voting records match your search.': 'Aucun vote ne correspond à votre recherche.',
+  'No 2026 votes are available yet.': 'Aucun vote de 2026 n’est encore disponible.',
+  'Clear search': 'Effacer la recherche',
+  '· Newest first': '· Les plus récents',
+  'Voting results pages': 'Pages des résultats des votes',
+  '← Previous': '← Précédent',
+  'Next →': 'Suivant →',
+  vote: 'vote',
+  votes: 'votes',
+  'Your City Council · Toronto': 'Votre conseil municipal · Toronto',
+  'Main navigation': 'Navigation principale',
+  'Explore more': 'En savoir plus',
+  'Related pages': 'Pages connexes',
+  'Explore Toronto': 'Explorer Toronto',
+  'Have your say →': 'Donnez votre avis →',
+  'All notices': 'Tous les avis',
+  'All decisions': 'Toutes les décisions',
+  'Read the full original notice': 'Lire l’avis original complet',
+  'WHY THIS MAY MATTER': 'POURQUOI CELA PEUT COMPTER',
+  'Why could this matter to residents?': 'Quels enjeux pour les résidents ?',
+  'Why is this included? View source excerpt': 'Pourquoi cette information ? Voir l’extrait source',
+  'Stated in notice': 'Indiqué dans l’avis',
+  'Possible effect': 'Effet possible',
+  'Includes saved AI analysis. Some explanations may be derived directly from the notice.':
+    'Comprend une analyse enregistrée par IA. Certaines explications peuvent provenir directement de l’avis.',
+  'Preliminary explanation based on this notice. Individualized AI analysis may still be pending.':
+    'Explication préliminaire fondée sur cet avis. L’analyse détaillée par IA peut être en attente.',
+  'Excerpts are matched against the notice text. An excerpt does not independently verify an interpretation.':
+    'Les extraits sont rapprochés du texte de l’avis. Un extrait ne suffit pas à confirmer une interprétation.',
+  'The available notice does not give enough detail to identify a specific effect on residents. That does not mean there will be no effect. Check the official notice for decisions and supporting documents.':
+    'L’avis ne donne pas assez de détails pour déterminer un effet précis sur les résidents. Cela ne signifie pas qu’il n’y en aura aucun. Consultez l’avis officiel et les documents complémentaires.',
+  '01 / WHAT THE RECORD SAYS': '01 / CONTENU DU DOSSIER',
+  'What’s happening?': 'Que se passe-t-il ?',
+  'This record does not include a plain-language description.':
+    'Ce dossier ne comprend pas de description en langage clair.',
+  'Record type': 'Type de document',
+  'City public notice': 'Avis public de la Ville',
+  'Council decision': 'Décision du Conseil',
+  'Notice published': 'Publication de l’avis',
+  'Council record date': 'Date du dossier du Conseil',
+  'Area in record': 'Secteur indiqué',
+  Status: 'Statut',
+  'Addresses listed': 'Adresses mentionnées',
+  'Planning application references listed': 'Références des demandes d’urbanisme',
+  'What this means for you': 'Ce que cela signifie pour vous',
+  'Development stages': 'Étapes du projet',
+  '02 / FROM APPROVAL TO HOMES': '02 / DE L’APPROBATION AUX LOGEMENTS',
+  'Planning application received · approval not recorded':
+    'Demande d’urbanisme reçue · approbation non consignée',
+  'Project stage not recorded': 'Étape du projet non consignée',
+  '✓ Recorded': '✓ Consigné',
+  '● Latest recorded stage': '● Dernière étape consignée',
+  '○ No record': '○ Aucune donnée',
+  'Latest recorded': 'Dernière étape consignée',
+  Recorded: 'Consigné',
+  'No record': 'Aucune donnée',
+  'Date not recorded': 'Date non consignée',
+  'Planning approval': 'Approbation d’urbanisme',
+  'Permit application': 'Demande de permis',
+  'Permit issued': 'Permis délivré',
+  'Construction started': 'Début des travaux',
+  'Completion / occupancy': 'Achèvement / occupation',
+  'A planning decision may allow a development to proceed, sometimes with remaining conditions.':
+    'Une décision d’urbanisme peut autoriser un projet, parfois sous réserve de conditions.',
+  'The developer has applied for a building permit. Applying is not the same as receiving a permit.':
+    'Le promoteur a demandé un permis de construire. Une demande ne signifie pas qu’un permis a été délivré.',
+  'A building permit has been issued, but this alone does not prove work has begun.':
+    'Un permis de construire a été délivré. Cela ne prouve pas que les travaux ont commencé.',
+  'Physical work has begun. This needs separate evidence, not merely a permit.':
+    'Les travaux ont commencé. Une preuve distincte est nécessaire ; le permis seul ne suffit pas.',
+  'The completed building or phase has reached occupancy or completion.':
+    'Le bâtiment ou la phase du projet a atteint l’étape d’occupation ou d’achèvement.',
+  'View source': 'Voir la source',
+  'Read original notice ↗': 'Lire l’avis original ↗',
+  '03 / VERIFY THE NEXT STEP': '03 / VÉRIFIER LA PROCHAINE ÉTAPE',
+  'Check the project status': 'Vérifier l’état du projet',
+  'Search the official project and permit systems, then match records using the address, application number and phase before drawing conclusions.':
+    'Consultez les systèmes officiels de projets et de permis. Rapprochez les dossiers par adresse, numéro de demande et phase avant de tirer des conclusions.',
+  'Read the original Toronto public notice': 'Lire l’avis public original de Toronto',
+  'Browse official City Council records': 'Consulter les dossiers officiels du Conseil',
+  'Not specified': 'Non précisé',
+  'Not specified in source': 'Non précisé dans la source',
+  'Not specified in the available record.': 'Non précisé dans le dossier disponible.',
+  '01 / THE RECORD': '01 / LE DOSSIER',
+  'What did Council decide?': 'Qu’a décidé le Conseil ?',
+  'Record date': 'Date du document',
+  'Area mentioned': 'Secteur mentionné',
+  'Decision status': 'Statut de la décision',
+  'Source type': 'Type de source',
+  '02 / RELEVANCE': '02 / PERTINENCE',
+  'Why might it matter?': 'Pourquoi est-ce pertinent ?',
+  '03 / WHAT IS NOT YET CLEAR': '03 / CE QUI RESTE À CLARIFIER',
+  'What should we check next?': 'Que faut-il vérifier ensuite ?',
+  '04 / SOURCE & NEXT STEPS': '04 / SOURCE ET SUITE',
+  'Where can I verify this?': 'Où vérifier ces informations ?',
+  "Locate the original item using the title and date in the City's Council and committee records.":
+    'Retrouvez le point original à l’aide du titre et de la date dans les dossiers du Conseil et de ses comités.',
+  'Browse City of Toronto Council records ↗': 'Consulter les dossiers du Conseil de Toronto ↗',
+  'PUBLIC PARTICIPATION / NOTICE DETAILS': 'PARTICIPATION PUBLIQUE / DÉTAILS DE L’AVIS',
+  'What can residents do?': 'Que peuvent faire les résidents ?',
+  'The available notice does not specify a participation method.':
+    'L’avis disponible ne précise pas de modalité de participation.',
+  'Deadline stated in notice': 'Échéance indiquée dans l’avis',
+  'Who may be affected': 'Qui pourrait être concerné',
+  'What remains uncertain?': 'Quelles incertitudes subsistent ?',
+  'Project-level milestones and outcomes are not established here.':
+    'Les étapes et les résultats du projet ne sont pas établis ici.',
+  '01 / WHAT THE NOTICE SAYS': '01 / CONTENU DE L’AVIS',
+  'What is happening?': 'Que se passe-t-il ?',
+  'Stage described': 'Étape décrite',
+  'Location described': 'Emplacement décrit',
+  'Public notice date': 'Date de l’avis public',
+  '03 / NEXT ACTION': '03 / PROCHAINE ACTION',
+  'How can residents participate?': 'Comment les résidents peuvent-ils participer ?',
+  Deadline: 'Échéance',
+  '04 / SOURCE & UNCERTAINTY': '04 / SOURCE ET INCERTITUDES',
+  'What remains unclear?': 'Que reste-t-il à clarifier ?',
+  'The available notice may not establish implementation or outcomes.':
+    'L’avis disponible ne permet pas nécessairement de confirmer la mise en œuvre ou les résultats.',
+  'Read the original Toronto notice ↗': 'Lire l’avis original de Toronto ↗',
+  'Show notice description provided to the system':
+    'Afficher la description de l’avis fournie au système',
+  'Housing & real estate': 'Logement et immobilier',
+  'Taxes & budget': 'Impôts et budget',
+  'Static decision archive': 'Archives statiques des décisions',
+  'STATIC CURATED ARCHIVE': 'ARCHIVES STATIQUES SÉLECTIONNÉES',
+  'Your saved decisions.': 'Vos décisions enregistrées.',
+  'Explore municipal decisions.': 'Explorez les décisions municipales.',
+  'These 14 static curated summaries do not update with the live public-notice feed. Verify status, dates and outcomes against the original Council records.':
+    'Ces 14 résumés statiques ne sont pas actualisés avec les avis publics. Vérifiez les statuts, les dates et les résultats dans les dossiers originaux du Conseil.',
+  'Search decisions': 'Rechercher des décisions',
+  'Sort decisions': 'Trier les décisions',
+  RECORDS: 'DOSSIERS',
+  SAVED: 'ENREGISTRÉS',
+  CURATED: 'SÉLECTIONNÉS',
+  TOPICS: 'SUJETS',
+  'Read full details →': 'Lire le dossier complet →',
+  'No matching decisions.': 'Aucune décision correspondante.',
+  'Change your filters or return to the full feed.':
+    'Modifiez les filtres ou consultez tous les avis.',
+  'Static curated summary restored from the archive. It does not update with the live notice feed. Verify the original Council record before relying on its status or dates.':
+    'Résumé statique restauré depuis les archives. Il n’est pas actualisé avec les avis publics. Vérifiez le dossier original du Conseil avant de vous fier à son statut ou à ses dates.',
+  'Original content is in English. Interface translation does not alter the official record.':
+    'Le contenu original est en anglais. La traduction de l’interface ne modifie pas le document officiel.',
+  '{count} matching notices': '{count} avis correspondants',
+  '{count} matching notice': '{count} avis correspondant',
+  'Page {page} of {total}': 'Page {page} sur {total}',
+  'Updated {date}': 'Mis à jour le {date}',
+  'View official item {reference}': 'Consulter le point officiel {reference}',
+  '{count} notices in view': '{count} avis visibles',
+  '{visible} in current view · {total} in selected areas':
+    '{visible} dans la vue actuelle · {total} dans les secteurs sélectionnés',
+  '{count} official notices loaded': '{count} avis officiels chargés',
+  'Reading shared Toronto notices…': 'Lecture des avis publics de Toronto…',
+  'Map notices are temporarily unavailable':
+    'Les avis de la carte sont temporairement indisponibles',
+  'Could not load notices': 'Impossible de charger les avis',
+  'Show more ({count} remaining)': 'Afficher plus ({count} restants)',
+  'Showing the first 30 of {count} unmapped notices.':
+    'Les 30 premiers avis sur {count} sans emplacement sont affichés.',
+  'Latest recorded stage: {stage}': 'Dernière étape consignée : {stage}',
+  '{count} relevant areas identified from the available notice. Potential effects are not confirmed outcomes.':
+    '{count} domaines pertinents relevés dans l’avis disponible. Les effets possibles ne sont pas des résultats confirmés.',
+});
+export const LOCALE_COOKIE = 'yc-language';
+export function normalizeLocale(value) {
+  return value === 'fr' ? 'fr' : 'en';
+}
+export function translate(locale, message, values = {}) {
+  const original = String(message ?? '');
+  const normalized = original.replace(/\s+/g, ' ').trim();
+  const translated = Object.hasOwn(french, normalized) ? french[normalized] : undefined;
+  const output =
+    locale === 'fr' && translated !== undefined
+      ? (original.match(/^\s*/)?.[0] || '') + translated + (original.match(/\s*$/)?.[0] || '')
+      : original;
+  return output.replace(/\{(\w+)\}/g, (token, key) =>
+    Object.hasOwn(values, key) ? String(values[key]) : token,
+  );
+}
+export function safeReturnPath(value, origin) {
+  try {
+    const url = new URL(value || '/', origin);
+    return url.origin === origin && !url.pathname.startsWith('/api/')
+      ? url.pathname + url.search + url.hash
+      : '/';
+  } catch {
+    return '/';
+  }
+}

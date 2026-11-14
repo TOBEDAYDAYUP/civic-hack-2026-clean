@@ -1,16 +1,13 @@
+import { getTranslator } from '@/features/language/server';
 import { collectAgendas, torontoDate, type AgendaItem } from '@/lib/civic-agent/agendas.mjs';
 import { publicDataConfig } from '@/lib/supabase/config';
 import { agendaKey, currentAgendaAnalysis } from '@/lib/civic-agent/agenda-analysis.mjs';
 import AgendaExplorer from './AgendaExplorer';
 import { agendaTopic, fallbackAgendaTitle, type AgendaDisplayItem } from './agenda-view.mjs';
 import './agendas.css';
+import { SourceLanguageNote } from '@/features/language/LanguageProvider';
 
 const official = 'https://www.toronto.ca/city-government/council/council-committee-meetings/';
-const updateTime = new Intl.DateTimeFormat('en-CA', {
-  dateStyle: 'medium',
-  timeStyle: 'short',
-  timeZone: 'America/Toronto',
-});
 
 type AgendaSnapshot = { items: AgendaItem[]; collected_at: string };
 
@@ -79,6 +76,12 @@ async function displayItems(items: AgendaItem[]): Promise<AgendaDisplayItem[]> {
 }
 
 export default async function AgendasPage() {
+  const { t, intlLocale } = await getTranslator();
+  const updateTime = new Intl.DateTimeFormat(intlLocale, {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+    timeZone: 'America/Toronto',
+  });
   const snapshot = await readAgendas();
   const today = torontoDate();
   const items = await displayItems(
@@ -90,37 +93,42 @@ export default async function AgendasPage() {
     <section className="route-page agendas">
       <header className="agenda-hero">
         <div>
-          <div className="agenda-eyebrow">COUNCIL &amp; COMMITTEES</div>
+          <div className="agenda-eyebrow">{t('COUNCIL & COMMITTEES')}</div>
           <h1>
-            Upcoming agendas<span>.</span>
+            {t('Upcoming agendas')}
+            <span>.</span>
           </h1>
-          <p>A clearer look at what Toronto is considering next.</p>
+          <p>{t('A clearer look at what Toronto is considering next.')}</p>
         </div>
         <div className="agenda-overview">
           <div>
             <strong>{meetingCount}</strong>
-            <span>upcoming meetings</span>
+            <span>{t('upcoming meetings')}</span>
           </div>
           <div>
             <strong>{items.length}</strong>
-            <span>agenda items</span>
+            <span>{t('agenda items')}</span>
           </div>
         </div>
       </header>
       <div className="agenda-update">
         <span>
-          {snapshot
-            ? `Updated ${updateTime.format(new Date(snapshot.collected_at))}`
-            : 'Meeting updates are temporarily unavailable'}
+          {t(
+            snapshot
+              ? t('Updated {date}', { date: updateTime.format(new Date(snapshot.collected_at)) })
+              : 'Meeting updates are temporarily unavailable',
+          )}
         </span>
         <a href={official} target="_blank" rel="noopener noreferrer">
-          Official meeting calendar <span aria-hidden="true">↗</span>
+          {t('Official meeting calendar ')}
+          <span aria-hidden="true">↗</span>
         </a>
       </div>
+      <SourceLanguageNote />
       <AgendaExplorer items={items} />
       {hasAnalysis && (
         <p className="agenda-footnote">
-          Summaries are simplified with AI. Follow the official item for the full record.
+          {t('Summaries are simplified with AI. Follow the official item for the full record.')}
         </p>
       )}
     </section>

@@ -1,5 +1,8 @@
 'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
+
 import Link from 'next/link';
+import { SourceLanguageNote } from '@/features/language/LanguageProvider';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PublicNotice } from '@/lib/public-notices';
 import { NOTICE_CATEGORIES, categoryLabel, noticeCategory } from '@/lib/notice-browser.mjs';
@@ -14,6 +17,7 @@ type Props = {
 const PAGE_SIZE = 12;
 
 export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props) {
+  const { t } = useLanguage();
   const [items, setItems] = useState<Item[]>([]);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -105,17 +109,18 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
   return (
     <section
       className="notice-feed"
-      aria-label={savedOnly ? 'Saved Toronto notices' : 'Shared Toronto notices'}
+      aria-label={t(savedOnly ? 'Saved Toronto notices' : 'Shared Toronto notices')}
     >
       <div className="live-panel-head">
         <div>
           <div className="eyebrow">
-            {savedOnly ? 'YOUR BOOKMARKED NOTICES' : 'SHARED OFFICIAL NOTICES'}
+            {t(savedOnly ? 'YOUR BOOKMARKED NOTICES' : 'SHARED OFFICIAL NOTICES')}
           </div>
-          <h2>{savedOnly ? 'Saved public notices.' : 'Explore Toronto decisions.'}</h2>
+          <h2>{t(savedOnly ? 'Saved public notices.' : 'Explore Toronto decisions.')}</h2>
           <p>
-            Search City of Toronto notices, read explanations and check original sources. Public
-            notices are not necessarily final Council decisions.
+            {t(
+              'Search City of Toronto notices, read explanations and check original sources. Public notices are not necessarily final Council decisions.',
+            )}
           </p>
         </div>
       </div>
@@ -131,15 +136,15 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
         <label className="notice-search-box">
           <span aria-hidden="true">⌕</span>
           <input
-            aria-label="Search public notices"
-            placeholder="Search public notices, streets, or topics..."
+            aria-label={t('Search public notices')}
+            placeholder={t('Search public notices, streets, or topics...')}
             value={input}
             maxLength={100}
             onChange={(e) => setInput(e.target.value)}
           />
         </label>
         <button className="notice-search-submit" type="submit">
-          Search
+          {t('Search')}
         </button>
         <button
           className={`notice-filter-toggle ${filtersOpen ? 'is-open' : ''}`}
@@ -148,32 +153,33 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
           aria-controls="notice-filter-options"
           onClick={() => setFiltersOpen((shown) => !shown)}
         >
-          <span aria-hidden="true">☷</span> Filters
+          <span aria-hidden="true">☷</span>
+          {t(' Filters')}
         </button>
       </form>
       {filtersOpen && (
         <div id="notice-filter-options" className="notice-filter-options">
           <label>
-            <span>SORT BY</span>
+            <span>{t('SORT BY')}</span>
             <select
-              aria-label="Sort notices by date"
+              aria-label={t('Sort notices by date')}
               value={sort}
               onChange={(e) => changeSort(e.target.value as 'newest' | 'oldest')}
             >
-              <option value="newest">Newest first</option>
-              <option value="oldest">Oldest first</option>
+              <option value="newest">{t('Newest first')}</option>
+              <option value="oldest">{t('Oldest first')}</option>
             </select>
           </label>
           <label>
-            <span>CATEGORY</span>
+            <span>{t('CATEGORY')}</span>
             <select
-              aria-label="Filter notice category"
+              aria-label={t('Filter notice category')}
               value={category}
               onChange={(e) => changeCategory(e.target.value)}
             >
               {NOTICE_CATEGORIES.map((choice) => (
                 <option key={choice.value} value={choice.value}>
-                  {choice.label}
+                  {t(choice.label)}
                 </option>
               ))}
             </select>
@@ -181,17 +187,20 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
         </div>
       )}
 
+      <SourceLanguageNote />
       <div className="notice-results-heading" aria-live="polite">
-        <h3>{savedOnly ? 'Saved municipal notices' : 'Municipal notices'}</h3>
+        <h3>{t(savedOnly ? 'Saved municipal notices' : 'Municipal notices')}</h3>
         <span>
           {loading
-            ? 'Updating results…'
-            : `${total} matching ${total === 1 ? 'notice' : 'notices'}`}
+            ? t('Updating results…')
+            : t(total === 1 ? '{count} matching notice' : '{count} matching notices', {
+                count: total,
+              })}
         </span>
       </div>
       {unavailable && (
         <p role="alert" className="notice-feed-error">
-          Could not refresh notices. Previously loaded records are still shown.
+          {t('Could not refresh notices. Previously loaded records are still shown.')}
         </p>
       )}
       <div className="notice-feed-grid">
@@ -199,54 +208,56 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
           const marked = savedIds.includes(n.id);
           return (
             <article className="notice-feed-card" key={n.id}>
-              <span className="notice-category">{categoryLabel(noticeCategory(n))}</span>
-              <h3>
+              <span className="notice-category">{t(categoryLabel(noticeCategory(n)))}</span>
+              <h3 lang="en">
                 <Link href={`/notices/${encodeURIComponent(n.id)}`}>
                   {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
                 </Link>
               </h3>
-              <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>
+              <p lang="en">
+                {(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}
+              </p>
               <div className="notice-feed-meta">
-                {n.noticeDate?.slice(0, 10) || 'Date not specified'} ·{' '}
-                {n.aiReady ? 'AI explanation available' : 'Official source'}
+                {n.noticeDate?.slice(0, 10) || t('Date not specified')} ·{' '}
+                {t(n.aiReady ? 'AI explanation available' : 'Official source')}
               </div>
               <div className="notice-card-actions">
                 <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>
-                  Read full notice →
+                  {t('Read full notice →')}
                 </Link>
                 <button
                   type="button"
                   aria-pressed={marked}
-                  aria-label={`${marked ? 'Remove saved notice' : 'Save notice'}: ${n.title}`}
+                  aria-label={`${t(marked ? 'Remove saved notice' : 'Save notice')}: ${n.title}`}
                   onClick={() => onToggleSaved(n.id)}
                 >
-                  {marked ? '♥ Saved' : '♡ Save'}
+                  {t(marked ? '♥ Saved' : '♡ Save')}
                 </button>
               </div>
             </article>
           );
         })}
       </div>
-      {!items.length && loading && <p>Loading notices…</p>}
+      {!items.length && loading && <p>{t('Loading notices…')}</p>}
       {!items.length && !loading && !unavailable && (
         <p>
-          {savedOnly && savedIds.length === 0
-            ? 'You have not saved any notices yet. Return to Home to bookmark one.'
-            : 'No notices match your search and filters.'}
+          {t(
+            savedOnly && savedIds.length === 0
+              ? 'You have not saved any notices yet. Return to Home to bookmark one.'
+              : 'No notices match your search and filters.',
+          )}
         </p>
       )}
       <div className="notice-pagination">
         <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={loading || page <= 1}>
-          Previous
+          {t('Previous')}
         </button>
-        <span>
-          Page {page} of {maxPage}
-        </span>
+        <span>{t('Page {page} of {total}', { page, total: maxPage })}</span>
         <button
           onClick={() => setPage((p) => p + 1)}
           disabled={loading || page * PAGE_SIZE >= total}
         >
-          Next
+          {t('Next')}
         </button>
         <form
           className="notice-page-jump"
@@ -258,9 +269,9 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
           }}
         >
           <label>
-            Go to page{' '}
+            {t('Go to page')}{' '}
             <input
-              aria-label="Go to page"
+              aria-label={t('Go to page')}
               type="number"
               min="1"
               max={maxPage}
@@ -272,7 +283,7 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
             />
           </label>
           <button type="submit" disabled={loading || !total}>
-            Go
+            {t('Go')}
           </button>
         </form>
       </div>

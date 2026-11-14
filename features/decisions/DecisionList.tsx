@@ -1,3 +1,5 @@
+'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 import Link from 'next/link';
 import type { Decision } from '@/data/decisions';
 const topicLabels: Record<string, string> = {
@@ -13,13 +15,14 @@ export default function DecisionList({
   saved: number[];
   toggleSaved: (id: number) => void;
 }) {
+  const { t } = useLanguage();
   return visible.length ? (
     <section className="grid">
       {visible.map((d) => (
         <article className="story" key={d.id}>
           <div className="story-tags">
-            <span className="topic">{topicLabels[d.topic] || d.topic}</span>
-            <span className="status">{d.status}</span>
+            <span className="topic">{t(topicLabels[d.topic] || d.topic)}</span>
+            <span className="status">{t(d.status)}</span>
           </div>
           <h3>
             <Link href={`/decisions/${d.id}`}>{d.title}</Link>
@@ -28,16 +31,19 @@ export default function DecisionList({
           <div className="story-bottom">
             <div className="story-meta">
               <span>{d.date}</span>
-              <span>Toronto · {d.area}</span>
+              <span>
+                {t('Toronto · ')}
+                {d.area}
+              </span>
             </div>
             <Link className="story-open-link" href={`/decisions/${d.id}`}>
-              Read full details →
+              {t('Read full details →')}
             </Link>
             <button
               className={`save ${saved.includes(d.id) ? 'saved' : ''}`}
               onClick={() => toggleSaved(d.id)}
             >
-              {saved.includes(d.id) ? '♥ Saved' : '♡ Save'}
+              {t(saved.includes(d.id) ? '♥ Saved' : '♡ Save')}
             </button>
           </div>
         </article>
@@ -45,8 +51,8 @@ export default function DecisionList({
     </section>
   ) : (
     <div className="empty">
-      <h3>No matching decisions.</h3>
-      <p>Change your filters or return to the full feed.</p>
+      <h3>{t('No matching decisions.')}</h3>
+      <p>{t('Change your filters or return to the full feed.')}</p>
     </div>
   );
 }

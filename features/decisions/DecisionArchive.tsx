@@ -1,4 +1,5 @@
 'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 
 import { useMemo, useState } from 'react';
 import { decisions } from '@/data/decisions';
@@ -14,6 +15,7 @@ export default function DecisionArchive({
   saved: number[];
   toggleSaved: (id: number) => void;
 }) {
+  const { t } = useLanguage();
   const [topic, setTopic] = useState('All topics');
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
@@ -38,13 +40,14 @@ export default function DecisionArchive({
   );
 
   return (
-    <section aria-label="Static decision archive">
+    <section aria-label={t('Static decision archive')}>
       <section className="hero">
-        <div className="eyebrow">STATIC CURATED ARCHIVE</div>
-        <h1>{savedOnly ? 'Your saved decisions.' : 'Explore municipal decisions.'}</h1>
+        <div className="eyebrow">{t('STATIC CURATED ARCHIVE')}</div>
+        <h1>{t(savedOnly ? 'Your saved decisions.' : 'Explore municipal decisions.')}</h1>
         <p className="lead">
-          These 14 static curated summaries do not update with the live public-notice feed. Verify
-          status, dates and outcomes against the original Council records.
+          {t(
+            'These 14 static curated summaries do not update with the live public-notice feed. Verify status, dates and outcomes against the original Council records.',
+          )}
         </p>
       </section>
       <TopicFilters topic={topic} setTopic={setTopic} />
@@ -52,24 +55,25 @@ export default function DecisionArchive({
         <label className="search">
           <span>⌕</span>
           <input
-            aria-label="Search decisions"
-            placeholder="Search decisions"
+            aria-label={t('Search decisions')}
+            placeholder={t('Search decisions')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </label>
         <select
-          aria-label="Sort decisions"
+          aria-label={t('Sort decisions')}
           value={sort}
           onChange={(e) => setSort(e.target.value as 'newest' | 'oldest')}
         >
-          <option value="newest">Newest first</option>
-          <option value="oldest">Oldest first</option>
+          <option value="newest">{t('Newest first')}</option>
+          <option value="oldest">{t('Oldest first')}</option>
         </select>
       </section>
       <div className="list-head">
         <span className="count">
-          {visible.length} {savedOnly ? 'SAVED' : 'CURATED'} RECORDS
+          {visible.length} {t(savedOnly ? 'SAVED' : 'CURATED')}
+          {t(' RECORDS')}
         </span>
       </div>
       <DecisionList visible={visible} saved={saved} toggleSaved={toggleSaved} />

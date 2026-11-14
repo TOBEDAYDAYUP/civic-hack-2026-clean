@@ -1,3 +1,4 @@
+import { getTranslator } from '@/features/language/server';
 import { introduction } from '@/features/records/introduction.mjs';
 import { notFound } from 'next/navigation';
 import { decisions } from '@/data/decisions';
@@ -11,6 +12,7 @@ export function generateStaticParams() {
 }
 
 export default async function DecisionPage({ params }: PageProps) {
+  const { t } = await getTranslator();
   const { id } = await params;
   if (!/^\d+$/.test(id)) notFound();
   const decision = decisions.find((d) => d.id === Number(id));
@@ -33,8 +35,7 @@ export default async function DecisionPage({ params }: PageProps) {
       backLabel="All decisions"
     >
       <p className="record-introduction">
-        Static curated summary restored from the archive. It does not update with the live notice
-        feed. Verify the original Council record before relying on its status or dates.
+        {t("Static curated summary restored from the archive. It does not update with the live notice feed. Verify the original Council record before relying on its status or dates.")}
       </p>
       <CuratedRecordDetails decision={decision} />
     </RecordPageFrame>

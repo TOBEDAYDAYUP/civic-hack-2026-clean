@@ -1,4 +1,6 @@
 'use client';
+import { translate, type Locale } from '@/features/language/messages.mjs';
+import { useLanguage } from '@/features/language/LanguageProvider';
 
 import { useEffect, useRef, useState } from 'react';
 import type { MapEntry } from '@/lib/map-regions.mjs';
@@ -37,6 +39,9 @@ type LeafletCluster = LeafletLayer & {
 };
 type ClusterInfo = { getChildCount(): number };
 type Leaflet = {
+  control: {
+    zoom(options: { zoomInTitle: string; zoomOutTitle: string }): { addTo(map: LeafletMap): void };
+  };
   map(
     element: HTMLElement,
     options: { zoomControl: boolean; scrollWheelZoom: boolean },
@@ -118,15 +123,17 @@ function loadLeafletCluster(): Promise<Leaflet> {
 function html(value: string): string {
   return value.replace(
     /[&<>"']/g,
-    (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] || ch,
+    (ch) => ({ '&': '&', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch] || ch,
   );
 }
-function popupContent(points: MapEntry[], approximate: boolean): string {
+function popupContent(points: MapEntry[], approximate: boolean, locale: Locale): string {
+  const t = (message: string, values?: Record<string, string | number>) =>
+    translate(locale, message, values);
   const seen = new Set<string>();
   const unique = points.filter((point) => !seen.has(point.id) && (seen.add(point.id), true));
   const title = approximate
-    ? '<strong class="civic-popup-warning">Approximate area · not a street address</strong>'
-    : `<strong>${unique.length > 1 ? `${unique.length} notices at this location` : unique[0]?.precision === 'geocoded' ? 'Geocoded street address' : 'Official notice'}</strong>`;
+    ? `<strong class="civic-popup-warning">${t('Approximate area · not a street address')}</strong>`
+    : `<strong>${unique.length > 1 ? t('{count} notices at this location', { count: unique.length }) : unique[0]?.precision === 'geocoded' ? t('Geocoded street address') : t('Official notice')}</strong>`;
   const items = unique
     .slice(0, 25)
     .map((point) => {
@@ -138,21 +145,21 @@ function popupContent(points: MapEntry[], approximate: boolean): string {
           'Untitled notice'
         ).slice(0, 130),
       );
-      const date = html(point.notice.noticeDate?.slice(0, 10) || 'Date not provided');
+      const date = html(point.notice.noticeDate?.slice(0, 10) || t('Date not provided'));
       const href = `/notices/${encodeURIComponent(point.id)}`;
-      return `<li><a href="${href}">${name}</a><small>${date} · ${html(point.location)}</small></li>`;
+      return `<li><a href="${href}" lang="en">${name}</a><small>${date} · ${html(point.location)}</small></li>`;
     })
     .join('');
   const extra =
     unique.length > 25
-      ? `<p>Showing 25 of ${unique.length} notices. Use the list to see more.</p>`
+      ? `<p>${t('Showing 25 of {count} notices. Use the list to see more.', { count: unique.length })}</p>`
       : '';
   const source = approximate
     ? 'Only a broad district is known. This pin is NOT the event address.'
     : unique.some((p) => p.precision === 'geocoded')
       ? 'Street address matched by Geoapify; verify the original notice for exact location.'
       : 'Coordinates supplied in the official notice.';
-  return `<div class="civic-marker-popup">${title}<ul>${items}</ul>${extra}<p class="civic-popup-footer">${source}</p></div>`;
+  return `<div class="civic-marker-popup">${title}<ul>${items}</ul>${extra}<p class="civic-popup-footer">${t(source)}</p></div>`;
 }
 
 export default function InteractiveMap({
@@ -170,6 +177,7 @@ export default function InteractiveMap({
   onViewportChange: (value: Viewport) => void;
   onSelectNotice: (id: string) => void;
 }) {
+  const { t, locale } = useLanguage();
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<LeafletMap | null>(null);
   const leaflet = useRef<Leaflet | null>(null);
@@ -193,13 +201,14 @@ export default function InteractiveMap({
       .then((L) => {
         if (disposed || !container.current) return;
         leaflet.current = L;
-        ownMap = L.map(container.current, { zoomControl: true, scrollWheelZoom: true }).setView(
+        ownMap = L.map(container.current, { zoomControl: false, scrollWheelZoom: true }).setView(
           [43.727, -79.39],
           10,
         );
+        L.control.zoom({ zoomInTitle: t('Zoom in'), zoomOutTitle: t('Zoom out') }).addTo(ownMap);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
+            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>',
           maxZoom: 19,
           minZoom: 9,
         }).addTo(ownMap);
@@ -212,7 +221,7 @@ export default function InteractiveMap({
             const number = group.getChildCount();
             return L.divIcon({
               className: 'civic-pin-wrapper',
-              html: `<div class="civic-dynamic-cluster" aria-label="${number} municipal notices"><span>${number}</span></div>`,
+              html: `<div class="civic-dynamic-cluster" aria-label="${html(t('{count} municipal notices', { count: number }))}"><span>${number}</span></div>`,
               iconSize: [49, 49],
               iconAnchor: [24, 24],
             });
@@ -261,7 +270,7 @@ export default function InteractiveMap({
       cluster.current = null;
       approxLayer.current = null;
     };
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     if (!ready || !map.current) return;
@@ -291,11 +300,11 @@ export default function InteractiveMap({
       const marker = L.marker([point.latitude, point.longitude], {
         icon: L.divIcon({
           className: 'civic-pin-wrapper',
-          html: `<div class="civic-pin ${style}" aria-label="Notice at ${html(point.location)}"><span class="civic-pin-dot"></span></div>`,
+          html: `<div class="civic-pin ${style}" aria-label="${html(t('Notice at {location}', { location: point.location }))}"><span class="civic-pin-dot"></span></div>`,
           iconSize: [39, 39],
           iconAnchor: [19, 19],
         }),
-      }).bindPopup(popupContent([point], false), { maxWidth: 320 });
+      }).bindPopup(popupContent([point], false, locale), { maxWidth: 320 });
       marker.on('click', () => selectedHandler.current(point.id));
       cluster.current.addLayer(marker);
       if (!markers.current.has(point.id)) markers.current.set(point.id, marker);
@@ -310,16 +319,16 @@ export default function InteractiveMap({
       const marker = L.marker([point.latitude, point.longitude], {
         icon: L.divIcon({
           className: 'civic-pin-wrapper',
-          html: `<div class="civic-pin civic-pin-approx" aria-label="Approximate region for ${uniqueCount} notices">${inner}</div>`,
+          html: `<div class="civic-pin civic-pin-approx" aria-label="${html(t('Approximate region for {count} notices', { count: uniqueCount }))}">${inner}</div>`,
           iconSize: [39, 39],
           iconAnchor: [19, 19],
         }),
-      }).bindPopup(popupContent(group, true), { maxWidth: 330 });
+      }).bindPopup(popupContent(group, true, locale), { maxWidth: 330 });
       if (uniqueCount === 1) marker.on('click', () => selectedHandler.current(point.id));
       approxLayer.current.addLayer(marker);
       for (const p of group) if (!markers.current.has(p.id)) markers.current.set(p.id, marker);
     }
-  }, [ready, entries]);
+  }, [ready, entries, locale, t]);
 
   useEffect(() => {
     if (!ready || !focusSelection || !selectedId || !map.current) return;
@@ -345,28 +354,31 @@ export default function InteractiveMap({
         ref={container}
         className="civic-map-canvas"
         role="application"
-        aria-label="Interactive Toronto municipal notice map; zoom to separate nearby pins"
+        aria-label={t('Interactive Toronto municipal notice map; zoom to separate nearby pins')}
       />
       {!ready && !error && (
         <div className="civic-map-loading" role="status">
-          Loading Toronto map and clustering…
+          {t('Loading Toronto map and clustering…')}
         </div>
       )}
       {error && (
         <div className="civic-map-loading civic-map-error" role="alert">
-          {error}
-          <p>The notice list remains available.</p>
+          {t(error)}
+          <p>{t('The notice list remains available.')}</p>
         </div>
       )}
       <div className="civic-map-legend">
         <span>
-          <i className="civic-legend-exact" /> Source coordinate
+          <i className="civic-legend-exact" />
+          {t(' Source coordinate')}
         </span>
         <span>
-          <i className="civic-legend-geocoded" /> Matched street
+          <i className="civic-legend-geocoded" />
+          {t(' Matched street')}
         </span>
         <span>
-          <i className="civic-legend-approx" /> Approximate area
+          <i className="civic-legend-approx" />
+          {t(' Approximate area')}
         </span>
       </div>
     </div>

@@ -1,3 +1,5 @@
+'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 const topics = [
   'All topics',
   'Transportation',
@@ -13,17 +15,24 @@ export default function SecondaryTopics({
   topic: string;
   setTopic: (value: string) => void;
 }) {
+  const { t } = useLanguage();
   return (
     <section className="secondary-nav">
-      <div className="secondary-label">TOPICS</div>
+      <div className="secondary-label">{t('TOPICS')}</div>
       <div className="filters">
-        {topics.map((t) => (
+        {topics.map((topicName) => (
           <button
-            key={t}
-            className={`pill ${topic === t ? 'selected' : 'g'}`}
-            onClick={() => setTopic(t)}
+            key={topicName}
+            className={`pill ${topic === topicName ? 'selected' : 'g'}`}
+            onClick={() => setTopic(topicName)}
           >
-            {t === 'Housing' ? 'Housing & real estate' : t === 'Budget' ? 'Taxes & budget' : t}
+            {t(
+              topicName === 'Housing'
+                ? 'Housing & real estate'
+                : topicName === 'Budget'
+                  ? 'Taxes & budget'
+                  : topicName,
+            )}
           </button>
         ))}
       </div>

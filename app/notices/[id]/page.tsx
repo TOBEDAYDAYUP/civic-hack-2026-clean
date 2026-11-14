@@ -1,3 +1,4 @@
+import { getTranslator } from '@/features/language/server';
 import { noticePresentation } from '@/features/records/notice-presentation';
 import { introduction } from '@/features/records/introduction.mjs';
 import NoticeRefresh from '@/features/notices/NoticeRefresh';
@@ -12,6 +13,7 @@ export const dynamic = 'force-dynamic';
 type PageProps = { params: Promise<{ id: string }> };
 
 export default async function NoticePage({ params }: PageProps) {
+  const { t } = await getTranslator();
   const { id } = await params;
   const notice = await getPublicNoticeById(id);
   if (!notice) notFound();
@@ -37,8 +39,8 @@ export default async function NoticePage({ params }: PageProps) {
       <LiveRecordDetails notice={displayed} />
       {notice.description && (
         <details className="record-source-excerpt">
-          <summary>Read the full original notice</summary>
-          <p>{notice.description}</p>
+          <summary>{t('Read the full original notice')}</summary>
+          <p lang="en">{notice.description}</p>
         </details>
       )}
     </RecordPageFrame>

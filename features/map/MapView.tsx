@@ -1,4 +1,5 @@
 'use client';
+import { useLanguage } from '@/features/language/LanguageProvider';
 
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -18,6 +19,7 @@ const cacheKey = 'yc-street-geocodes-v1';
 const cacheAge = 14 * 24 * 60 * 60 * 1000;
 
 export default function MapView() {
+  const { t } = useLanguage();
   const [notices, setNotices] = useState<PublicNotice[]>([]);
   const [region, setRegion] = useState('all');
   const [input, setInput] = useState('');
@@ -78,7 +80,7 @@ export default function MapView() {
     const load = async () => {
       setLoading(true);
       setError('');
-      setProgress('Reading shared Toronto notices…');
+      setProgress(t('Reading shared Toronto notices…'));
       const all: PublicNotice[] = [];
       const ids = new Set<string>();
       try {
@@ -99,7 +101,7 @@ export default function MapView() {
 
         if (!controller.signal.aborted) {
           setNotices(all);
-          setProgress(`${all.length} official notices loaded`);
+          setProgress(t('{count} official notices loaded', { count: all.length }));
         }
       } catch (cause) {
         if (!controller.signal.aborted)
@@ -250,19 +252,21 @@ export default function MapView() {
   return (
     <>
       <section className="page-heading map-heading civic-map-intro">
-        <div className="eyebrow">CITY EXPLORER · TORONTO</div>
+        <div className="eyebrow">{t('CITY EXPLORER · TORONTO')}</div>
         <h1>
-          What is happening <em>near you?</em>
+          {t('What is happening ')}
+          <em>{t('near you?')}</em>
         </h1>
         <p>
-          Zoom in to reveal individual street-level notices. Move the map to see the list update
-          automatically. Choose an area or search for an address to explore nearby notices.
+          {t(
+            'Zoom in to reveal individual street-level notices. Move the map to see the list update automatically. Choose an area or search for an address to explore nearby notices.',
+          )}
         </p>
       </section>
-      <section className="civic-area-controls" aria-label="Toronto area filters">
+      <section className="civic-area-controls" aria-label={t('Toronto area filters')}>
         <div className="civic-area-heading">
-          <strong>Explore by area</strong>
-          <span>Broad geographic groupings · approximate boundaries</span>
+          <strong>{t('Explore by area')}</strong>
+          <span>{t('Broad geographic groupings · approximate boundaries')}</span>
         </div>
         <div className="civic-area-buttons">
           <button
@@ -270,7 +274,8 @@ export default function MapView() {
             onClick={() => chooseArea('all')}
             aria-pressed={region === 'all'}
           >
-            All Toronto <span>{new Set(entries.map((e) => e.id)).size}</span>
+            {t('All Toronto ')}
+            <span>{new Set(entries.map((e) => e.id)).size}</span>
           </button>
           {MAP_REGIONS.map((area) => (
             <button
@@ -279,42 +284,48 @@ export default function MapView() {
               onClick={() => chooseArea(area.id)}
               aria-pressed={region === area.id}
             >
-              {area.name} <span>{countInRegion(area.id)}</span>
+              {t(area.name)} <span>{countInRegion(area.id)}</span>
             </button>
           ))}
         </div>
       </section>
-      <section className="civic-map-workspace" aria-label="Toronto municipal notice map">
+      <section className="civic-map-workspace" aria-label={t('Toronto municipal notice map')}>
         <aside className="civic-map-sidebar">
           <div className="civic-map-sidehead">
-            <div className="eyebrow">VISIBLE ON YOUR MAP</div>
-            <h2>{inView.length} notices in view</h2>
+            <div className="eyebrow">{t('VISIBLE ON YOUR MAP')}</div>
+            <h2>
+              {inView.length}
+              {t(' notices in view')}
+            </h2>
             <div className="civic-map-update-status" aria-live="polite">
               {loading
                 ? progress
-                : `${inView.length} in current view · ${new Set(eligibleEntries.map((e) => e.id)).size} in selected areas`}
+                : t('{visible} in current view · {total} in selected areas', {
+                    visible: inView.length,
+                    total: new Set(eligibleEntries.map((e) => e.id)).size,
+                  })}
             </div>
             <button
               className="civic-map-refresh"
               onClick={() => setRevision((v) => v + 1)}
               disabled={loading}
             >
-              {loading ? 'Loading…' : '↻ Refresh map data'}
+              {t(loading ? 'Loading…' : '↻ Refresh map data')}
             </button>
             {error && !notices.length && (
               <p className="civic-map-alert" role="alert">
-                {error}
+                {t(error)}
                 <br />
-                Previously loaded records are kept.
+                {t('Previously loaded records are kept.')}
               </p>
             )}
             <label className="civic-map-search-label" htmlFor="civic-map-search">
-              Filter visible notices
+              {t('Filter visible notices')}
             </label>
             <input
               id="civic-map-search"
               className="civic-map-search"
-              placeholder="Search title or address"
+              placeholder={t('Search title or address')}
               value={input}
               onChange={(e) => {
                 setInput(e.target.value);
@@ -323,10 +334,11 @@ export default function MapView() {
             />
             {geocodingEnabled && (
               <div className="civic-map-geocode-state">
-                {shownAddressCount} street addresses matched
+                {shownAddressCount}
+                {t(' street addresses matched')}
                 {outstanding.length > geocodingLimit && (
                   <button onClick={() => setGeocodingLimit((v) => v + 50)}>
-                    Locate more addresses +
+                    {t('Locate more addresses +')}
                   </button>
                 )}
               </div>
@@ -342,34 +354,38 @@ export default function MapView() {
               >
                 <span className="civic-map-row-tag">
                   {point.regionName} ·{' '}
-                  {point.precision === 'source'
-                    ? 'Source coordinates'
-                    : point.precision === 'geocoded'
-                      ? 'Matched street'
-                      : 'Approximate area'}
+                  {t(
+                    point.precision === 'source'
+                      ? 'Source coordinates'
+                      : point.precision === 'geocoded'
+                        ? 'Matched street'
+                        : 'Approximate area',
+                  )}
                 </span>
-                <strong>
+                <strong lang="en">
                   {point.notice.displayTitle ||
                     point.notice.simple?.plainTitle ||
                     point.notice.title}
                 </strong>
                 <small>
-                  {point.notice.noticeDate?.slice(0, 10) || 'No date'} ·{' '}
-                  {point.notice.topics?.[0] || 'Notice'}
+                  {point.notice.noticeDate?.slice(0, 10) || t('No date')} ·{' '}
+                  {t(point.notice.topics?.[0] || 'Notice')}
                 </small>
-                <span className="civic-map-row-link">Show on map →</span>
+                <span className="civic-map-row-link">{t('Show on map →')}</span>
               </button>
             ))}
             {!inView.length && (
               <div className="civic-map-empty">
-                {loading
-                  ? 'Loading notice locations…'
-                  : 'No notices in the visible map area. Pan or zoom out to see more.'}
+                {t(
+                  loading
+                    ? 'Loading notice locations…'
+                    : 'No notices in the visible map area. Pan or zoom out to see more.',
+                )}
               </div>
             )}
             {inView.length > listLimit && (
               <button className="civic-map-more" onClick={() => setListLimit((n) => n + 25)}>
-                Show more ({inView.length - listLimit} remaining)
+                {t('Show more ({count} remaining)', { count: inView.length - listLimit })}
               </button>
             )}
           </div>
@@ -380,15 +396,17 @@ export default function MapView() {
               onClick={() => setUnknownOpen((v) => !v)}
             >
               <span>
-                Location unknown <b>{unknownFiltered.length}</b>
+                {t('Location unknown ')}
+                <b>{unknownFiltered.length}</b>
               </span>
-              <span>{unknownOpen ? '−' : '+'}</span>
+              <span>{t(unknownOpen ? '−' : '+')}</span>
             </button>
             {unknownOpen && (
               <div className="civic-map-unknown-list">
                 <p>
-                  These notices lack a reliable map position, or their street address could not be
-                  verified. They are not placed at invented coordinates.
+                  {t(
+                    'These notices lack a reliable map position, or their street address could not be verified. They are not placed at invented coordinates.',
+                  )}
                 </p>
                 {unknownFiltered.slice(0, 30).map((n) => (
                   <Link key={n.id} href={`/notices/${encodeURIComponent(n.id)}`}>
@@ -396,7 +414,11 @@ export default function MapView() {
                   </Link>
                 ))}
                 {unknownFiltered.length > 30 && (
-                  <p>Showing the first 30 of {unknownFiltered.length} unmapped notices.</p>
+                  <p>
+                    {t('Showing the first 30 of {count} unmapped notices.', {
+                      count: unknownFiltered.length,
+                    })}
+                  </p>
                 )}
               </div>
             )}
@@ -412,24 +434,29 @@ export default function MapView() {
             onSelectNotice={onSelectNotice}
           />
           <div className="civic-map-disclosure">
-            <strong>How to read this map</strong>
+            <strong>{t('How to read this map')}</strong>
             <p>
-              Numbered circles automatically split into street pins as you zoom; click a tightly
-              overlapping cluster to fan out individual notices. The list contains only notices
-              within the visible map rectangle. <b>Blue</b> uses source coordinates; <b>teal</b> is
-              a high-confidence street-address match from Geoapify; <b>amber dashed</b> is a
-              broad-area representative point, not the actual address. Toronto area filters are
-              approximate, not official boundaries. Missing markers do not establish that nothing is
-              happening.
+              {t(
+                'Numbered circles automatically split into street pins as you zoom; click a tightly overlapping cluster to fan out individual notices. The list contains only notices within the visible map rectangle. ',
+              )}
+              <b>{t('Blue')}</b>
+              {t(' uses source coordinates; ')}
+              <b>{t('teal')}</b>
+              {t(' is a high-confidence street-address match from Geoapify; ')}
+              <b>{t('amber dashed')}</b>
+              {t(
+                ' is a broad-area representative point, not the actual address. Toronto area filters are approximate, not official boundaries. Missing markers do not establish that nothing is happening.',
+              )}
             </p>
             {geocodingEnabled && (
               <p>
-                Geocoding:{' '}
+                {t('Geocoding:')}{' '}
                 <a href="https://www.geoapify.com/" target="_blank" rel="noopener noreferrer">
-                  Powered by Geoapify
+                  {t('Powered by Geoapify')}
                 </a>
-                ; basemap &copy; OpenStreetMap contributors. For matches, verify the source record
-                before treating the street location as definitive.
+                {t(
+                  '; basemap © OpenStreetMap contributors. For matches, verify the source record before treating the street location as definitive.',
+                )}
               </p>
             )}
           </div>
