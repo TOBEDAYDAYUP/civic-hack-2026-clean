@@ -12,3 +12,6 @@ supabase/.temp/
 supabase/.branches/
 
 .next-dev/
+
+# Local validated street-coordinate cache; never contains API keys.
+data/.street-geocodes.json*
