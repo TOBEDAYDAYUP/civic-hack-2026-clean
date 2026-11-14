@@ -1,9 +1,9 @@
 import { collectAgendas } from '../lib/civic-agent/agendas.mjs';
 import { writeFile } from 'node:fs/promises';
-import { buildPreview, digest, normalizeNotice, normalizeVote } from '../lib/civic-agent/model.mjs';
+import { collectVotes } from '../lib/civic-agent/votes.mjs';
+import { buildPreview, digest, normalizeNotice } from '../lib/civic-agent/model.mjs';
 
 const ckanOrigin = 'https://ckan0.cf.opendata.inter.prod-toronto.ca/api/3/action/';
-const voteDataset = 'members-of-toronto-city-council-voting-record';
 
 function parseArguments(args) {
   const options = { source: 'all', write: false };
@@ -82,24 +82,6 @@ async function getNotices(database) {
   throw new Error('Notice page limit reached');
 }
 
-async function getVotes() {
-  const dataset = await ckan('package_show', { id: voteDataset });
-  const resources = (dataset.resources || []).filter(
-    (resource) =>
-      resource.datastore_active && /^member-voting-record-\d{4}-\d{4}$/.test(resource.name),
-  );
-  resources.sort((a, b) => b.name.localeCompare(a.name));
-  const resource = resources[0];
-  if (!resource?.id) throw new Error('No active voting resource');
-  const data = await ckan('datastore_search', {
-    resource_id: resource.id,
-    limit: '100',
-    sort: '_id desc',
-  });
-  if (!Array.isArray(data.records)) throw new Error('Invalid voting records');
-  return data.records.map((row) => normalizeVote(row, resource.id));
-}
-
 async function saveRecords(database, records) {
   const url = new URL('/rest/v1/rpc/agent_ingest_source_batch', database.url);
   for (let start = 0; start < records.length; start += 500) {
@@ -146,7 +128,7 @@ async function main() {
   }
   const collectors = {
     notices: () => getNotices(databaseConfig(false)),
-    votes: getVotes,
+    votes: () => collectVotes(ckan),
   };
   const sources = [];
   for (const [name, collect] of Object.entries(collectors)) {

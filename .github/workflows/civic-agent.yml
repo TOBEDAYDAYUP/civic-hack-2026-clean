@@ -45,7 +45,7 @@ jobs:
         run: node scripts/setup-env.mjs
       - name: Collect and validate public records
         if: github.event_name == 'pull_request'
-        run: node --env-file=.env.local scripts/civic-agent.mjs
+        run: node --env-file=.env.local scripts/civic-agent.mjs --source=notices
       - name: Write to Supabase
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         env:
@@ -56,4 +56,4 @@ jobs:
             echo "::error::Configure CIVIC_AGENT_SUPABASE_SECRET_KEY in GitHub Actions secrets."
             exit 1
           fi
-          node --env-file=.env.local scripts/civic-agent.mjs --write
+          node --env-file=.env.local scripts/civic-agent.mjs --source=notices --write

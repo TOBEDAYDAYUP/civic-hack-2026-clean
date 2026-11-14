@@ -121,3 +121,32 @@ test('agenda collector fails if official meeting details fail', async () => {
     /HTTP 503/,
   );
 });
+
+test('official vote tables keep each motion separate and omit voter names', async () => {
+  const { parseOfficialMotions } = await import('../lib/civic-agent/official-motions.mjs');
+  const vote = (number, body) => `
+    <div class="italics">${number} - Motion to Amend Item moved by Councillor Example</div>
+    <div class="wep"><p>${body}</p></div>
+    <h4 class="vote-table-header">Vote <span>(Amend Item)</span><small>Jul-29-2026</small></h4>
+    <table><thead><tr><th>Result: Carried</th></tr></thead><tbody>
+    <tr><td><span>Count</span>Yes: 4</td><td>Example Voter</td></tr>
+    <tr><td><span>Count</span>No: 2</td></tr>
+    <tr><td><span>Count</span>Absent: 1</td></tr></tbody></table>
+  `;
+  const header = '<title>Agenda Item History - 2026.PH31.2</title><h4>Motions</h4>';
+  const records = parseOfficialMotions(
+    header + vote(1, 'First') + vote(2, 'Second'),
+    '2026.PH31.2',
+    'Title',
+  );
+  assert.equal(records.length, 2);
+  assert.notEqual(records[0].external_id, records[1].external_id);
+  assert.deepEqual(
+    records.map(({ payload: { yes, no, absent, motion_text } }) => [yes, no, absent, motion_text]),
+    [
+      [4, 2, 1, 'First'],
+      [4, 2, 1, 'Second'],
+    ],
+  );
+  assert.doesNotMatch(JSON.stringify(records), /Example/);
+});

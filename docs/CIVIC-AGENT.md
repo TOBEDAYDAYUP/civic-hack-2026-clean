@@ -15,12 +15,12 @@ To run the public voting source independently, use `node scripts/civic-agent.mjs
 
 ## Run on GitHub Actions
 
-When the migration and GitHub Actions repository secret CIVIC_AGENT_SUPABASE_SECRET_KEY are in place, the Civic Source Agent workflow on main imports records after each successful **Hourly Toronto notice sync** run. The upstream workflow is scheduled at minute 17 each hour; the agent starts only after notices have been synchronized. Both workflows share a production concurrency group to prevent overlapping runs. A failed upstream sync does not start the agent. Select main in Actions → Civic Source Agent → Run workflow to run the same import manually. Pull requests run the tests and a read-only collection using the public notice configuration.
+When the migration and GitHub Actions repository secret CIVIC_AGENT_SUPABASE_SECRET_KEY are in place, the Civic Source Agent workflow on main imports records after each successful **Hourly Toronto notice sync** run. The upstream workflow is scheduled at minute 17 each hour; the agent starts only after notices have been synchronized. Both workflows share a production concurrency group to prevent overlapping runs. A failed upstream sync does not start the agent. Select main in Actions → Civic Source Agent → Run workflow to run the same import manually. GitHub runs the notice collector. Run the vote collector from a machine that can access the official item pages using `node --env-file=.env.local scripts/civic-agent.mjs --source=votes --write`.
 
 ## Source coverage and review
 
 - Public notices come from the existing Supabase `civic_source_notices` archive. The existing administrator sync refreshes that archive from Toronto.
-- [Toronto Open Data](https://open.toronto.ca/dataset/members-of-toronto-city-council-voting-record/) provides recorded member votes. The collector selects the latest active council-term resource and reads up to 100 rows in descending source row ID order. Each row represents a member's vote on a motion.
+- [Toronto Open Data](https://open.toronto.ca/dataset/members-of-toronto-city-council-voting-record/) supplies 2026 agenda references and vote options. The collector requests a fixed set of fields that excludes member names. It stores vote totals and any available motion text from each official item page. When a page has no vote table, the collector uses the aggregate counts from the Open Data rows and leaves the motion text empty.
 - The preview preserves the source URL, resource and row identity, source date text, payload, and content hash. Exact official agenda identifiers group vote rows into agenda items pending human review. Records without an unambiguous identifier remain in the source records.
 
 ## Write to Supabase
