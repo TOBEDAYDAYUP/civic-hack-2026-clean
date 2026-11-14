@@ -329,4 +329,23 @@
   .notice-filter-options {
     grid-template-columns: 1fr;
   }
+
+  .notice-search-box input,
+  .notice-filter-options select,
+  .notice-page-jump input {
+    font-size: 16px;
+  }
+
+  .notice-search-submit,
+  .notice-filter-toggle,
+  .notice-card-actions button,
+  .notice-pagination button,
+  .notice-card-actions .notice-read-link {
+    min-height: 44px;
+  }
+
+  .notice-card-actions .notice-read-link {
+    display: inline-flex;
+    align-items: center;
+  }
 }

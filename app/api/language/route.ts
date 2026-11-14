@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { LOCALE_COOKIE, safeReturnPath } from '@/features/language/messages.mjs';
 export async function POST(request: NextRequest) {
-  const origin = request.nextUrl.origin;
+  // Next's standalone server can canonicalize nextUrl to localhost. Use the
+  // actual request Host for same-origin checks and redirects on custom domains.
+  const requestUrl = new URL(request.url);
+  const host = request.headers.get('host');
+  if (host) requestUrl.host = host;
+  const origin = requestUrl.origin;
   if (request.headers.get('origin') && request.headers.get('origin') !== origin)
     return new NextResponse('Invalid origin', { status: 403 });
   let data: FormData;

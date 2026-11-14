@@ -23,7 +23,7 @@ export default function ResidentImpactSection({
             {impacts.map((impact) => (
               <li className="resident-impact-card" key={impact.category}>
                 <div className="resident-impact-label">
-                  <strong>{impact.category}</strong>
+                  <strong>{t(impact.category)}</strong>
                   <span>
                     {t(impact.certainty === 'confirmed' ? 'Stated in notice' : 'Possible effect')}
                   </span>

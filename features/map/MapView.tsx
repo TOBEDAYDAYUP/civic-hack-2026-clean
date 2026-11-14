@@ -1,4 +1,5 @@
 'use client';
+import { SourceLanguageNote } from '@/features/language/LanguageProvider';
 import { useLanguage } from '@/features/language/LanguageProvider';
 
 import Link from 'next/link';
@@ -263,6 +264,7 @@ export default function MapView() {
           )}
         </p>
       </section>
+      <SourceLanguageNote />
       <section className="civic-area-controls" aria-label={t('Toronto area filters')}>
         <div className="civic-area-heading">
           <strong>{t('Explore by area')}</strong>

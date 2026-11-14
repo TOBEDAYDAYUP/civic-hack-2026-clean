@@ -127,13 +127,13 @@ export default function HousingPipelineDetail({
           {area && (
             <div>
               <strong>{t('Area in record')}</strong>
-              <span>{area}</span>
+              <span lang="en">{area}</span>
             </div>
           )}
           {noticeStage && (
             <div>
               <strong>{t('Status')}</strong>
-              <span>{noticeStage}</span>
+              <span lang="en">{noticeStage}</span>
             </div>
           )}
           {listedAddresses.length > 0 && (

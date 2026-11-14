@@ -658,7 +658,7 @@ a.map-record:focus-visible,
     margin-bottom: 24px;
   }
   .record-page-heading h1 {
-    font-size: 39px;
+    font-size: clamp(30px, 8vw, 39px);
     letter-spacing: -1px;
   }
   .record-page-body.modal {

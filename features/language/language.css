@@ -61,3 +61,21 @@ a:focus-visible {
     white-space: normal;
   }
 }
+
+@media (max-width: 730px) {
+  .app-shell .mobile-topbar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .app-shell .mobile-brand {
+    flex: 1 1 150px;
+    min-width: 0;
+  }
+  .app-shell .mobile-topbar .language-switcher {
+    margin-left: 0;
+    flex-shrink: 0;
+  }
+  .app-shell .mobile-menu {
+    margin-left: auto;
+  }
+}

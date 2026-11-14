@@ -1,4 +1,5 @@
 export const french = Object.freeze({
+  Menu: 'Menu',
   'Taxes & Budget': 'Impôts et budget',
   'Adoption notice': 'Avis d’adoption',
   'Application notice': 'Avis de demande',

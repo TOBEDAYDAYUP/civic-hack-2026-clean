@@ -35,7 +35,7 @@ const notSpecified = (s: string | undefined | null) =>
   !s || /^(not specified|not provided|unknown|n\/a)/i.test(s.trim());
 
 function Fact({ label, value }: { label: string; value: string }) {
-  const { t, intlLocale } = useLanguage();
+  const { t } = useLanguage();
   return (
     <div>
       <strong>{t(label)}</strong>
@@ -46,7 +46,7 @@ function Fact({ label, value }: { label: string; value: string }) {
 
 /** Presentation only: keep every AI sentence, but make lengthy explanations scan-friendly. */
 function ShortPoints({ text }: { text: string }) {
-  const { t, intlLocale } = useLanguage();
+  const { t } = useLanguage();
   if (notSpecified(text)) return <p>{t('Not specified in the available record.')}</p>;
   const points = text
     .trim()
@@ -77,7 +77,7 @@ function Questions({ items }: { items: readonly string[] }) {
 }
 
 export function CuratedRecordDetails({ decision }: { decision: Decision }) {
-  const { t, intlLocale } = useLanguage();
+  const { t } = useLanguage();
   const context = recordContext[decision.id];
   if (decision.topic === 'Housing') {
     return (
@@ -148,7 +148,7 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
 }
 
 export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
-  const { t, intlLocale } = useLanguage();
+  const { t } = useLanguage();
   const housing = notice.topics.some((t) => /housing|planning|development/i.test(t));
   const s = notice.simple;
   const residentImpactSection = <ResidentImpactSection {...notice.residentImpact} />;
