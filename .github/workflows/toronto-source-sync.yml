@@ -1,0 +1,46 @@
+name: Hourly Toronto notice sync
+
+on:
+  schedule:
+    # Run away from the busy start of the hour. GitHub may delay scheduled jobs.
+    - cron: '17 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: toronto-source-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'TOBEDAYDAYUP/civic-hack-2026-clean' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Check administrator settings
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: |
+          node --input-type=module <<'JS'
+          for (const name of ['SUPABASE_URL', 'SUPABASE_SECRET_KEY']) {
+            if (!process.env[name]?.trim()) throw new Error(`Missing GitHub Actions secret: ${name}`);
+          }
+          const url = new URL(process.env.SUPABASE_URL);
+          if (url.protocol !== 'https:') throw new Error('SUPABASE_URL must use HTTPS');
+          JS
+      - name: Test source synchronization
+        run: node --test tests/sync.test.mjs
+      - name: Fetch Toronto notices and synchronize shared database
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SECRET_KEY: ${{ secrets.SUPABASE_SECRET_KEY }}
+        run: node scripts/sync-notices.mjs

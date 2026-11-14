@@ -30,7 +30,7 @@ Open http://localhost:3000.
 
 The notice feed reads the shared Supabase database. Everyone sees the same stored notices; database changes trigger realtime refresh, with a 30-second fallback. No secret key or Ollama is required to browse.
 
-Source ingestion is **administrator-triggered**, as requested. Run `npm run data:sync` with private local administrator settings. No unattended schedule is enabled. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
+Source ingestion is scheduled hourly by `.github/workflows/toronto-source-sync.yml` (minute 17 of each hour, UTC), once merged into `main` and configured with the repository Actions secrets `SUPABASE_URL` and `SUPABASE_SECRET_KEY`. GitHub schedules may be delayed. Administrators can also run `npm run data:sync` manually. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
 
 AI explanations remain optional and are displayed only when their source hash is current. Raw official notices remain readable without them.
 
