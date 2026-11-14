@@ -1,12 +1,51 @@
-/* Floating navigation and a quiet blue rule above the content. */
-.app-shell .topbar {
-  background: #fff;
-  color: #185784;
-  border-bottom: 2px solid #185784;
+.app-shell {
+  --civic-navy: #10283d;
+  --civic-blue: #1b4764;
+  --civic-gold: #f4ca83;
+  --civic-paper: #f4f4ef;
+  --civic-surface: #fffefa;
+  --civic-line: #d9dfe1;
+  background: var(--civic-paper);
 }
+.app-shell .topbar,
+.app-shell .mobile-topbar {
+  background: var(--civic-surface);
+  color: var(--civic-navy);
+  border-bottom: 1px solid var(--civic-line);
+}
+
 .app-shell .topbar .top-right,
-.app-shell .topbar i {
-  color: #185784;
+.app-shell .topbar i,
+.app-shell .mobile-brand {
+  color: var(--civic-blue);
+}
+
+.app-shell .sidebar,
+.app-shell .mobile-menu nav {
+  background: var(--civic-navy);
+}
+
+.app-shell .mark span {
+  color: var(--civic-gold);
+}
+
+.app-shell .nav:hover {
+  background: #ffffff16;
+}
+
+.app-shell .nav.active {
+  background: #f4ca8324;
+  color: #ffe1a9;
+}
+
+.app-shell .nav.active .saved-number,
+.app-shell .saved-number {
+  background: var(--civic-gold);
+  color: var(--civic-navy);
+}
+
+.app-shell .sidebar-foot {
+  border-color: #ffffff26;
 }
 @media (min-width: 731px) {
   .app-shell {
@@ -17,7 +56,6 @@
     top: 18px;
     height: calc(100vh - 36px);
     border-radius: 22px;
-    background: #185784;
     box-shadow: 0 12px 30px #123c6024;
     border: 0;
     overflow-y: auto;
@@ -80,8 +118,6 @@
     gap: 12px;
     padding: calc(8px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 8px
       max(16px, env(safe-area-inset-left));
-    background: #fff;
-    border-bottom: 2px solid #185784;
   }
 
   .mobile-brand {
@@ -120,7 +156,6 @@
     max-height: 70dvh;
     overflow-y: auto;
     padding: 8px;
-    background: #185784;
     border-radius: 12px;
     box-shadow: 0 12px 30px #123c6040;
   }
@@ -129,10 +164,6 @@
     min-height: 44px;
     font-size: 15px;
     text-decoration: none;
-  }
-
-  .mobile-menu .saved-number {
-    color: #185784;
   }
 
   .app-shell .main-wrap > main {

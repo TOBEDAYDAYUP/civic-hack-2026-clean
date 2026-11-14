@@ -102,7 +102,7 @@ export default function CityCouncilApp() {
         <ParticipationView />
       ) : (
         <>
-          <section className="hero">
+          <section className={view === 'Home' ? 'hero toronto-hero' : 'hero'}>
             <div className="eyebrow">
               {t(view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION')}
             </div>
@@ -123,6 +123,17 @@ export default function CityCouncilApp() {
                   : 'Find Toronto public notices, understand what is happening, and check the official source.',
               )}
             </p>
+            {view === 'Home' && (
+              <div className="toronto-hero-credit">
+                <a href="https://commons.wikimedia.org/wiki/File:Skyline_Sunset_Toronto_2010.jpg">
+                  Andrew Rivett
+                </a>
+                {' · '}
+                <a href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>
+                {' · '}
+                <a href="/images/toronto-skyline-credit.txt">{t('Image details')}</a>
+              </div>
+            )}
           </section>
           <NoticeFeed savedOnly={view === 'Saved'} savedIds={saved} onToggleSaved={toggleSaved} />
           {view === 'Saved' && (

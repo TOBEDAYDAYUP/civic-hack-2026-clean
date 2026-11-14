@@ -1,0 +1,7 @@
+Toronto Skyline Sunset by Andrew Rivett.
+Source: https://commons.wikimedia.org/wiki/File:Skyline_Sunset_Toronto_2010.jpg
+License: Creative Commons Attribution 2.0 Generic
+https://creativecommons.org/licenses/by/2.0/
+
+Resized to 1800 pixels wide and converted to WebP.
+The website crops the image and places a gradient over it.
