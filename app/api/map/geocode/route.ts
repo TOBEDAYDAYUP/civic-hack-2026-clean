@@ -2,6 +2,7 @@ import {NextRequest, NextResponse} from 'next/server';
 import {getPublicNoticeById} from '@/lib/public-notices';
 import {streetAddressCandidates,validateGeocodeResult, type StreetGeocode} from '@/lib/map-geocode.mjs';
 
+import {readStreetCache,cachedStreetPoints,saveStreetPoints} from '@/lib/map-geocode-cache.mjs';
 export const runtime='nodejs';
 export const dynamic='force-dynamic';
 
@@ -35,6 +36,8 @@ export async function GET(request:NextRequest){
    // street addresses belonging to a real notice from the official archive.
    const notice=await getPublicNoticeById(id);
    if(!notice)return NextResponse.json({ok:false,error:'Notice not found'},{status:404});
+   const saved=cachedStreetPoints(notice,await readStreetCache());
+   if(saved.length)return NextResponse.json({ok:true,points:saved});
    const addresses=streetAddressCandidates(notice);
    if(!addresses.length)return NextResponse.json({ok:true,points:[],reason:'No eligible source street address'});
    const results:StreetGeocode[]=[];
@@ -64,6 +67,7 @@ export async function GET(request:NextRequest){
      if(cache.size>MAX_CACHE_ENTRIES)cache.delete(cache.keys().next().value!);
      results.push(...found);
    }
+   if(results.length)await saveStreetPoints(notice,results).catch(()=>{});
    return NextResponse.json({ok:true,points:results},{headers:{'Cache-Control':'private, max-age=3600'}});
  }catch(e){
    return NextResponse.json({ok:false,error:e instanceof Error?e.message:'Geocoding unavailable'},{status:502});

@@ -6,6 +6,7 @@ export type PublicNotice = {
   id: string;
   title: string;
   displayTitle?: string;
+  streetMatches?: import('./map-geocode.mjs').StreetGeocode[];
   description?: string;
   noticeDate?: string | null;
   topics?: string[];
