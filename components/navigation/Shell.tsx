@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { View } from './types';
 export default function Shell({
   view,
@@ -38,6 +39,9 @@ export default function Shell({
               {k === 'Saved' && <b className="saved-number">{saved}</b>}
             </button>
           ))}
+          <Link href="/agendas" className="nav">
+            <span aria-hidden="true">▦</span>Upcoming agendas
+          </Link>
         </nav>
         <div className="sidebar-foot">
           INDEPENDENT CIVIC PROTOTYPE

@@ -1,3 +1,4 @@
+import { collectAgendas } from '../lib/civic-agent/agendas.mjs';
 import { writeFile } from 'node:fs/promises';
 import { buildPreview, digest, normalizeNotice, normalizeVote } from '../lib/civic-agent/model.mjs';
 
@@ -13,8 +14,8 @@ function parseArguments(args) {
     else if (arg.startsWith('--report=')) options.report = arg.slice('--report='.length);
     else throw new Error('Unknown argument: ' + arg);
   }
-  if (!['all', 'notices', 'votes'].includes(options.source)) {
-    throw new Error('--source must be all, notices, or votes');
+  if (!['all', 'notices', 'votes', 'agendas'].includes(options.source)) {
+    throw new Error('--source must be all, notices, votes, or agendas');
   }
   if (options.report === '' || (options.write && options.report)) {
     throw new Error('--report requires a path and can only be used for a dry run');
@@ -118,12 +119,31 @@ async function main() {
   const options = parseArguments(process.argv.slice(2));
   if (options.help) {
     console.log(
-      'Usage: node scripts/civic-agent.mjs [--source=all|notices|votes] [--report=PATH | --write]',
+      'Usage: node scripts/civic-agent.mjs [--source=all|notices|votes|agendas] [--report=PATH | --write]',
     );
     return;
   }
 
   const writeDatabase = options.write ? databaseConfig(true) : null;
+  if (options.source === 'agendas') {
+    const collectedAt = new Date();
+    const items = await collectAgendas(fetch, collectedAt);
+    if (writeDatabase) {
+      await getJson(new URL('/rest/v1/civic_agenda_snapshot', writeDatabase.url), {
+        method: 'POST',
+        headers: {
+          ...writeDatabase.headers,
+          Prefer: 'resolution=merge-duplicates,return=representation',
+        },
+        body: JSON.stringify({ id: 1, collected_at: collectedAt.toISOString(), items }),
+      });
+    }
+    if (options.report) {
+      await writeFile(options.report, JSON.stringify(items, null, 2) + '\n', { flag: 'wx' });
+    }
+    console.log('agendas: ' + items.length + (writeDatabase ? ' items saved' : ' items validated'));
+    return;
+  }
   const collectors = {
     notices: () => getNotices(databaseConfig(false)),
     votes: getVotes,

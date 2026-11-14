@@ -16,6 +16,7 @@ on:
       - 'lib/civic-agent/**'
       - 'tests/civic-agent.test.mjs'
       - 'supabase/migrations/*_civic_agent_ingestion.sql'
+      - 'supabase/migrations/*_civic_agenda_snapshot.sql'
 
 permissions:
   contents: read
@@ -57,3 +58,12 @@ jobs:
             exit 1
           fi
           node --env-file=.env.local scripts/civic-agent.mjs --write
+      - name: Validate upcoming Toronto agendas
+        if: github.event_name == 'pull_request'
+        run: node scripts/civic-agent.mjs --source=agendas
+      - name: Refresh the public agenda snapshot
+        if: ${{ !cancelled() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        env:
+          SUPABASE_URL: https://johoelklvlszzjgrkudw.supabase.co
+          SUPABASE_SECRET_KEY: ${{ secrets.CIVIC_AGENT_SUPABASE_SECRET_KEY }}
+        run: node scripts/civic-agent.mjs --source=agendas --write
