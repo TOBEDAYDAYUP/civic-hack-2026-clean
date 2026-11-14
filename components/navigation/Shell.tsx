@@ -42,6 +42,9 @@ export default function Shell({
           <Link href="/agendas" className="nav">
             <span aria-hidden="true">▦</span>Upcoming agendas
           </Link>
+          <Link href="/voting" className="nav">
+            <span aria-hidden="true">✓</span>Voting
+          </Link>
         </nav>
         <div className="sidebar-foot">
           INDEPENDENT CIVIC PROTOTYPE
