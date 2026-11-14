@@ -23,17 +23,27 @@ The Civic Source Agent workflow runs a read-only collection at minute 17 of ever
 - [Toronto Open Data](https://open.toronto.ca/dataset/members-of-toronto-city-council-voting-record/) provides recorded member votes. The collector selects the latest active council-term resource and reads up to 100 rows in descending source row ID order. Each row represents a member's vote on a motion.
 - The preview preserves the source URL, resource and row identity, source date text, payload, and content hash. Exact official agenda identifiers group vote rows into agenda items pending human review. Records without an unambiguous identifier remain in the source records.
 
-## Test database write mode
+## Write to Supabase
 
-`docs/drafts/civic-agent-schema.sql` is a schema draft. The write command requires a separate test Supabase target with a reviewed schema and private `SUPABASE_URL` and `SUPABASE_SECRET_KEY` environment variables.
+Apply [the Agent ingestion migration](../supabase/migrations/20261114003000_civic_agent_ingestion.sql) to a test Supabase project first. The migration adds private staging tables and the service-role ingestion function. It can also be run in the test project's SQL Editor.
+
+Keep the public notice settings in `.env.local`. Set `SUPABASE_URL` and `SUPABASE_SECRET_KEY` in a private local environment file for the Supabase write target. The agent reads notices using the public settings, so the test destination can be separate from the source archive.
 
 ```sh
-node scripts/civic-agent.mjs --write
+node scripts/setup-env.mjs
+node --env-file=.env.local scripts/civic-agent.mjs --write
 ```
 
-Write mode sends records to the administrator-only ingestion function in batches of 500. Each batch commits independently. Re-running upserts by source identity. The draft records first and last seen times and returns confirmed links and timeline entries to pending review when source content changes.
+The command submits up to 500 records per transaction. Repeat it to verify that rows are updated by source identity without duplicates. Check the resulting counts in the target project's SQL Editor.
 
-The draft still needs a database integration test. Per-run history, historical source versions, stale link resolution after an identifier change, a review interface, and publishing remain future work.
+```sql
+select source, count(*)
+from public.agent_sources
+group by source
+order by source;
+```
+
+A changed source sends confirmed links back for review. An agenda identifier correction removes the previous automatic link and timeline entry. The GitHub Actions schedule continues to run in read-only mode. Historical backfill, run history, and a review interface remain future work.
 
 ## Agent tests
 

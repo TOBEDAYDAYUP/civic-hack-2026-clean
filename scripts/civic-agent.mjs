@@ -125,7 +125,7 @@ async function main() {
 
   const writeDatabase = options.write ? databaseConfig(true) : null;
   const collectors = {
-    notices: () => getNotices(writeDatabase ?? databaseConfig(false)),
+    notices: () => getNotices(databaseConfig(false)),
     votes: getVotes,
   };
   const sources = [];
