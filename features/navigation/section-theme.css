@@ -1,0 +1,95 @@
+:root {
+  --civic-panel-radius: 20px;
+  --civic-panel-shadow: 0 12px 28px color-mix(in srgb, var(--civic-navy) 9%, transparent);
+  --civic-banner-gradient: linear-gradient(115deg, var(--civic-navy) 28%, var(--civic-blue));
+}
+
+.app-shell main .civic-banner,
+.record-page .civic-banner {
+  min-width: 0;
+  max-width: none;
+  padding: clamp(24px, 5vw, 56px);
+  border: 1px solid var(--civic-navy);
+  border-radius: var(--civic-panel-radius);
+  background: var(--civic-banner-gradient);
+  color: var(--civic-surface);
+  box-shadow: var(--civic-panel-shadow);
+}
+
+.app-shell .main-wrap > main {
+  padding-block-start: 28px;
+}
+
+.app-shell .route-page {
+  padding-top: 0;
+}
+
+/* Keep text legible where a feature stylesheet supplies its own colours. */
+:is(.app-shell, .record-page) .civic-banner h1 {
+  color: var(--civic-surface);
+  overflow-wrap: anywhere;
+}
+
+:is(.app-shell, .record-page) .civic-banner :is(p, .status, .agenda-overview span) {
+  color: var(--civic-on-navy-muted);
+}
+
+:is(.app-shell, .record-page)
+  .civic-banner
+  :is(.eyebrow, .agenda-eyebrow, h1 em, .agenda-overview strong),
+.record-page .civic-banner .status::before {
+  color: var(--civic-gold);
+}
+
+.civic-banner h1 {
+  margin-top: 0;
+}
+
+.civic-banner :is(.eyebrow, .record-page-tags) {
+  margin-bottom: 16px;
+}
+
+.civic-banner .topic {
+  color: var(--civic-gold);
+  background: color-mix(in srgb, var(--civic-gold) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--civic-gold) 40%, transparent);
+  border-radius: 5px;
+}
+
+.app-shell main .hero:not(.toronto-hero) {
+  margin-bottom: 24px;
+}
+
+:is(
+  .notice-feed,
+  .notice-feed .notice-feed-card,
+  .info-card,
+  .story,
+  .civic-map-sidebar,
+  .civic-map-frame,
+  .agenda-card,
+  .vote-card
+) {
+  border-radius: var(--civic-panel-radius);
+}
+
+:is(.notice-feed .notice-feed-card, .info-card, .story, .agenda-card, .vote-card) {
+  box-shadow: var(--civic-panel-shadow);
+}
+
+@media (max-width: 730px) {
+  .app-shell .main-wrap > main {
+    padding-block-start: 16px;
+  }
+
+  .app-shell main .civic-banner,
+  .record-page .civic-banner {
+    padding: 24px;
+  }
+
+  .app-shell .civic-banner h1,
+  .record-page .civic-banner h1 {
+    font-size: clamp(28px, 8vw, 38px);
+    letter-spacing: -0.035em;
+  }
+}

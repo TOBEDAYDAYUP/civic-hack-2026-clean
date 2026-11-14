@@ -4,7 +4,7 @@ export default function ParticipationView() {
   const { t } = useLanguage();
   return (
     <>
-      <section className="page-heading">
+      <section className="page-heading civic-banner">
         <div className="eyebrow">{t('YOUR VOICE MATTERS')}</div>
         <h1>
           {t('Have a say in')}
@@ -28,12 +28,8 @@ export default function ParticipationView() {
             'Explore public consultations',
             'https://www.toronto.ca/community-people/get-involved/public-consultations/',
           ],
-        ].map((x, i) => (
+        ].map((x) => (
           <div className="info-card" key={x[0]}>
-            <span className="number">
-              0{i + 1}
-              {t(' / GET INVOLVED')}
-            </span>
             <h3>{t(x[0])}</h3>
             <p>{t('Check the official City source for current dates, rules and deadlines.')}</p>
             <a href={x[1]} target="_blank" rel="noreferrer">

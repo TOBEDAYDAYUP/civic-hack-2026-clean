@@ -252,7 +252,7 @@ export default function MapView() {
   ).size;
   return (
     <>
-      <section className="page-heading map-heading civic-map-intro">
+      <section className="page-heading map-heading civic-map-intro civic-banner">
         <div className="eyebrow">{t('CITY EXPLORER · TORONTO')}</div>
         <h1>
           {t('What is happening ')}

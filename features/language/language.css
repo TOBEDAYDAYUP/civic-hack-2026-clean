@@ -25,18 +25,9 @@ a:focus-visible {
   outline: 3px solid var(--civic-focus);
   outline-offset: 3px;
 }
-.record-page-navbar .language-switcher button {
-  background: var(--civic-navy);
-  border-color: var(--civic-on-navy-muted);
-  color: var(--civic-surface);
-}
 .record-page-navbar .language-switcher button[aria-pressed='true'] {
-  background: var(--civic-gold);
-  border-color: var(--civic-gold);
-  color: var(--civic-navy);
-}
-.record-page-navbar :is(a, button):focus-visible {
-  outline-color: var(--civic-gold);
+  background: var(--civic-navy);
+  border-color: var(--civic-navy);
 }
 .source-language-note {
   padding: 12px 16px;

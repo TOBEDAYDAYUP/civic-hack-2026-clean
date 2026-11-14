@@ -41,7 +41,7 @@ export default function DecisionArchive({
 
   return (
     <section aria-label={t('Static decision archive')}>
-      <section className="hero">
+      <section className="hero civic-banner">
         <div className="eyebrow">{t('STATIC CURATED ARCHIVE')}</div>
         <h1>{t(savedOnly ? 'Your saved decisions.' : 'Explore municipal decisions.')}</h1>
         <p className="lead">

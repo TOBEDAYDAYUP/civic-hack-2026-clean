@@ -51,7 +51,7 @@ export default function RecordPageFrame({
           <span aria-hidden="true">/</span>
           <span>{t(category)}</span>
         </div>
-        <div className="record-page-heading">
+        <div className="record-page-heading civic-banner">
           <div className="record-page-tags">
             <span className="topic">{t(category)}</span>
             <span className="status">{t(status)}</span>
