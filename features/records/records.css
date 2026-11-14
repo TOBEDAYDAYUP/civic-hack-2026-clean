@@ -1,4 +1,4 @@
-/* Challenge 5: evidence-first housing pipeline detail, without altering site-wide colors. */
+/* Evidence-first housing pipeline details. */
 .housing-detail {
   margin-top: 24px;
 }
@@ -14,7 +14,7 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.14em;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .modal .housing-panel h3 {
   font:
@@ -33,8 +33,8 @@
   margin: 18px 0;
 }
 .housing-facts > div {
-  background: #f5f6f7;
-  border: 1px solid #d9e4ee;
+  background: var(--civic-paper);
+  border: 1px solid var(--civic-line);
   border-radius: 5px;
   padding: 12px;
   min-width: 0;
@@ -43,21 +43,21 @@
   display: block;
   font-size: 10px;
   letter-spacing: 0.03em;
-  color: #63717c;
+  color: var(--civic-muted);
   margin-bottom: 5px;
 }
 .housing-facts span {
   font-size: 12px;
   line-height: 1.5;
-  color: #253c50;
+  color: var(--civic-navy);
   overflow-wrap: anywhere;
 }
 .modal .housing-caution {
   font-size: 12px;
-  color: #725b27;
+  color: var(--civic-gold-ink);
   line-height: 1.65;
-  background: #fff8ea;
-  border-left: 3px solid #eca000;
+  background: var(--civic-warm);
+  border-left: 3px solid var(--civic-gold-line);
   padding: 11px 13px;
   margin: 16px 0;
 }
@@ -78,7 +78,7 @@
   left: 15px;
   top: 33px;
   bottom: 0;
-  border-left: 2px solid #d9e4ee;
+  border-left: 2px solid var(--civic-line);
 }
 .housing-step-number {
   flex-shrink: 0;
@@ -87,12 +87,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #b8cada;
+  border: 1px solid var(--civic-line-strong);
   border-radius: 50%;
   font-size: 12px;
   font-weight: 800;
-  color: #185784;
-  background: #eaf1f7;
+  color: var(--civic-blue);
+  background: var(--civic-tint);
 }
 .housing-step-content {
   min-width: 0;
@@ -108,12 +108,12 @@
 }
 .housing-step-head strong {
   font-size: 14px;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .housing-unverified {
   font-size: 10px;
-  color: #80601f;
-  background: #fff4d9;
+  color: var(--civic-gold-ink);
+  background: var(--civic-warm-strong);
   padding: 4px 8px;
   border-radius: 50px;
   font-weight: 700;
@@ -127,7 +127,7 @@
   display: block;
   font-size: 11px;
   line-height: 1.5;
-  color: #63717c;
+  color: var(--civic-muted);
 }
 .housing-two-columns {
   display: grid;
@@ -136,14 +136,14 @@
   margin: 16px 0;
 }
 .housing-two-columns > div {
-  background: #f5f6f7;
-  border: 1px solid #d9e4ee;
+  background: var(--civic-paper);
+  border: 1px solid var(--civic-line);
   padding: 15px;
   border-radius: 5px;
 }
 .housing-two-columns strong {
   font-size: 12px;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .modal .housing-two-columns p {
   font-size: 12px;
@@ -168,19 +168,19 @@
   flex-direction: column;
   gap: 5px;
   text-decoration: none;
-  background: #eaf1f7;
-  border: 1px solid #d9e4ee;
+  background: var(--civic-tint);
+  border: 1px solid var(--civic-line);
   border-radius: 5px;
   padding: 13px 15px;
 }
 .housing-resources a:hover {
-  background: #dce9f3;
+  background: var(--civic-tint-hover);
 }
 .housing-resources strong {
   font-size: 13px;
 }
 .housing-resources span {
-  color: #63717c;
+  color: var(--civic-muted);
   font-size: 11px;
   line-height: 1.5;
 }
@@ -189,7 +189,7 @@
 }
 .modal .housing-disclaimer {
   font-size: 11px;
-  color: #63717c;
+  color: var(--civic-muted);
 }
 @media (max-width: 730px) {
   .housing-facts,
@@ -216,7 +216,7 @@
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.14em;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .modal .record-section h3 {
   font:
@@ -236,8 +236,8 @@
   margin: 14px 0;
 }
 .record-facts > div {
-  background: #f5f6f7;
-  border: 1px solid #d9e4ee;
+  background: var(--civic-paper);
+  border: 1px solid var(--civic-line);
   border-radius: 5px;
   padding: 12px;
   min-width: 0;
@@ -245,26 +245,26 @@
 .record-facts strong {
   display: block;
   font-size: 10px;
-  color: #63717c;
+  color: var(--civic-muted);
   margin-bottom: 5px;
 }
 .record-facts span {
   display: block;
   font-size: 12px;
   line-height: 1.55;
-  color: #253c50;
+  color: var(--civic-navy);
   overflow-wrap: anywhere;
 }
 .modal .record-note {
   padding: 11px 14px;
-  background: #fff8ea;
-  border-left: 3px solid #eca000;
-  color: #80601f;
+  background: var(--civic-warm);
+  border-left: 3px solid var(--civic-gold-line);
+  color: var(--civic-gold-ink);
   font-size: 12px;
 }
 .modal .record-footnote {
   font-size: 11px;
-  color: #63717c;
+  color: var(--civic-muted);
   line-height: 1.6;
   margin-top: 12px;
 }
@@ -284,12 +284,12 @@
   margin: 4px 0 8px;
 }
 .record-source-excerpt {
-  border: 1px solid #d9e4ee;
+  border: 1px solid var(--civic-line);
   border-radius: 5px;
   margin-top: 14px;
   padding: 12px;
   font-size: 12px;
-  color: #536575;
+  color: var(--civic-muted);
 }
 .record-source-excerpt summary {
   cursor: pointer;
@@ -339,8 +339,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #eaf1f7;
-  border-bottom: 1px solid var(--line);
+  background: var(--civic-navy);
+  border-bottom: 1px solid var(--civic-navy);
   gap: 20px;
 }
 .record-page-brand {
@@ -348,7 +348,7 @@
   align-items: center;
   gap: 15px;
   text-decoration: none;
-  color: #185784;
+  color: var(--civic-surface);
   font-size: 13px;
   font-weight: 800;
 }
@@ -359,7 +359,7 @@
   line-height: 1;
 }
 .record-page-logo span {
-  color: #e1c06b;
+  color: var(--civic-gold);
 }
 .record-page-navbar nav {
   display: flex;
@@ -367,14 +367,17 @@
   gap: 24px;
 }
 .record-page-navbar nav a {
-  color: #536575;
+  color: var(--civic-surface);
   text-decoration: none;
   font-weight: 700;
   font-size: 12px;
 }
-.record-page-navbar nav a:hover,
+.record-page-navbar nav a:hover {
+  color: var(--civic-gold);
+  text-decoration: underline;
+}
 .record-page-breadcrumb a:hover {
-  color: #185784;
+  color: var(--civic-blue);
   text-decoration: underline;
 }
 .record-page-main {
@@ -389,14 +392,14 @@
   align-items: center;
   gap: 13px;
   flex-wrap: wrap;
-  color: #63717c;
+  color: var(--civic-muted);
   font-size: 12px;
   margin-bottom: 30px;
 }
 .record-page-breadcrumb a {
   text-decoration: none;
   font-weight: 800;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .record-page-heading {
   max-width: 970px;
@@ -420,7 +423,7 @@
 }
 .record-page-heading p {
   font-size: 13px;
-  color: #63717c;
+  color: var(--civic-muted);
   line-height: 1.6;
   margin: 0;
 }
@@ -436,8 +439,8 @@
   overflow: visible;
   width: 100%;
   padding: 38px 44px;
-  background: #fff;
-  border: 1px solid #d9e4ee;
+  background: var(--civic-surface);
+  border: 1px solid var(--civic-line);
   border-radius: 9px;
   box-shadow: none;
   min-width: 0;
@@ -464,9 +467,9 @@
 }
 .resident-impact-card {
   padding: clamp(12px, 3vw, 21px);
-  border: 1px solid #d4e2ee;
+  border: 1px solid var(--civic-line);
   border-radius: 7px;
-  background: #f5f8fa;
+  background: var(--civic-paper);
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -476,12 +479,12 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 6px 12px;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .resident-impact-label span,
 .resident-impact-source,
 .modal .resident-impact-note {
-  color: #526575;
+  color: var(--civic-muted);
   font-size: 12px;
 }
 .resident-impact-label span,
@@ -490,7 +493,7 @@
 }
 .modal .resident-impact-card p {
   margin: 9px 0 12px;
-  color: #334b5d;
+  color: var(--civic-muted);
   font-size: 14px;
   line-height: 1.7;
 }
@@ -499,12 +502,12 @@
 }
 .resident-impact-source blockquote {
   margin: 8px 0 0;
-  border-left: 2px solid #b8cada;
+  border-left: 2px solid var(--civic-line-strong);
   padding-left: 10px;
   line-height: 1.65;
 }
 .modal .resident-impact-intro {
-  color: #526575;
+  color: var(--civic-muted);
 }
 .record-page-aside {
   position: sticky;
@@ -512,13 +515,13 @@
 }
 .record-page-guide {
   padding: 25px 24px;
-  background: #eaf1f7;
+  background: var(--civic-warm);
   border-radius: 8px;
-  border: 1px solid #d9e4ee;
+  border: 1px solid var(--civic-line);
 }
 .record-page-guide-label {
   font-size: 10px;
-  color: #39749f;
+  color: var(--civic-blue);
   letter-spacing: 0.14em;
   font-weight: 800;
 }
@@ -532,12 +535,12 @@
 .record-page-guide p {
   font-size: 12px;
   line-height: 1.8;
-  color: #536575;
+  color: var(--civic-muted);
   margin: 0 0 15px;
 }
 .record-page-guide-divider {
   height: 1px;
-  background: #d9e4ee;
+  background: var(--civic-line);
   margin: 17px 0;
 }
 .record-page-back {
@@ -546,7 +549,7 @@
   font-size: 12px;
   text-decoration: none;
   font-weight: 800;
-  color: #185784;
+  color: var(--civic-blue);
 }
 .record-page-footer {
   border-top: 1px solid var(--line);
@@ -555,7 +558,7 @@
   justify-content: space-between;
   gap: 10px;
   padding: 23px 5%;
-  color: #63717c;
+  color: var(--civic-muted);
   font-size: 11px;
 }
 /* Links now open detail routes, not modal windows. */
@@ -569,7 +572,7 @@
   text-decoration: none;
 }
 .story h3 a:hover {
-  color: #185784;
+  color: var(--civic-blue);
 }
 .story-actions {
   display: flex;
@@ -585,7 +588,7 @@
 .story-open-link {
   font-size: 12px;
   font-weight: 800;
-  color: #185784;
+  color: var(--civic-blue);
   text-decoration: none;
 }
 .story-open-link:hover {
@@ -596,13 +599,13 @@
   text-decoration: none;
 }
 .live-card h3 a:hover {
-  color: #185784;
+  color: var(--civic-blue);
 }
 .live-open-link {
   display: inline-block;
   font-size: 10px;
   font-weight: 800;
-  color: #185784;
+  color: var(--civic-blue);
   text-decoration: none;
   margin-top: 13px;
 }
@@ -616,7 +619,7 @@ a.map-record {
 a.map-record:focus-visible,
 .story h3 a:focus-visible,
 .live-card h3 a:focus-visible {
-  outline: 2px solid #eca000;
+  outline: 2px solid var(--civic-focus);
   outline-offset: 3px;
 }
 @media (max-width: 960px) {
@@ -681,7 +684,7 @@ a.map-record:focus-visible,
 }
 .milestone-guide > summary {
   cursor: pointer;
-  color: #185784;
+  color: var(--civic-blue);
   font-weight: 700;
   font-size: 13px;
   padding: 14px 0;
@@ -702,7 +705,7 @@ a.map-record:focus-visible,
 .record-introduction p {
   font-size: 18px;
   line-height: 1.8;
-  color: #536575;
+  color: var(--civic-muted);
   margin: 0;
 }
 @media (max-width: 730px) {
@@ -753,27 +756,27 @@ a.map-record:focus-visible,
   font-weight: 700;
   border-radius: 20px;
   padding: 4px 9px;
-  color: #53616b;
-  background: #edf0f2;
+  color: var(--civic-muted);
+  background: var(--civic-line);
 }
 .housing-stage-recorded .housing-step-number {
   background: #18704e;
   border-color: #18704e;
-  color: white;
+  color: var(--civic-surface);
 }
 .housing-stage-latest .housing-step-number {
-  background: #185784;
-  color: white;
-  border-color: #185784;
-  box-shadow: 0 0 0 4px #eaf1f7;
+  background: var(--civic-blue);
+  color: var(--civic-surface);
+  border-color: var(--civic-blue);
+  box-shadow: 0 0 0 4px var(--civic-tint);
 }
 .housing-stage-latest .housing-stage-badge {
-  background: #185784;
-  color: white;
+  background: var(--civic-blue);
+  color: var(--civic-surface);
 }
 .housing-stage-date {
   font-size: 12px;
-  color: #53616b;
+  color: var(--civic-muted);
   margin: 8px 0;
 }
 .housing-stage-source {
@@ -782,13 +785,13 @@ a.map-record:focus-visible,
 }
 .housing-stage-source summary {
   cursor: pointer;
-  color: #185784;
+  color: var(--civic-blue);
   font-weight: 700;
 }
 .housing-stage-source blockquote {
   margin: 12px 0;
   padding: 10px 14px;
-  border-left: 3px solid #b8cada;
-  color: #53616b;
+  border-left: 3px solid var(--civic-line-strong);
+  color: var(--civic-muted);
   line-height: 1.7;
 }
