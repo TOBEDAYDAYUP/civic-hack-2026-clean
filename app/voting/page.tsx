@@ -1,3 +1,4 @@
+import RouteShell from '@/components/navigation/RouteShell';
 import VotingPage from '@/features/voting/VotingPage';
 
 export const dynamic = 'force-dynamic';
@@ -8,5 +9,9 @@ export default async function Page({
 }: {
   searchParams: Promise<{ q?: string | string[]; page?: string | string[] }>;
 }) {
-  return <VotingPage params={await searchParams} />;
+  return (
+    <RouteShell view="Voting">
+      <VotingPage params={await searchParams} />
+    </RouteShell>
+  );
 }

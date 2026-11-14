@@ -50,3 +50,8 @@
     font-size: 20px;
   }
 }
+
+.app-shell .route-page {
+  min-width: 0;
+  padding: 38px 0 60px;
+}

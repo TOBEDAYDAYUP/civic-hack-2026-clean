@@ -6,7 +6,7 @@ export default function Shell({
   go,
   children,
 }: {
-  view: View;
+  view: View | 'Agendas' | 'Voting';
   saved: number;
   go: (v: View) => void;
   children: React.ReactNode;
@@ -39,10 +39,18 @@ export default function Shell({
               {k === 'Saved' && <b className="saved-number">{saved}</b>}
             </button>
           ))}
-          <Link href="/agendas" className="nav">
+          <Link
+            href="/agendas"
+            className={`nav ${view === 'Agendas' ? 'active' : ''}`}
+            aria-current={view === 'Agendas' ? 'page' : undefined}
+          >
             <span aria-hidden="true">▦</span>Upcoming agendas
           </Link>
-          <Link href="/voting" className="nav">
+          <Link
+            href="/voting"
+            className={`nav ${view === 'Voting' ? 'active' : ''}`}
+            aria-current={view === 'Voting' ? 'page' : undefined}
+          >
             <span aria-hidden="true">✓</span>Voting
           </Link>
         </nav>

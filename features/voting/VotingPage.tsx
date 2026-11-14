@@ -86,79 +86,65 @@ export default async function VotingPage({
   if (currentPage > 1 && results && currentPage > lastPage) redirect(pageLink(query, 1));
 
   return (
-    <div className="record-page civic-voting">
-      <header className="record-page-navbar">
-        <Link href="/" className="record-page-brand">
-          <span className="record-page-logo" aria-hidden="true">
-            yc<span>.</span>
-          </span>
-          <span>Your City Council</span>
-        </Link>
-        <nav aria-label="Main navigation">
-          <Link href="/">Home</Link>
-          <Link href="/agendas">Upcoming agendas</Link>
-        </nav>
-      </header>
-      <main className="record-page-main">
-        <div className="voting-hero">
-          <h1>2026 voting records</h1>
-          <p>Explore recorded votes from Toronto City Council and its committees.</p>
-        </div>
+    <section className="route-page civic-voting">
+      <div className="voting-hero">
+        <h1>2026 voting records</h1>
+        <p>Explore recorded votes from Toronto City Council and its committees.</p>
+      </div>
 
-        <form className="vote-search" action="/voting" role="search">
-          <label htmlFor="vote-query">Find a vote</label>
-          <div>
-            <input
-              type="search"
-              id="vote-query"
-              name="q"
-              placeholder="Search by agenda item or title"
-              maxLength={100}
-              defaultValue={query}
-            />
-            <button type="submit">Search</button>
-          </div>
-        </form>
-        {!results && (
-          <p className="vote-message" role="status">
-            Voting records are temporarily unavailable.{' '}
-            <a href={pageLink(query, currentPage)}>Try again</a>
-          </p>
-        )}
-        {results?.total === 0 && (
-          <p className="vote-message">
-            {query ? 'No voting records match your search. ' : 'No 2026 votes are available yet.'}
+      <form className="vote-search" action="/voting" role="search">
+        <label htmlFor="vote-query">Find a vote</label>
+        <div>
+          <input
+            type="search"
+            id="vote-query"
+            name="q"
+            placeholder="Search by agenda item or title"
+            maxLength={100}
+            defaultValue={query}
+          />
+          <button type="submit">Search</button>
+        </div>
+      </form>
+      {!results && (
+        <p className="vote-message" role="status">
+          Voting records are temporarily unavailable.{' '}
+          <a href={pageLink(query, currentPage)}>Try again</a>
+        </p>
+      )}
+      {results?.total === 0 && (
+        <p className="vote-message">
+          {query ? 'No voting records match your search. ' : 'No 2026 votes are available yet.'}
+          {query && <Link href="/voting">Clear search</Link>}
+        </p>
+      )}
+      {results && results.total > 0 && (
+        <>
+          <div className="vote-list-heading">
+            <p>
+              {results.total.toLocaleString('en-CA')} {results.total === 1 ? 'vote' : 'votes'} ·
+              Newest first
+            </p>
             {query && <Link href="/voting">Clear search</Link>}
-          </p>
-        )}
-        {results && results.total > 0 && (
-          <>
-            <div className="vote-list-heading">
-              <p>
-                {results.total.toLocaleString('en-CA')} {results.total === 1 ? 'vote' : 'votes'} ·
-                Newest first
-              </p>
-              {query && <Link href="/voting">Clear search</Link>}
-            </div>
-            <div className="vote-grid">
-              {results.rows.map((vote) => (
-                <VoteCard key={vote.id} vote={vote} />
-              ))}
-            </div>
-            {lastPage > 1 && (
-              <nav className="vote-pagination" aria-label="Voting results pages">
-                {currentPage > 1 && <Link href={pageLink(query, currentPage - 1)}>← Previous</Link>}
-                <span>
-                  Page {currentPage} of {lastPage}
-                </span>
-                {currentPage < lastPage && (
-                  <Link href={pageLink(query, currentPage + 1)}>Next →</Link>
-                )}
-              </nav>
-            )}
-          </>
-        )}
-      </main>
-    </div>
+          </div>
+          <div className="vote-grid">
+            {results.rows.map((vote) => (
+              <VoteCard key={vote.id} vote={vote} />
+            ))}
+          </div>
+          {lastPage > 1 && (
+            <nav className="vote-pagination" aria-label="Voting results pages">
+              {currentPage > 1 && <Link href={pageLink(query, currentPage - 1)}>← Previous</Link>}
+              <span>
+                Page {currentPage} of {lastPage}
+              </span>
+              {currentPage < lastPage && (
+                <Link href={pageLink(query, currentPage + 1)}>Next →</Link>
+              )}
+            </nav>
+          )}
+        </>
+      )}
+    </section>
   );
 }
