@@ -227,10 +227,15 @@
   .vote-grid {
     grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 480px) {
-  .civic-voting .record-page-navbar nav {
-    gap: 12px;
+  .vote-search input {
+    font-size: 16px;
+  }
+  .vote-search button,
+  .vote-pagination a {
+    min-height: 44px;
+  }
+  .vote-pagination a {
+    display: inline-flex;
+    align-items: center;
   }
 }
