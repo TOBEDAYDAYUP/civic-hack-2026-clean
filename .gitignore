@@ -15,3 +15,5 @@ supabase/.branches/
 
 # Local validated street-coordinate cache; never contains API keys.
 data/.street-geocodes.json*
+
+/civic-agent-preview*.json
