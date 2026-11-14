@@ -1,13 +1,11 @@
 import { collectAgendas, torontoDate, type AgendaItem } from '@/lib/civic-agent/agendas.mjs';
 import { publicDataConfig } from '@/lib/supabase/config';
-import '@/features/records/records.css';
+import { agendaKey, currentAgendaAnalysis } from '@/lib/civic-agent/agenda-analysis.mjs';
+import AgendaExplorer from './AgendaExplorer';
+import { agendaTopic, fallbackAgendaTitle, type AgendaDisplayItem } from './agenda-view.mjs';
 import './agendas.css';
 
 const official = 'https://www.toronto.ca/city-government/council/council-committee-meetings/';
-const meetingDate = new Intl.DateTimeFormat('en-CA', {
-  dateStyle: 'long',
-  timeZone: 'UTC',
-});
 const updateTime = new Intl.DateTimeFormat('en-CA', {
   dateStyle: 'medium',
   timeStyle: 'short',
@@ -45,55 +43,86 @@ async function readAgendas(): Promise<AgendaSnapshot | null> {
   }
 }
 
+type SummaryRow = { item_key: string; source_hash: string; short_title: string; summary: string };
+async function displayItems(items: AgendaItem[]): Promise<AgendaDisplayItem[]> {
+  const summaries = new Map<string, SummaryRow>();
+  if (items.length) {
+    try {
+      const endpoint = new URL('/rest/v1/civic_agenda_summaries', publicDataConfig.url);
+      endpoint.search = new URLSearchParams({
+        select: 'item_key,source_hash,short_title,summary',
+        item_key: `in.(${items.map((item) => JSON.stringify(agendaKey(item))).join(',')})`,
+      }).toString();
+      const response = await fetch(endpoint, {
+        headers: { apikey: publicDataConfig.key },
+        cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
+      });
+      if (response.ok) {
+        for (const row of (await response.json()) as SummaryRow[]) summaries.set(row.item_key, row);
+      }
+    } catch {
+      /* Official agenda items remain available without local AI. */
+    }
+  }
+  return items.map((item) => {
+    const row = summaries.get(agendaKey(item));
+    const current = currentAgendaAnalysis(item, row);
+    return {
+      ...item,
+      displayTitle: current?.shortTitle || fallbackAgendaTitle(item.title),
+      summary: current?.summary || '',
+      aiReady: !!current,
+      topic: agendaTopic(item.title),
+    };
+  });
+}
+
 export default async function AgendasPage() {
   const snapshot = await readAgendas();
   const today = torontoDate();
-  const meetings = new Map<number, AgendaItem[]>();
-
-  for (const item of snapshot?.items ?? []) {
-    if (item.meetingDate < today) continue;
-    const meeting = meetings.get(item.meetingId);
-    if (meeting) meeting.push(item);
-    else meetings.set(item.meetingId, [item]);
-  }
-
+  const items = await displayItems(
+    (snapshot?.items || []).filter((item) => item.meetingDate >= today),
+  );
+  const meetingCount = new Set(items.map((item) => item.meetingId)).size;
+  const hasAnalysis = items.some((item) => item.aiReady);
   return (
     <section className="route-page agendas">
-      <div className="record-page-heading">
-        <h1>Upcoming agendas</h1>
-        <p>
-          See public items scheduled for action at upcoming Toronto meetings, where the city has
-          recorded no action for that meeting yet. This list uses the Toronto Meeting Monitor.
-        </p>
-        <p>
-          <a href={official}>See all meeting schedules on the City of Toronto website ↗</a>
-        </p>
-        {snapshot && (
-          <p>Last checked {updateTime.format(new Date(snapshot.collected_at))} Toronto time</p>
-        )}
+      <header className="agenda-hero">
+        <div>
+          <div className="agenda-eyebrow">COUNCIL &amp; COMMITTEES</div>
+          <h1>
+            Upcoming agendas<span>.</span>
+          </h1>
+          <p>A clearer look at what Toronto is considering next.</p>
+        </div>
+        <div className="agenda-overview">
+          <div>
+            <strong>{meetingCount}</strong>
+            <span>upcoming meetings</span>
+          </div>
+          <div>
+            <strong>{items.length}</strong>
+            <span>agenda items</span>
+          </div>
+        </div>
+      </header>
+      <div className="agenda-update">
+        <span>
+          {snapshot
+            ? `Updated ${updateTime.format(new Date(snapshot.collected_at))}`
+            : 'Meeting updates are temporarily unavailable'}
+        </span>
+        <a href={official} target="_blank" rel="noopener noreferrer">
+          Official meeting calendar <span aria-hidden="true">↗</span>
+        </a>
       </div>
-      {!snapshot && <p role="status">Agendas are temporarily unavailable.</p>}
-      {snapshot && meetings.size === 0 && (
-        <p>The Meeting Monitor lists no upcoming items scheduled for action.</p>
+      <AgendaExplorer items={items} />
+      {hasAnalysis && (
+        <p className="agenda-footnote">
+          Summaries are simplified with AI. Follow the official item for the full record.
+        </p>
       )}
-      {[...meetings].map(([id, items]) => (
-        <section className="agendas-meeting" key={id}>
-          <header>
-            <h2>{items[0].committee}</h2>
-            <time dateTime={items[0].meetingDate}>
-              {meetingDate.format(new Date(items[0].meetingDate + 'T00:00:00Z'))}
-            </time>
-          </header>
-          <ul>
-            {items.map((item) => (
-              <li key={item.reference}>
-                <span>{item.reference}</span>
-                <a href={item.sourceUrl}>{item.title} ↗</a>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ))}
     </section>
   );
 }
