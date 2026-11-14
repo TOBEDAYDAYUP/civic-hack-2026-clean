@@ -105,27 +105,23 @@ export default function HousingPipelineDetail({
         className="housing-panel housing-record-panel"
         aria-labelledby="housing-record-heading"
       >
-        <div className="housing-section-label">01 / WHAT THE RECORD SAYS</div>
+        {!isLive && <div className="housing-section-label">01 / WHAT THE RECORD SAYS</div>}
         <h3 id="housing-record-heading">What’s happening?</h3>
         <p>{summary || 'This record does not include a plain-language description.'}</p>
         <div className="housing-facts">
-          <div>
-            <strong>Record type</strong>
-            <span>{isLive ? 'City public notice' : 'Council decision'}</span>
-          </div>
-          {recordDate && (
+          {!isLive && recordDate && (
             <div>
               <strong>{isLive ? 'Notice published' : 'Council record date'}</strong>
               <span>{readableDate(recordDate)}</span>
             </div>
           )}
-          {area && (
+          {!isLive && area && (
             <div>
               <strong>Area in record</strong>
               <span>{area}</span>
             </div>
           )}
-          {noticeStage && (
+          {!isLive && noticeStage && (
             <div>
               <strong>Status</strong>
               <span>{noticeStage}</span>
@@ -133,7 +129,7 @@ export default function HousingPipelineDetail({
           )}
           {listedAddresses.length > 0 && (
             <div>
-              <strong>Addresses listed</strong>
+              <strong>Location</strong>
               <ul className="address-list">
                 {listedAddresses.map((a) => (
                   <li key={a}>{a}</li>
@@ -143,7 +139,7 @@ export default function HousingPipelineDetail({
           )}
           {listedReferences.length > 0 && (
             <div>
-              <strong>Planning application references listed</strong>
+              <strong>Application number</strong>
               <span>{listedReferences.join(' · ')}</span>
             </div>
           )}
@@ -159,102 +155,61 @@ export default function HousingPipelineDetail({
           </section>
         ))}
 
-      <section className="housing-panel" aria-label="Development stages">
-        <div className="housing-section-label">02 / FROM APPROVAL TO HOMES</div>
-        <p className="housing-current-stage">
-          <strong>
-            {progress.latest >= 0
-              ? `Latest recorded stage: ${stages[progress.latest].name}`
-              : progress.review
-                ? 'Planning application received · approval not recorded'
-                : 'Project stage not recorded'}
-          </strong>
-        </p>
-        <div className="housing-stage-legend">
-          <span>✓ Recorded</span>
-          <span>● Latest recorded stage</span>
-          <span>○ No record</span>
-        </div>
-        <ol className="housing-timeline">
-          {stages.map((stage, index) => {
-            const evidence = progress.milestones[index];
-            return (
-              <li
-                key={stage.name}
-                className={`housing-stage-${evidence.status}`}
-                aria-current={evidence.status === 'latest' ? 'step' : undefined}
-              >
-                <div className="housing-step-number">
-                  {evidence.status === 'recorded' ? '✓' : index + 1}
-                </div>
-                <div className="housing-step-content">
-                  <div className="housing-step-head">
-                    <strong>{stage.name}</strong>
-                    <span className="housing-stage-badge">
-                      {evidence.status === 'latest'
-                        ? 'Latest recorded'
-                        : evidence.status === 'recorded'
-                          ? 'Recorded'
-                          : 'No record'}
-                    </span>
-                  </div>
-                  <p>{stage.meaning}</p>
-                  <div className="housing-stage-date">
-                    {evidence.date ? (
-                      <time dateTime={evidence.date}>{readableDate(evidence.date)}</time>
-                    ) : (
-                      'Date not recorded'
-                    )}
-                  </div>
-                  {evidence.quote && (
-                    <details className="housing-stage-source">
-                      <summary>View source</summary>
-                      <blockquote>{evidence.quote}</blockquote>
-                      <a href={evidence.sourceUrl} target="_blank" rel="noopener noreferrer">
-                        Read original notice ↗
-                      </a>
-                    </details>
+      {progress.latest >= 0 && (
+        <section className="housing-panel" aria-label="Project status">
+          <h3>Project status</h3>
+          <ul className="record-status-list">
+            {stages.map((stage, index) => {
+              const evidence = progress.milestones[index];
+              if (evidence.status === 'unknown') return null;
+              return (
+                <li key={stage.name}>
+                  <strong>{stage.name}</strong>
+                  {evidence.date && (
+                    <time dateTime={evidence.date}>{readableDate(evidence.date)}</time>
                   )}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
-      </section>
-
-      <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
-        <div className="housing-section-label">03 / VERIFY THE NEXT STEP</div>
-        <h3 id="housing-next-heading">Check the project status</h3>
-        <p>
-          Search the official project and permit systems, then match records using the address,
-          application number and phase before drawing conclusions.
-        </p>
-        {followUpQuestions.length > 0 && (
-          <ul className="record-points">
-            {followUpQuestions.map((question) => (
-              <li key={question}>{question}</li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
-        )}
-        <div className="housing-resources">
-          {sources.map((s) => (
-            <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer">
-              <strong>{s.label} ↗</strong>
-              <span>{s.detail}</span>
-            </a>
-          ))}
-        </div>
-        {sourceUrl && (
-          <p className="housing-original">
-            <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
-              {isLive
-                ? 'Read the original Toronto public notice'
-                : 'Browse official City Council records'}{' '}
-              ↗
-            </a>
+        </section>
+      )}
+
+      {!isLive && (
+        <section className="housing-panel housing-next" aria-labelledby="housing-next-heading">
+          <div className="housing-section-label">03 / VERIFY THE NEXT STEP</div>
+          <h3 id="housing-next-heading">Check the project status</h3>
+          <p>
+            Search the official project and permit systems, then match records using the address,
+            application number and phase before drawing conclusions.
           </p>
-        )}
-      </section>
+          {followUpQuestions.length > 0 && (
+            <ul className="record-points">
+              {followUpQuestions.map((question) => (
+                <li key={question}>{question}</li>
+              ))}
+            </ul>
+          )}
+          <div className="housing-resources">
+            {sources.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer">
+                <strong>{s.label} ↗</strong>
+                <span>{s.detail}</span>
+              </a>
+            ))}
+          </div>
+          {sourceUrl && (
+            <p className="housing-original">
+              <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+                {isLive
+                  ? 'Read the original Toronto public notice'
+                  : 'Browse official City Council records'}{' '}
+                ↗
+              </a>
+            </p>
+          )}
+        </section>
+      )}
     </div>
   );
 }

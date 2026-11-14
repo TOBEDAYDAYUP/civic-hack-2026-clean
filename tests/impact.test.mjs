@@ -438,3 +438,134 @@ test('a merely proposed approval is not treated as an adoption', () => {
   assert.match(impacts[0].explanation, /if approved and built/i);
   assert.doesNotMatch(impacts[0].explanation, /adopted/i);
 });
+
+test('an application cannot be explained as already changing legal rights', () => {
+  const application = { ...source, title: 'Notice of Application for a new building' };
+  const impacts = filterSupportedImpacts(
+    [
+      {
+        ...grounded,
+        explanation:
+          'These legal changes fundamentally alter zoning rules and property rights for the designated area.',
+      },
+    ],
+    application,
+  );
+  assert.deepEqual(impacts, []);
+});
+
+import {
+  cleanResidentText,
+  impactCopy,
+  residentActions,
+} from '../features/records/resident-copy.mjs';
+
+test('resident copy removes coordinate metadata while keeping addresses, amounts and conditions', () => {
+  const text = cleanResidentText(
+    'If approved, 155 homes at 99 Example Street · 43.700474895 · -79.518505404. The fee is $12.50.',
+  );
+  assert.doesNotMatch(text, /43\.700|79\.518/);
+  assert.match(text, /If approved, 155 homes at 99 Example Street/);
+  assert.match(text, /\$12\.50/);
+  assert.equal(cleanResidentText('latitude: 43.700474895 longitude: -79.518505404'), '');
+});
+
+test('shorter impact copy retains conditional outcomes without repeated generic disclaimers', () => {
+  assert.equal(
+    impactCopy(
+      'If approved and built, this would add 155 homes. This notice does not confirm rents or a construction date.',
+    ),
+    'If approved and built, this would add 155 homes.',
+  );
+});
+
+test('vague affected-resident text and source-link instructions do not become resident actions', () => {
+  assert.deepEqual(residentActions('People living on Example Street may be affected.'), []);
+  assert.deepEqual(
+    residentActions('See the original notice for participation details and deadlines.'),
+    [],
+  );
+});
+
+test('specific participation method, contact and deadline remain intact', () => {
+  const action = 'Email comments to planner@toronto.ca before November 27, 2026.';
+  assert.deepEqual(residentActions(action), [action]);
+});
+
+test('missing AI participation instructions fall back only to explicit source instructions', () => {
+  const source =
+    'The City received an application. You may send written comments to planner@toronto.ca. Construction may affect the street.';
+  assert.deepEqual(residentActions('Not specified in the source', source), [
+    'You may send written comments to planner@toronto.ca.',
+  ]);
+  assert.deepEqual(residentActions('', 'The City received an application.'), []);
+});
+
+test('legacy geocoded address labels cannot leak coordinates into new fallback impact text', () => {
+  const impacts = sourceGroundedFallbackImpacts({
+    title: 'Notice of Application for 155 homes',
+    description: 'The application proposes 155 residential units.',
+    addresses: [
+      { label: 'Toronto · Ontario · 43.700474895 · -79.518505404 · Canada · 99 Example Street' },
+    ],
+  });
+  assert.ok(impacts.length);
+  assert.match(impacts[0].explanation, /99 Example Street/);
+  assert.doesNotMatch(impacts[0].explanation, /43\.700|79\.518|Ontario ·/);
+});
+
+test('old saved impact text replaces whole geocoder labels, not just their numeric coordinates', () => {
+  const label = 'Toronto · Ontario · 43.700474895 · -79.518505404 · Canada · 99 Example Street';
+  assert.equal(
+    impactCopy(`If approved, homes could be built at ${label}.`, [label]),
+    'If approved, homes could be built at 99 Example Street.',
+  );
+});
+
+test('source instructions to request future notices remain useful actions', () => {
+  const source =
+    'If you wish to receive notice of future decisions, make a request to the City Clerk.';
+  assert.deepEqual(residentActions('', source), [source]);
+});
+
+test('already-cleaned notice addresses still remove legacy metadata from saved explanations', () => {
+  const raw =
+    'Toronto · Ontario · 43.744498916 · -79.406014636 · M2P 2G4 · Canada · 10 York Mills Road · 10 York Mills Road Toronto Ontario';
+  assert.equal(
+    impactCopy(`Homes are proposed at ${raw}.`, ['10 York Mills Road']),
+    'Homes are proposed at 10 York Mills Road.',
+  );
+});
+
+test('an intention notice does not present a proposed legal change as already effective', () => {
+  const intention = { ...source, title: 'Notice of Intention to Remove a Holding Symbol' };
+  assert.deepEqual(
+    filterSupportedImpacts(
+      [
+        {
+          ...grounded,
+          category: 'Other Impacts',
+          explanation: 'The removal of a holding symbol alters allowable land use.',
+        },
+      ],
+      intention,
+    ),
+    [],
+  );
+});
+
+test('building height and an address alone cannot justify a traffic impact card', () => {
+  assert.deepEqual(
+    filterSupportedImpacts(
+      [
+        {
+          ...grounded,
+          category: 'Daily Life & Transportation',
+          explanation: 'A six-storey building could change traffic patterns for local residents.',
+        },
+      ],
+      source,
+    ),
+    [],
+  );
+});

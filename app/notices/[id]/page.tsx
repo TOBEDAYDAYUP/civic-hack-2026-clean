@@ -1,5 +1,4 @@
 import { noticePresentation } from '@/features/records/notice-presentation';
-import { introduction } from '@/features/records/introduction.mjs';
 import NoticeRefresh from '@/features/notices/NoticeRefresh';
 import { notFound } from 'next/navigation';
 import { getPublicNoticeById } from '@/lib/public-notices';
@@ -19,12 +18,6 @@ export default async function NoticePage({ params }: PageProps) {
   const summary = displayed.simple;
   return (
     <RecordPageFrame
-      introduction={introduction({
-        title: notice.title,
-        summary: [summary.whatIsHappening, summary.whyItMatters].filter(Boolean).join(' '),
-        location: summary.where,
-        status: summary.decisionStage,
-      })}
       category={notice.topics?.[0] || 'Public notice'}
       title={summary.plainTitle || notice.title}
       status={summary.decisionStage}
@@ -35,12 +28,6 @@ export default async function NoticePage({ params }: PageProps) {
     >
       <NoticeRefresh />
       <LiveRecordDetails notice={displayed} />
-      {notice.description && (
-        <details className="record-source-excerpt">
-          <summary>Read the full original notice</summary>
-          <p>{notice.description}</p>
-        </details>
-      )}
     </RecordPageFrame>
   );
 }

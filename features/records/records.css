@@ -378,7 +378,7 @@
   text-decoration: underline;
 }
 .record-page-main {
-  width: min(1180px, 90%);
+  width: min(980px, 90%);
   margin: 0 auto;
   padding: 37px 0 85px;
   flex: 1;
@@ -426,7 +426,7 @@
 }
 .record-page-columns {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 248px;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 24px;
 }
@@ -814,4 +814,23 @@ a.map-record:focus-visible,
   border-left: 3px solid #b8cada;
   color: #53616b;
   line-height: 1.7;
+}
+
+.record-status-list {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0 0;
+}
+.record-status-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5edf3;
+}
+.record-status-list time {
+  color: #536575;
+  font-size: 14px;
 }

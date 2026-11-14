@@ -2,6 +2,8 @@ import type { Decision } from '@/data/decisions';
 import { recordContext } from '@/features/records/recordContext';
 import HousingPipelineDetail from './HousingPipelineDetail';
 import ResidentImpactSection from './ResidentImpactSection';
+import { cleanResidentText, residentActions } from './resident-copy.mjs';
+import { addressLabel } from '@/lib/address-label.mjs';
 import type { NoticeImpactPresentation } from '@/lib/impact-analysis.mjs';
 
 export type DetailedNotice = {
@@ -30,7 +32,10 @@ export type DetailedNotice = {
 };
 
 const notSpecified = (s: string | undefined | null) =>
-  !s || /^(not specified|not provided|unknown|n\/a)/i.test(s.trim());
+  !s ||
+  /^(not specified|not provided|not applicable|unknown|n\/a|no (?:specific )?(?:deadline|date) (?:is )?(?:provided|specified|stated)|see (?:the )?(?:original|official) notice)/i.test(
+    s.trim(),
+  );
 
 function Fact({ label, value }: { label: string; value: string }) {
   return (
@@ -140,116 +145,65 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
 export function LiveRecordDetails({ notice }: { notice: DetailedNotice }) {
   const housing = notice.topics.some((t) => /housing|planning|development/i.test(t));
   const s = notice.simple;
-  const residentImpactSection = <ResidentImpactSection {...notice.residentImpact} />;
-  if (housing) {
-    return (
-      <div className="record-details">
+  const actions = residentActions(s.howToParticipate, notice.description);
+  const deadline = cleanResidentText(s.participationDeadline);
+  const addresses = notice.addresses.map((a) => addressLabel(a.label)).filter(Boolean);
+  return (
+    <div className="record-details">
+      {housing ? (
         <HousingPipelineDetail
           sourceType="public notice"
           sourceText={notice.description}
           sourceTitle={notice.title}
-          summary={s.whatIsHappening}
-          residentImpactSection={residentImpactSection}
+          summary={cleanResidentText(s.whatIsHappening)}
+          residentImpactSection={
+            <ResidentImpactSection
+              {...notice.residentImpact}
+              addressLabels={notice.addresses.map((a) => a.label)}
+            />
+          }
           recordDate={notice.noticeDate}
-          area={s.where}
+          area={addressLabel(s.where)}
           noticeStage={s.decisionStage}
-          addresses={notice.addresses.map((a) => a.label)}
+          addresses={addresses}
           references={notice.planningApplicationNumbers}
           sourceUrl={notice.sourceUrl}
         />
+      ) : (
+        <>
+          <section className="record-section">
+            <h3>What’s happening?</h3>
+            <ShortPoints text={cleanResidentText(s.whatIsHappening)} />
+            {addresses.length > 0 && <p>{addresses.join('; ')}</p>}
+          </section>
+          <ResidentImpactSection
+            {...notice.residentImpact}
+            addressLabels={notice.addresses.map((a) => a.label)}
+          />
+        </>
+      )}
+      {(actions.length > 0 || !notSpecified(deadline)) && (
         <section className="record-section">
-          <div className="record-eyebrow">PUBLIC PARTICIPATION / NOTICE DETAILS</div>
           <h3>What can residents do?</h3>
-          <p>
-            {notSpecified(s.howToParticipate)
-              ? 'The available notice does not specify a participation method.'
-              : s.howToParticipate}
-          </p>
-          <div className="record-facts">
-            <Fact
-              label="Deadline stated in notice"
-              value={
-                notSpecified(s.participationDeadline) ? 'Not specified' : s.participationDeadline
-              }
-            />
-            <Fact
-              label="Who may be affected"
-              value={notSpecified(s.whoMayBeAffected) ? 'Not specified' : s.whoMayBeAffected}
-            />
-          </div>
-          <h3>What remains uncertain?</h3>
-          <p>
-            {notSpecified(s.uncertainty)
-              ? 'Project-level milestones and outcomes are not established here.'
-              : s.uncertainty}
-          </p>
-        </section>
-      </div>
-    );
-  }
-
-  return (
-    <div className="record-details">
-      <section className="record-section">
-        <div className="record-eyebrow">01 / WHAT THE NOTICE SAYS</div>
-        <h3>What is happening?</h3>
-        <ShortPoints text={s.whatIsHappening} />
-        <div className="record-facts">
-          <Fact
-            label="Stage described"
-            value={notSpecified(s.decisionStage) ? 'Not specified' : s.decisionStage}
-          />
-          <Fact
-            label="Location described"
-            value={notSpecified(s.where) ? 'Not specified' : s.where}
-          />
-          <Fact
-            label="Who may be affected"
-            value={notSpecified(s.whoMayBeAffected) ? 'Not specified' : s.whoMayBeAffected}
-          />
-          {notice.noticeDate && (
-            <Fact label="Public notice date" value={notice.noticeDate.slice(0, 10)} />
+          {actions.map((action) => (
+            <p key={action}>{action}</p>
+          ))}
+          {!notSpecified(deadline) && (
+            <p>
+              <strong>Deadline:</strong> {deadline}
+            </p>
           )}
-        </div>
-      </section>
-      {residentImpactSection}
+        </section>
+      )}
       <section className="record-section">
-        <div className="record-eyebrow">03 / NEXT ACTION</div>
-        <h3>How can residents participate?</h3>
-        <ShortPoints text={s.howToParticipate} />
-        <div className="record-facts">
-          <Fact
-            label="Deadline"
-            value={
-              notSpecified(s.participationDeadline)
-                ? 'Not specified in source'
-                : s.participationDeadline
-            }
-          />
-        </div>
-      </section>
-      <section className="record-section">
-        <div className="record-eyebrow">04 / SOURCE & UNCERTAINTY</div>
-        <h3>What remains unclear?</h3>
-        <p>
-          {notSpecified(s.uncertainty)
-            ? 'The available notice may not establish implementation or outcomes.'
-            : s.uncertainty}
-        </p>
         <a
           className="record-source-link"
           href={notice.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Read the original Toronto notice ↗
+          Original source ↗
         </a>
-        {notice.description && (
-          <details className="record-source-excerpt">
-            <summary>Show notice description provided to the system</summary>
-            <p>{notice.description}</p>
-          </details>
-        )}
       </section>
     </div>
   );

@@ -61,17 +61,6 @@ export default function RecordPageFrame({
 
         <div className="record-page-columns">
           <article className="record-page-body modal">{children}</article>
-          <aside className="record-page-aside" aria-label="Explore more">
-            <nav className="record-page-guide" aria-label="Related pages">
-              <h2>Explore Toronto</h2>
-              <Link href={backHref} className="record-page-back">
-                ← {backLabel}
-              </Link>
-              <Link href="/?view=Participate" className="record-page-back">
-                Have your say →
-              </Link>
-            </nav>
-          </aside>
         </div>
       </main>
 

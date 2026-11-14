@@ -1,5 +1,7 @@
 import type { PublicNotice } from '@/lib/public-notices';
 import type { DetailedNotice } from './RecordDetails';
+import { addressLabel } from '@/lib/address-label.mjs';
+import { cleanResidentText } from './resident-copy.mjs';
 import { noticeImpactPresentation } from '@/lib/impact-analysis.mjs';
 
 export function noticePresentation(notice: PublicNotice & { aiReady?: boolean }): DetailedNotice {
@@ -33,16 +35,26 @@ export function noticePresentation(notice: PublicNotice & { aiReady?: boolean })
     generatedBy: notice.generatedBy || 'Official source',
     generatedAt: notice.generatedAt || '',
     residentImpact: noticeImpactPresentation(notice),
-    simple: current || {
-      plainTitle: title,
-      whatIsHappening: summary,
-      whyItMatters: '',
-      whoMayBeAffected: '',
-      where: notice.addresses?.map((a) => a.label).join('; ') || '',
-      decisionStage: status,
-      howToParticipate: 'See the original notice for participation details and any deadlines.',
-      participationDeadline: '',
-      uncertainty: '',
-    },
+    simple: current
+      ? {
+          ...current,
+          plainTitle: cleanResidentText(current.plainTitle),
+          where: addressLabel(current.where),
+        }
+      : {
+          plainTitle: title,
+          whatIsHappening: summary,
+          whyItMatters: '',
+          whoMayBeAffected: '',
+          where:
+            notice.addresses
+              ?.map((a) => addressLabel(a.label))
+              .filter(Boolean)
+              .join('; ') || '',
+          decisionStage: status,
+          howToParticipate: 'See the original notice for participation details and any deadlines.',
+          participationDeadline: '',
+          uncertainty: '',
+        },
   };
 }
