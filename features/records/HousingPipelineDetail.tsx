@@ -91,6 +91,7 @@ export default function HousingPipelineDetail({
   sourceTitle = '',
   interpretation,
   residentImpactSection,
+  followUpQuestions = [],
   references = [],
   addresses = [],
 }: HousingDetailProps) {
@@ -228,6 +229,13 @@ export default function HousingPipelineDetail({
           Search the official project and permit systems, then match records using the address,
           application number and phase before drawing conclusions.
         </p>
+        {followUpQuestions.length > 0 && (
+          <ul className="record-points">
+            {followUpQuestions.map((question) => (
+              <li key={question}>{question}</li>
+            ))}
+          </ul>
+        )}
         <div className="housing-resources">
           {sources.map((s) => (
             <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer">

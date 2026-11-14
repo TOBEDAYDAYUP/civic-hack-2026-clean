@@ -51,6 +51,16 @@ try {
       'Structured detail sections should render',
     );
   }
+  const monthOnly = await page('/decisions/11');
+  assert.ok(
+    monthOnly.includes('JUN 2024') && !monthOnly.includes('Jun 1, 2024'),
+    'Archive display must preserve month-only date precision',
+  );
+  const renter = await page('/decisions/10');
+  assert.ok(
+    renter.includes('What properties and types of renovation are covered?'),
+    'Housing details must retain record-specific follow-up questions',
+  );
   await page('/decisions/999', 404);
   await page('/decisions/not-a-number', 404);
   await page('/notices/nonexistent-notice-smoke-test', 404);

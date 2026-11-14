@@ -75,7 +75,7 @@ export function CuratedRecordDetails({ decision }: { decision: Decision }) {
       <HousingPipelineDetail
         sourceType="council decision"
         summary={decision.summary}
-        recordDate={decision.sortDate}
+        recordDate={decision.date}
         area={decision.area}
         interpretation={context?.significance}
         followUpQuestions={context?.followUpQuestions}
