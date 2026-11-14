@@ -38,7 +38,11 @@ try {
   assert.ok(home.includes('Search public notices'), 'Home should render notice browsing controls');
   assert.ok(home.includes('Transportation'), 'Category filter options should render');
   assert.ok(!home.includes('Selected Council decisions'), 'Curated static archive must not appear');
-  assert.ok(home.includes('Decisions'), 'Restored archive navigation should render');
+  const sidebar = home.match(/<aside class="sidebar">[\s\S]*?<\/aside>/)?.[0] || '';
+  assert.ok(
+    sidebar.includes('Home') && !sidebar.includes('Decisions'),
+    'Sidebar should retain Home and omit Decisions',
+  );
   for (let id = 0; id < 14; id++) {
     const detail = await page(`/decisions/${id}`);
     assert.ok(
