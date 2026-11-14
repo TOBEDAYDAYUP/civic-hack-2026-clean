@@ -4,7 +4,7 @@ A Next.js civic-information prototype for making Toronto municipal information e
 
 ## Current prototype
 
-- Recreated Toronto decision feed with search, filters, saved items and participation links
+- A single Home feed for Supabase-backed Toronto Public Notices, with full-record search, newest/oldest ordering, one category selector and bookmarks for actual notices
 - Live City of Toronto Public Notices ingestion endpoint
 - Local AI simplification with Ollama + `qwen3.5:4b`
 - Structured AI output with conservative prompts that forbid invented deadlines, locations or decision stages
@@ -15,7 +15,7 @@ A Next.js civic-information prototype for making Toronto municipal information e
 
 Use Node 22 (`nvm use`). Read [CONTRIBUTING.md](CONTRIBUTING.md) for module ownership, short task branches and PR checks. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the code map.
 
-The detail pages now explain facts, relevance, missing evidence and next steps. Housing records retain the five-stage verification guide. Open a card or visit `/decisions/3`. These curated pages work without a database or Ollama.
+Notice detail pages explain facts, relevance, missing evidence and next steps. Open a notice from Home or Map to visit `/notices/<id>`. The former set of 14 curated static Council decisions and the duplicated Decisions navigation have been removed.
 
 ## Run locally
 
@@ -33,6 +33,14 @@ The notice feed reads the shared Supabase database. Everyone sees the same store
 Source ingestion is **administrator-triggered**, as requested. Run `npm run data:sync` with private local administrator settings. No unattended schedule is enabled. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
 
 AI explanations remain optional and are displayed only when their source hash is current. Raw official notices remain readable without them.
+
+## Home filters and bookmarks
+
+- The Home page is the only municipal notice feed. Its **Search**, **Sort by** (newest/oldest) and **Category** (Transportation, Housing, Taxes & Budget, Infrastructure, Other) controls work together.
+- Sorting uses the original notice date; unknown dates sort last. Topic categories are rule-based from official topic labels and source titles (not independent validation of decision stages).
+- Search/category filtering is done server-side **before** paging, across all stored notices, not just the visible 12. Since the current Supabase view lacks a normalized category column, filtered requests scan the notice archive with a brief 15-second in-process cache. This works without a database migration but should be replaced with a database-indexed category if the volume becomes large. The browser limit is currently 20,000 records.
+- **Saved** now bookmarks Supabase public-notice IDs in this browser only. Bookmarks from the deleted static 14-item archive are not migrated.
+- Map, Participate, and the `/notices/[id]` source-backed details are unchanged.
 
 ## Important data note
 

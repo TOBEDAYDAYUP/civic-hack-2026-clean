@@ -2,30 +2,69 @@
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { PublicNotice } from '@/lib/public-notices';
+import { NOTICE_CATEGORIES, categoryLabel, noticeCategory } from '@/lib/notice-browser.mjs';
 import { useNoticeUpdates } from './useNoticeUpdates';
+
 type Item = PublicNotice & { aiReady: boolean };
-export default function NoticeFeed() {
-  const [items, setItems] = useState<Item[]>([]),
-    [page, setPage] = useState(1),
-    [total, setTotal] = useState(0);
-  const [input, setInput] = useState(''),
-    [query, setQuery] = useState(''),
-    [unavailable, setUnavailable] = useState(false),
-    [loading, setLoading] = useState(false);
+type Props = {
+  savedOnly: boolean;
+  savedIds: string[];
+  onToggleSaved: (id: string) => void;
+};
+const PAGE_SIZE = 12;
+
+export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props) {
+  const [items, setItems] = useState<Item[]>([]);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [input, setInput] = useState('');
+  const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
+  const [category, setCategory] = useState('all');
+  const [filtersOpen, setFiltersOpen] = useState(true);
+  const [unavailable, setUnavailable] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [jumpPage, setJumpPage] = useState('1');
-  const maxPage = Math.max(1, Math.ceil(total / 12));
+  const savedLookup = savedIds.join(',');
+  const maxPage = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
   useEffect(() => {
     setJumpPage(String(page));
   }, [page]);
+  // Home and Saved are two views of the same feed, not the same search session.
+  useEffect(() => {
+    setPage(1);
+    setInput('');
+    setQuery('');
+    setSort('newest');
+    setCategory('all');
+  }, [savedOnly]);
+  useEffect(() => {
+    if (savedOnly) setPage(1);
+  }, [savedOnly, savedLookup]);
+
   const generation = useRef(0);
   const refresh = useCallback(async () => {
     const current = ++generation.current;
+    if (savedOnly && !savedLookup) {
+      setItems([]);
+      setTotal(0);
+      setUnavailable(false);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/notices?${new URLSearchParams({ page: String(page), limit: '12', q: query })}`,
-        { cache: 'no-store', signal: AbortSignal.timeout(15000) },
-      );
+      const params = new URLSearchParams({
+        page: String(page), limit: String(PAGE_SIZE), q: query, sort, category,
+      });
+      if (savedOnly) {
+        params.set('savedOnly', '1');
+        params.set('ids', savedLookup);
+      }
+      const res = await fetch(`/api/notices?${params}`, {
+        cache: 'no-store', signal: AbortSignal.timeout(25000),
+      });
       const data = await res.json();
       if (!res.ok || !data.ok)
         throw new Error('Could not refresh shared notices. Previously loaded records are kept.');
@@ -33,117 +72,117 @@ export default function NoticeFeed() {
       setItems(data.items);
       setTotal(data.total);
       setUnavailable(false);
-      if (page > 1 && page > Math.max(1, Math.ceil(data.total / 12))) setPage(1);
+      if (page > 1 && page > Math.max(1, Math.ceil(data.total / PAGE_SIZE))) setPage(1);
     } catch {
-      // Keep already displayed records when a background refresh cannot complete.
       if (current === generation.current) setUnavailable(true);
     } finally {
       if (current === generation.current) setLoading(false);
     }
-  }, [page, query]);
+  }, [page, query, sort, category, savedOnly, savedLookup]);
+
   useEffect(() => {
     void refresh();
-    return () => {
-      generation.current++;
-    };
+    return () => { generation.current++; };
   }, [refresh]);
   useNoticeUpdates(() => void refresh());
+
+  function changeSort(next: 'newest' | 'oldest') { setPage(1); setSort(next); }
+  function changeCategory(next: string) { setPage(1); setCategory(next); }
+
   return (
-    <section className="notice-feed" aria-label="Shared Toronto notices">
+    <section className="notice-feed" aria-label={savedOnly ? 'Saved Toronto notices' : 'Shared Toronto notices'}>
       <div className="live-panel-head">
         <div>
-          <div className="eyebrow">SHARED OFFICIAL NOTICES</div>
-          <h2>Toronto public notices.</h2>
-          <p>
-            Browse public notices, read the explanation, and follow links to the original City
-            records.
-          </p>
+          <div className="eyebrow">{savedOnly ? 'YOUR BOOKMARKED NOTICES' : 'SHARED OFFICIAL NOTICES'}</div>
+          <h2>{savedOnly ? 'Saved public notices.' : 'Explore Toronto decisions.'}</h2>
+          <p>Search City of Toronto notices, read explanations and check original sources. Public notices are not necessarily final Council decisions.</p>
         </div>
       </div>
-      <div className="live-status">
-        <span>{total} records</span>
-      </div>
-      <form
-        className="toolbox"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setPage(1);
-          setQuery(input.trim());
-        }}
-      >
-        <label className="search">
+
+      <form className="notice-search-row" onSubmit={(e) => {e.preventDefault();setPage(1);setQuery(input.trim());}}>
+        <label className="notice-search-box">
+          <span aria-hidden="true">⌕</span>
           <input
             aria-label="Search public notices"
-            placeholder="Search all public notices"
+            placeholder="Search public notices, streets, or topics..."
             value={input}
+            maxLength={100}
             onChange={(e) => setInput(e.target.value)}
           />
         </label>
-        <button className="primary" type="submit">
-          Search
+        <button className="notice-search-submit" type="submit">Search</button>
+        <button
+          className={`notice-filter-toggle ${filtersOpen ? 'is-open' : ''}`}
+          type="button"
+          aria-expanded={filtersOpen}
+          aria-controls="notice-filter-options"
+          onClick={() => setFiltersOpen((shown) => !shown)}
+        >
+          <span aria-hidden="true">☷</span> Filters
         </button>
       </form>
+      {filtersOpen && (
+        <div id="notice-filter-options" className="notice-filter-options">
+          <label>
+            <span>SORT BY</span>
+            <select aria-label="Sort notices by date" value={sort} onChange={(e) => changeSort(e.target.value as 'newest' | 'oldest')}>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+          </label>
+          <label>
+            <span>CATEGORY</span>
+            <select aria-label="Filter notice category" value={category} onChange={(e) => changeCategory(e.target.value)}>
+              {NOTICE_CATEGORIES.map((choice) => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+
+      <div className="notice-results-heading" aria-live="polite">
+        <h3>{savedOnly ? 'Saved municipal notices' : 'Municipal notices'}</h3>
+        <span>{loading ? 'Updating results…' : `${total} matching ${total === 1 ? 'notice' : 'notices'}`}</span>
+      </div>
+      {unavailable && <p role="alert" className="notice-feed-error">Could not refresh notices. Previously loaded records are still shown.</p>}
       <div className="notice-feed-grid">
-        {items.map((n) => (
-          <article className="notice-feed-card" key={n.id}>
-            <span className="notice-category">{n.topics?.[0] || 'Public notice'}</span>
-            <h3>
-              <Link href={`/notices/${encodeURIComponent(n.id)}`}>
-                {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
-              </Link>
-            </h3>
-            <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>
-            <div className="notice-feed-meta">
-              {n.noticeDate?.slice(0, 10) || 'Date not specified'} ·{' '}
-              {n.aiReady ? 'AI explanation available' : 'Official source'}
-            </div>
-            <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>
-              Read full notice →
-            </Link>
-          </article>
-        ))}
+        {items.map((n) => {
+          const marked = savedIds.includes(n.id);
+          return (
+            <article className="notice-feed-card" key={n.id}>
+              <span className="notice-category">{categoryLabel(noticeCategory(n))}</span>
+              <h3>
+                <Link href={`/notices/${encodeURIComponent(n.id)}`}>
+                  {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
+                </Link>
+              </h3>
+              <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0,260)}</p>
+              <div className="notice-feed-meta">
+                {n.noticeDate?.slice(0,10) || 'Date not specified'} · {n.aiReady ? 'AI explanation available' : 'Official source'}
+              </div>
+              <div className="notice-card-actions">
+                <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>Read full notice →</Link>
+                <button type="button" aria-pressed={marked} aria-label={`${marked?'Remove saved notice':'Save notice'}: ${n.title}`} onClick={() => onToggleSaved(n.id)}>
+                  {marked ? '♥ Saved' : '♡ Save'}
+                </button>
+              </div>
+            </article>
+          );
+        })}
       </div>
       {!items.length && loading && <p>Loading notices…</p>}
-      {!items.length && !loading && unavailable && (
-        <p>Public notices are temporarily unavailable. Please try again later.</p>
+      {!items.length && !loading && !unavailable && (
+        <p>{savedOnly && savedIds.length === 0 ? 'You have not saved any notices yet. Return to Home to bookmark one.' : 'No notices match your search and filters.'}</p>
       )}
-      {!items.length && !loading && !unavailable && <p>No notices match this search.</p>}
-      <div className="toolbox">
-        <button onClick={() => setPage((p) => p - 1)} disabled={loading || page <= 1}>
-          Previous
-        </button>
-        <span>
-          Page {page} of {maxPage}
-        </span>
-        <button onClick={() => setPage((p) => p + 1)} disabled={loading || page * 12 >= total}>
-          Next
-        </button>
-        <form
-          className="notice-page-jump"
-          onSubmit={(e) => {
-            e.preventDefault();
-            const requested = Number(jumpPage);
-            if (!loading && Number.isInteger(requested) && requested >= 1 && requested <= maxPage)
-              setPage(requested);
-          }}
-        >
-          <label>
-            Go to page{' '}
-            <input
-              aria-label="Go to page"
-              type="number"
-              min="1"
-              max={maxPage}
-              step="1"
-              required
-              value={jumpPage}
-              onChange={(e) => setJumpPage(e.target.value)}
-              disabled={loading || !total}
-            />
-          </label>
-          <button type="submit" disabled={loading || !total}>
-            Go
-          </button>
+      <div className="notice-pagination">
+        <button onClick={() => setPage((p) => Math.max(1,p-1))} disabled={loading || page <= 1}>Previous</button>
+        <span>Page {page} of {maxPage}</span>
+        <button onClick={() => setPage((p) => p+1)} disabled={loading || page*PAGE_SIZE >= total}>Next</button>
+        <form className="notice-page-jump" onSubmit={(e) => {
+          e.preventDefault();const requested=Number(jumpPage);
+          if (!loading && Number.isInteger(requested) && requested>=1 && requested<=maxPage) setPage(requested);
+        }}>
+          <label>Go to page <input aria-label="Go to page" type="number" min="1" max={maxPage} step="1" required value={jumpPage} onChange={(e)=>setJumpPage(e.target.value)} disabled={loading || !total}/></label>
+          <button type="submit" disabled={loading || !total}>Go</button>
         </form>
       </div>
     </section>

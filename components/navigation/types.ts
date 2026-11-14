@@ -1,1 +1,1 @@
-export type View = 'Home' | 'Map' | 'Decisions' | 'Participate' | 'Saved';
+export type View = 'Home' | 'Map' | 'Participate' | 'Saved';

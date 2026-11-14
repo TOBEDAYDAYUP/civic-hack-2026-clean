@@ -35,7 +35,6 @@ export default function RecordPageFrame({
         </Link>
         <nav aria-label="Main navigation">
           <Link href="/">Home</Link>
-          <Link href="/?view=Decisions">Decisions</Link>
         </nav>
       </header>
 

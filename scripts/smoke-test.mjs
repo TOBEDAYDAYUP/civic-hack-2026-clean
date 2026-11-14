@@ -34,42 +34,12 @@ try {
   }
   assert.ok(ready, `Server did not start: ${logs}`);
   const home = await page('/');
-  assert.ok(home.includes('/decisions/3'), 'Home must link to the housing detail route');
-  const housing = await page('/decisions/3');
-  for (const text of [
-    'What’s happening?',
-    'What this means for you',
-    'Planning approval',
-    'record-introduction',
-    'Check the project status',
-    'Completion / occupancy',
-    '/?view=Decisions',
-  ])
-    assert.ok(housing.includes(text), `Missing housing content: ${text}`);
-  for (const label of [
-    'What is missing, and why?',
-    'IN PLAIN ENGLISH',
-    'Brief introduction',
-    'Evidence first.',
-    'AI-generated interpretation',
-    'Project progress',
-    'No delay calculation:',
-    'housing-caution',
-    'milestone-guide',
-  ])
-    assert.ok(!housing.includes(label), label);
-  const transport = await page('/decisions/0');
-  for (const text of [
-    'What did Council decide?',
-    'Why might it matter?',
-    'What should we check next?',
-    'Where can I verify this?',
-  ])
-    assert.ok(transport.includes(text), `Missing decision content: ${text}`);
-  // Every curated record should remain reachable after reorganizing files.
-  for (let id = 0; id < 14; id++) await page(`/decisions/${id}`);
-  await page('/decisions/not-a-number', 404);
-  await page('/decisions/999999', 404);
+  assert.ok(home.includes('Your city.'), 'Home should render the consolidated public-notice page');
+  assert.ok(home.includes('Search public notices'), 'Home should render notice browsing controls');
+  assert.ok(home.includes('Transportation'), 'Category filter options should render');
+  assert.ok(!home.includes('Selected Council decisions'), 'Curated static archive must not appear');
+  assert.ok(!home.includes('View all decisions'), 'Old Decisions navigation must be gone');
+  await page('/decisions/3', 404);
   await page('/notices/nonexistent-notice-smoke-test', 404);
   const response = await fetch(base + '/api/processed-notices');
   assert.equal(response.status, 200);
@@ -78,6 +48,12 @@ try {
   await page('/api/notices?page=0', 400);
   await page('/api/notices?limit=49', 400);
   await page('/api/notices?q=construction');
+  await page('/api/notices?category=housing&sort=oldest&q=Toronto');
+  await page('/api/notices?category=other');
+  await page('/api/notices?savedOnly=1');
+  await page('/api/notices?sort=reverse', 400);
+  await page('/api/notices?category=does-not-exist', 400);
+
   await page('/api/map/notices');
   await page('/api/map/geocode');
   for (const endpoint of ['/api/sync', '/api/ai/simplify']) {
@@ -85,7 +61,7 @@ try {
     assert.equal(denied.status, 401);
   }
   console.log(
-    'Smoke checks passed: home links, 14 detail pages, explanation sections, missing records, local notices API.',
+    'Smoke checks passed: consolidated Home, no curated detail routes, filtered notice API and safe local-mode defaults.',
   );
 } finally {
   server.kill('SIGTERM');

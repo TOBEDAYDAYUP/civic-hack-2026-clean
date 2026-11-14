@@ -41,7 +41,7 @@ git push -u origin feat/short-task-name
 
 | 范围 | 目录 | 约定 |
 | --- | --- | --- |
-| 决策列表、筛选 | `features/decisions/` | 不修改详情或数据接口 |
+| 决策列表、筛选 | `features/notices/` | 与数据接口负责人协调筛选参数 |
 | 分块详情、住房阶段 | `features/records/` | 截图里的页面在这里；保留来源和不确定性 |
 | 公告列表 | `features/notices/` | 与 API 负责人协调数据字段 |
 | 地图 | `features/map/` | 仅使用有坐标的记录 |
@@ -49,7 +49,7 @@ git push -u origin feat/short-task-name
 | 导航和页面外框 | `components/navigation/` | 改动前通知其他 UI 开发者 |
 | 页面组合、状态 | `components/CityCouncilApp.tsx` | 集成人员负责，避免同时修改 |
 | URL 与接口 | `app/`、`lib/` | 路由保持轻量；不要把页面 UI 堆进 API |
-| 示例记录 | `data/decisions.ts` | 当前 ID 与数组位置对应，只追加；重排需同步迁移 ID 和收藏 |
+| 记录来源 | Supabase `civic_notice_feed` | 已移除静态 Decision 数组；请使用真实公告 ID 及现有同步流程 |
 
 新增样式放在自己的模块里；全局主题 `app/globals.css`、依赖清单、锁文件和共享类型由集成人员协调。不要把 `.env.local`、`node_modules`、`.next` 上传。不要手改 `next-env.d.ts`。
 

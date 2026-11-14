@@ -37,7 +37,8 @@ node --env-file=../.env.local scripts/sync-notices.mjs
 
 | 路径 | 用途 |
 | --- | --- |
-| `GET /api/notices?page=1&limit=12&q=meeting` | 共享公告分页、标题搜索；limit 1–48 |
+| `GET /api/notices?page=1&limit=12&q=meeting` | 共享公告分页、全文字段搜索；可同时提供 `sort=newest|oldest` 与 `category=all|transportation|housing|budget|infrastructure|other`；limit 1–48 |
+| `GET /api/notices?savedOnly=1&ids=8006,8123` | 只读取所选公共公告 ID；支持上述搜索、分类与排序参数，收藏仅在用户浏览器保存 |
 | `GET /api/processed-notices` | 只返回与当前原始记录哈希匹配的 AI 摘要 |
 | `GET /api/sync/status` | 最近同步状态；不返回管理员密钥或租约令牌 |
 | `POST /api/sync` | 管理员手动同步；要求服务器配置 `SYNC_ADMIN_TOKEN` 和 `SUPABASE_SECRET_KEY` |
@@ -55,6 +56,8 @@ node --env-file=../.env.local scripts/sync-notices.mjs
 - `features/notices/`：共享列表、状态展示、实时订阅和详情刷新。
 - `supabase/schema.sql`：原有两张公告表与只读视图的基础结构。
 - `supabase/migrations/`：本次已应用到现有项目的增量迁移；不要由每个队友重复应用。
+
+搜索/分类会先对符合条件的公告做筛选，再进行每页 12 条的分页。由于现有数据库没有标准分类列，非默认筛选会在服务器端读取公告集合，使用 15 秒短期缓存；当前限制 20,000 条，未来数据变大时应迁移到有索引的数据库筛选。分类依据官方 topic 和标题的关键词，Other 为未匹配记录，属于导航辅助标签，不是市政府官方的最终决策性质判断。
 
 AI 数据仅在哈希与原始公告相同时合入 `civic_notice_feed`，避免把旧摘要展示成新事实。后台 AI 进程默认不启动。
 
