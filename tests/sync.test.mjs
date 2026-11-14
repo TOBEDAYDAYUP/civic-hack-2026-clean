@@ -222,3 +222,31 @@ test('source timeout identifies the failed phase, releases the lease and never c
   assert.equal(requests.length, 3);
   assert.ok(!requests.some((r) => r.url.includes('civic_commit_source_sync')));
 });
+
+test('database timeout reports its SQL code without exposing the response payload', async () => {
+  const requests = [];
+  await assert.rejects(
+    syncSource({
+      url: 'https://db.test',
+      key: 'sb_secret_test',
+      fetcher: async (url, options) => {
+        requests.push(url);
+        if (url.endsWith('civic_acquire_sync_lease')) return Response.json('db-timeout-lease');
+        if (url.includes('secure.toronto.ca')) return Response.json({ notices: [record] });
+        if (url.endsWith('civic_commit_source_sync'))
+          return Response.json(
+            { code: '57014', message: 'sensitive-response-must-stay-hidden' },
+            { status: 500 },
+          );
+        assert.equal(options.method, 'PATCH');
+        return new Response(null, { status: 204 });
+      },
+    }),
+    (error) => {
+      assert.match(error.message, /500, 57014.*database statement timeout/);
+      assert.ok(!error.message.includes('sensitive-response-must-stay-hidden'));
+      return true;
+    },
+  );
+  assert.equal(requests.length, 4);
+});

@@ -45,3 +45,9 @@ node --test tests/source-diagnostics.test.mjs
 In a same-machine run, both original-header and default-header source requests timed out at 45 seconds without HTTP headers. An independent IPv4 curl probe completed TLS in 54 ms but received no HTTP bytes within 45 seconds. A separate 120-second source probe succeeded with HTTP 200: headers arrived after 92.245 seconds, with a 22,669,452-byte JSON body completed in 93.161 seconds. The teammate's unchanged agent independently validated 2,983 archived notices and 100 votes.
 
 This demonstrates that the previous 45-second source deadline was too short for at least this successful export. It does not prove every timeout has the same cause or that all networks behave identically. The active Node source-sync deadline is raised to 120 seconds, below the existing 180-second database lease, and source timeouts now identify whether headers or the body stalled. No database schema change is needed.
+
+### Second failure uncovered after the HTTP fix
+
+The first live ingestion with the longer HTTP deadline reached the database but failed with HTTP 500. The project Postgres log at `2026-11-14T02:28:09.356Z` explicitly reported `canceling statement due to statement timeout`. The service role had no override and inherited the authenticator role's 8-second statement timeout.
+
+The administrator approved migration `20261114023826_allow_notice_sync_commit_45_seconds.sql`, which sets a 45-second timeout only on `public.civic_commit_source_sync(uuid,jsonb)`. Verification confirmed it remains SECURITY INVOKER, executable by service_role and not anon. This preserves the existing table and privilege model. With a 120-second source deadline and a 45-second commit deadline, both budgets fit the existing 180-second lease with a small normalization margin. The migration includes its rollback command.
