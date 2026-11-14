@@ -19,7 +19,13 @@ export default function CityCouncilApp() {
       const stored: unknown = JSON.parse(localStorage.getItem(SAVED_STORAGE_KEY) || '[]');
       if (Array.isArray(stored)) {
         setSaved(
-          [...new Set(stored.filter((id): id is string => typeof id === 'string' && /^[\w-]{1,128}$/.test(id)))].slice(0, 200),
+          [
+            ...new Set(
+              stored.filter(
+                (id): id is string => typeof id === 'string' && /^[\w-]{1,128}$/.test(id),
+              ),
+            ),
+          ].slice(0, 200),
         );
       }
     } catch {
@@ -30,7 +36,11 @@ export default function CityCouncilApp() {
       const requested = new URLSearchParams(window.location.search).get('view');
       // Old Decisions URLs now open the single Home feed instead.
       if (requested === 'Decisions') window.history.replaceState(null, '', '/');
-      setView(requested === 'Map' || requested === 'Participate' || requested === 'Saved' ? requested : 'Home');
+      setView(
+        requested === 'Map' || requested === 'Participate' || requested === 'Saved'
+          ? requested
+          : 'Home',
+      );
     };
     updateView();
     window.addEventListener('popstate', updateView);
@@ -67,7 +77,9 @@ export default function CityCouncilApp() {
       ) : (
         <>
           <section className="hero">
-            <div className="eyebrow">{view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION'}</div>
+            <div className="eyebrow">
+              {view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION'}
+            </div>
             <h1>
               {view === 'Saved' ? (
                 'Your saved notices.'
@@ -83,11 +95,7 @@ export default function CityCouncilApp() {
                 : 'Find Toronto public notices, understand what is happening, and check the official source.'}
             </p>
           </section>
-          <NoticeFeed
-            savedOnly={view === 'Saved'}
-            savedIds={saved}
-            onToggleSaved={toggleSaved}
-          />
+          <NoticeFeed savedOnly={view === 'Saved'} savedIds={saved} onToggleSaved={toggleSaved} />
         </>
       )}
     </Shell>
