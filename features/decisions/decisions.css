@@ -9,7 +9,7 @@
 }
 .story-open-link {
   display: block;
-  color: #185784;
+  color: var(--civic-blue);
   font-size: 12px;
   font-weight: 700;
   margin-top: 12px;
@@ -20,6 +20,6 @@ a.map-record {
 }
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid #eca000;
+  outline: 2px solid var(--civic-focus);
   outline-offset: 3px;
 }

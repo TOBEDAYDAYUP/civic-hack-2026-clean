@@ -5,10 +5,10 @@
   flex-wrap: wrap;
 }
 .language-switcher button {
-  border: 1px solid #185784;
+  border: 1px solid var(--civic-blue);
   border-radius: 6px;
-  background: #fff;
-  color: #185784;
+  background: var(--civic-surface);
+  color: var(--civic-blue);
   padding: 8px 10px;
   min-height: 44px;
   font:
@@ -17,19 +17,32 @@
   cursor: pointer;
 }
 .language-switcher button[aria-pressed='true'] {
-  background: #185784;
-  color: white;
+  background: var(--civic-blue);
+  color: var(--civic-surface);
 }
 .language-switcher button:focus-visible,
 a:focus-visible {
-  outline: 3px solid #b46b00;
+  outline: 3px solid var(--civic-focus);
   outline-offset: 3px;
+}
+.record-page-navbar .language-switcher button {
+  background: var(--civic-navy);
+  border-color: var(--civic-on-navy-muted);
+  color: var(--civic-surface);
+}
+.record-page-navbar .language-switcher button[aria-pressed='true'] {
+  background: var(--civic-gold);
+  border-color: var(--civic-gold);
+  color: var(--civic-navy);
+}
+.record-page-navbar :is(a, button):focus-visible {
+  outline-color: var(--civic-gold);
 }
 .source-language-note {
   padding: 12px 16px;
-  border-left: 3px solid #185784;
-  background: #eff5f9;
-  color: #315267;
+  border-left: 3px solid var(--civic-blue);
+  background: var(--civic-tint);
+  color: var(--civic-blue);
   font:
     14px/1.6 Arial,
     sans-serif;
