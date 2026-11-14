@@ -270,6 +270,8 @@ export const french = Object.freeze({
   'Planning application references listed': 'Références des demandes d’urbanisme',
   'What this means for you': 'Ce que cela signifie pour vous',
   'Development stages': 'Étapes du projet',
+  'Recorded project milestones': 'Étapes documentées du projet',
+  'Planning application received': 'Demande d’urbanisme reçue',
   '02 / FROM APPROVAL TO HOMES': '02 / DE L’APPROBATION AUX LOGEMENTS',
   'Planning application received · approval not recorded':
     'Demande d’urbanisme reçue · approbation non consignée',

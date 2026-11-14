@@ -6,5 +6,5 @@ export function stageEvidence(input?: { text?: string; title?: string; sourceUrl
     sourceUrl: string;
   }[];
   latest: number;
-  review: boolean;
+  planningApplication: { date: string | null; quote: string; sourceUrl: string } | null;
 };

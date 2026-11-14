@@ -154,9 +154,25 @@ test('planning applications are not building permit applications or approvals', 
     title: 'Notice of Application',
     text: 'The City received a planning application on November 6, 2026.',
   });
-  assert.equal(p.review, true);
+  assert.equal(p.planningApplication?.date, '2026-11-06');
+  assert.equal(p.planningApplication?.sourceUrl, sourceUrl);
   assert.equal(p.latest, -1);
   assert.ok(p.milestones.every((m) => !m.date && m.status === 'unknown'));
+});
+test('Toronto notice receipts work with a colon and do not borrow publication dates', () => {
+  const p = stageEvidence({
+    sourceUrl,
+    text: 'NOTICE OF APPLICATION(S) (Under the Planning Act) The City has received the following application under the Planning Act: Application Number: 26 215914 NNY 15 OZ. Published November 6, 2026.',
+  });
+  assert.match(p.planningApplication?.quote, /has received/);
+  assert.equal(p.planningApplication.date, null);
+  for (const text of [
+    'The City has not received a planning application.',
+    'If the City received a planning application, it would review it.',
+    'The City received a building permit application.',
+  ]) {
+    assert.equal(stageEvidence({ sourceUrl, text }).planningApplication, null);
+  }
 });
 test('proposed, negated and hypothetical events do not establish milestones', () => {
   for (const text of [

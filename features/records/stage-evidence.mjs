@@ -10,6 +10,8 @@ const datePattern =
   /\b(?:\d{4}-\d{2}-\d{2}|(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},?\s+\d{4})\b/gi;
 const negative =
   /\b(?:not|never|may|might|could|will|would|proposed|expected|anticipated|if|should|must|seeks?|requested)\b/i;
+const planningReceipt =
+  /\b(?:city(?: of toronto)? (?:has )?received (?:a |the (?:following )?)?(?:complete )?(?:planning application|application under (?:section \d+ of )?the planning act)|(?:complete )?planning application (?:was |has been )?received)\b/i;
 function validDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -47,9 +49,18 @@ export function stageEvidence({ text = '', title = '', sourceUrl = '' } = {}) {
     if (m.status === 'recorded') latest = i;
   });
   if (latest >= 0) milestones[latest].status = 'latest';
-  const review =
-    latest < 0 &&
-    /application/i.test(title) &&
-    /\b(?:received|submitted|application to amend)\b/i.test(text);
-  return { milestones, latest, review };
+  // Toronto notices often continue the receipt statement with a colon and a list.
+  const receipt = text
+    .replace(/\s+/g, ' ')
+    .split(/[:;]|\.(?=\s|$)/)
+    .map((part) => part.trim())
+    .find((part) => part.length <= 650 && planningReceipt.test(part) && !negative.test(part));
+  const receiptDate = receipt?.match(
+    /\breceived\b.*?\bon ((?:\d{4}-\d{2}-\d{2})|(?:[A-Za-z]+ \d{1,2},? \d{4}))$/i,
+  );
+  const planningApplication =
+    receipt && safeUrl
+      ? { date: receiptDate ? validDate(receiptDate[1]) : null, quote: receipt, sourceUrl: safeUrl }
+      : null;
+  return { milestones, latest, planningApplication };
 }
