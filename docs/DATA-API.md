@@ -17,7 +17,7 @@
 
 本任务只抓取 `https://secure.toronto.ca/nm/notices.json`，调用已有的 `civic_acquire_sync_lease` / `civic_commit_source_sync`，更新原始公告和同步状态。不收集投票、不运行队友的 agent、不调用 Ollama、不覆盖 agent 的派生表，也不重复应用数据库迁移。已同步且内容未变的公告不会更新 `updated_at`；没有新增时，agent 可能没有新记录可处理。租约和 Actions concurrency 阻止同一源的重叠抓取。
 
-队友应在上游成功入库后处理；不能假定自己在整点运行时公告已更新。GitHub cron 可能延迟，可读取同步状态后重试。如果保留本机 `data:watch` 做 AI 处理，请去掉 `--sync-source`，避免启动第二个抓取循环。手动入库仍可使用下面的命令。
+现有 **Civic Source Agent** 的独立整点触发已改为 `workflow_run`：仅在 **Hourly Toronto notice sync** 成功完成后运行，读取已同步的公告并收集投票。两者共用生产 concurrency 组，避免同时运行；agent 的采集和入库脚本不变。不能假定自己在整点运行时公告已更新。GitHub cron 可能延迟，可读取同步状态后重试。如果保留本机 `data:watch` 做 AI 处理，请去掉 `--sync-source`，避免启动第二个抓取循环。手动入库仍可使用下面的命令。
 
 ## 管理员手动同步
 

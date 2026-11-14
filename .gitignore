@@ -12,3 +12,5 @@ supabase/.temp/
 supabase/.branches/
 
 .next-dev/
+
+/civic-agent-preview*.json
