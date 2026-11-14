@@ -6,7 +6,18 @@
 
 数据库的公告或 AI 摘要发生变化时，页面通过 Supabase Realtime 收到通知并重新查询 API；断线或页面重新可见时，30 秒轮询作为补充。不要把“数据库变化实时显示”理解成“官方源一直在自动抓取”。
 
-默认由管理员手动同步。没有启用云端定时抓取，也没有将管理员密钥保存到 Vault。需要短时间自动同步或分析时，可在管理员电脑上显式启动下方进程。数据库写入成功后，队友页面会自动看到变化。
+每小时同步工作流见 `.github/workflows/toronto-source-sync.yml`。合入 `main` 并配置下述 GitHub Actions secrets 后，在 GitHub 服务器上按每小时第 17 分钟（UTC）抓取官方源并同步共享数据库，不依赖任何人的电脑或 Next.js 进程。GitHub 的计划任务可能延迟，不保证准点。数据库写入成功后，队友页面和 agent 可读取新公告。
+
+## 每小时官方源入库与队友 agent 的接口
+
+1. 在 `TOBEDAYDAYUP/civic-hack-2026-clean` 仓库的 Settings → Secrets and variables → Actions 配置 `SUPABASE_URL` 和 `SUPABASE_SECRET_KEY`。只使用仓库 secrets，不要提交到源码或写入公开日志。
+2. 将工作流合入默认分支 `main`；分支里的 cron 不会自动开始运行，fork 也不会写入共享库。
+3. 在 Actions → **Hourly Toronto notice sync** 手动运行一次，确认成功后检查 `GET /api/sync/status` 的 `last_success_at`。失败会显示红叉；Toronto 超时会保留已有公告，不会伪装为成功。
+4. 队友 agent 继续读取 `civic_source_notices`（字段 `id,source_hash,notice_date,payload,updated_at`）。`updated_at` 用于增量读取，`source_hash` 标识内容版本；应按 `(updated_at,id)` 排序分页并在处理成功后持久化游标。
+
+本任务只抓取 `https://secure.toronto.ca/nm/notices.json`，调用已有的 `civic_acquire_sync_lease` / `civic_commit_source_sync`，更新原始公告和同步状态。不收集投票、不运行队友的 agent、不调用 Ollama、不覆盖 agent 的派生表，也不重复应用数据库迁移。已同步且内容未变的公告不会更新 `updated_at`；没有新增时，agent 可能没有新记录可处理。租约和 Actions concurrency 阻止同一源的重叠抓取。
+
+现有 **Civic Source Agent** 的独立整点触发已改为 `workflow_run`：仅在 **Hourly Toronto notice sync** 成功完成后运行，读取已同步的公告并收集投票。两者共用生产 concurrency 组，避免同时运行；agent 的采集和入库脚本不变。不能假定自己在整点运行时公告已更新。GitHub cron 可能延迟，可读取同步状态后重试。如果保留本机 `data:watch` 做 AI 处理，请去掉 `--sync-source`，避免启动第二个抓取循环。手动入库仍可使用下面的命令。
 
 ## 管理员手动同步
 
@@ -78,7 +89,7 @@ npm run data:analyze -- --id=8006 --dry-run
 管理员在已经配置 `SUPABASE_SECRET_KEY` 的电脑上启动 Ollama。默认使用本机的 `qwen3.5:4b`，没有安装时先运行 `ollama pull qwen3.5:4b`。
 
 ```sh
-caffeinate -i npm run data:watch -- --sync-source --since-minutes=120
+caffeinate -i npm run data:watch -- --since-minutes=120
 ```
 
 - 每约 30 秒查询一次写入 Supabase 的原文版本，串行生成并发布未处理的新版影响分析。这里回看过去 120 分钟内同步过的记录，不跑整个历史库。相同原文和分析版本不会重复调用模型。失败会重试；重启后可用 `--since-minutes` 补上停机窗口。

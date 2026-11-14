@@ -15,7 +15,7 @@ To run the public voting source independently, use `node scripts/civic-agent.mjs
 
 ## Run on GitHub Actions
 
-When the migration and GitHub Actions repository secret CIVIC_AGENT_SUPABASE_SECRET_KEY are in place, the Civic Source Agent workflow on main imports records to Supabase every hour at minute 17. Select main in Actions → Civic Source Agent → Run workflow to run the same import manually. Pull requests run the tests and a read-only collection using the public notice configuration.
+When the migration and GitHub Actions repository secret CIVIC_AGENT_SUPABASE_SECRET_KEY are in place, the Civic Source Agent workflow on main imports records after each successful **Hourly Toronto notice sync** run. The upstream workflow is scheduled at minute 17 each hour; the agent starts only after notices have been synchronized. Both workflows share a production concurrency group to prevent overlapping runs. A failed upstream sync does not start the agent. Select main in Actions → Civic Source Agent → Run workflow to run the same import manually. Pull requests run the tests and a read-only collection using the public notice configuration.
 
 ## Source coverage and review
 

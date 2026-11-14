@@ -15,7 +15,7 @@ A Next.js civic-information prototype for making Toronto municipal information e
 
 Use Node 22 (`nvm use`). Read [CONTRIBUTING.md](CONTRIBUTING.md) for module ownership, short task branches and PR checks. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the code map.
 
-Notice detail pages explain facts, relevance, missing evidence and next steps. Open a notice from Home or Map to visit `/notices/<id>`. The former set of 14 curated static Council decisions and the duplicated Decisions navigation have been removed.
+Notice detail pages explain facts, relevance, missing evidence and next steps. Open a notice from Home or Map to visit `/notices/<id>`. The Decisions tab contains the restored archive of 14 static curated summaries, with search, topic filters, sorting, bookmarks and structured detail pages at `/decisions/<id>`. These records do not update with the live public-notice feed; verify them against original Council records.
 
 ## Run locally
 
@@ -30,7 +30,7 @@ Open http://localhost:3000.
 
 The notice feed reads the shared Supabase database. Everyone sees the same stored notices; database changes trigger realtime refresh, with a 30-second fallback. No secret key or Ollama is required to browse.
 
-Source ingestion is **administrator-triggered**, as requested. Run `npm run data:sync` with private local administrator settings. No unattended schedule is enabled. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
+Source ingestion is scheduled hourly by `.github/workflows/toronto-source-sync.yml` (minute 17 of each hour, UTC), once merged into `main` and configured with the repository Actions secrets `SUPABASE_URL` and `SUPABASE_SECRET_KEY`. GitHub schedules may be delayed. Administrators can also run `npm run data:sync` manually. Toronto upstream failures are reported without erasing existing data. See [docs/DATA-API.md](docs/DATA-API.md) for setup, endpoints and verification.
 
 AI explanations remain optional and are displayed only when their source hash is current. Raw official notices remain readable without them.
 
@@ -39,7 +39,7 @@ AI explanations remain optional and are displayed only when their source hash is
 - The Home page is the only municipal notice feed. Its **Search**, **Sort by** (newest/oldest) and **Category** (Transportation, Housing, Taxes & Budget, Infrastructure, Other) controls work together.
 - Sorting uses the original notice date; unknown dates sort last. Topic categories are rule-based from official topic labels and source titles (not independent validation of decision stages).
 - Search/category filtering is done server-side **before** paging, across all stored notices, not just the visible 12. Since the current Supabase view lacks a normalized category column, filtered requests scan the notice archive with a brief 15-second in-process cache. This works without a database migration but should be replaced with a database-indexed category if the volume becomes large. The browser limit is currently 20,000 records.
-- **Saved** now bookmarks Supabase public-notice IDs in this browser only. Bookmarks from the deleted static 14-item archive are not migrated.
+- **Saved** now bookmarks Supabase public-notice IDs in this browser only. Static decision bookmarks use the separate `yc-saved` store and appear below saved public notices; numeric decision IDs are never sent to the public-notice bookmark API.
 - Map, Participate, and the `/notices/[id]` source-backed details are unchanged.
 
 ## Important data note

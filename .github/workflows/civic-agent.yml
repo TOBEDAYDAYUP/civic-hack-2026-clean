@@ -1,8 +1,10 @@
 name: Civic Source Agent
 
 on:
-  schedule:
-    - cron: '17 * * * *'
+  workflow_run:
+    workflows: ['Hourly Toronto notice sync']
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
   pull_request:
     paths:
@@ -19,12 +21,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: civic-agent-${{ github.event_name == 'pull_request' && github.ref || 'production' }}
+  group: ${{ github.event_name == 'pull_request' && format('civic-agent-pr-{0}', github.ref) || 'toronto-source-pipeline' }}
   cancel-in-progress: false
 
 jobs:
   collect:
-    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
+    if: >-
+      github.repository == 'TOBEDAYDAYUP/civic-hack-2026-clean' &&
+      (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') &&
+      (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
