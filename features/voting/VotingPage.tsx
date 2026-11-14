@@ -93,7 +93,7 @@ export default async function VotingPage({
 
   return (
     <section className="route-page civic-voting">
-      <div className="voting-hero">
+      <div className="voting-hero civic-banner">
         <h1>{t('2026 voting records')}</h1>
         <p>{t('Explore recorded votes from Toronto City Council and its committees.')}</p>
       </div>

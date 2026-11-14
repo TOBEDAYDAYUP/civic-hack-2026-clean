@@ -91,7 +91,7 @@ export default async function AgendasPage() {
   const hasAnalysis = items.some((item) => item.aiReady);
   return (
     <section className="route-page agendas">
-      <header className="agenda-hero">
+      <header className="agenda-hero civic-banner">
         <div>
           <div className="agenda-eyebrow">{t('COUNCIL & COMMITTEES')}</div>
           <h1>

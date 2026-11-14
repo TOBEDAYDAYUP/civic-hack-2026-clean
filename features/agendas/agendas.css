@@ -39,7 +39,7 @@
   flex-shrink: 0;
   gap: 28px;
   padding: 20px 24px;
-  border-left: 1px solid var(--civic-line);
+  border-left: 1px solid color-mix(in srgb, var(--civic-surface) 28%, transparent);
 }
 .agenda-overview > div {
   display: flex;

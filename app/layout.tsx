@@ -7,6 +7,7 @@ import '@/features/decisions/decisions.css';
 import '@/features/map/map.css';
 import '@/features/notices/notices.css';
 import '@/features/navigation/layout.css';
+import '@/features/navigation/section-theme.css';
 
 export const metadata: Metadata = {
   title: 'Your City Council — Toronto Edition',

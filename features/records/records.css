@@ -334,13 +334,13 @@
   flex-direction: column;
 }
 .record-page-navbar {
-  height: 78px;
-  padding: 0 max(5%, calc((100vw - 1320px) / 2));
+  min-height: 78px;
+  padding: 10px max(5%, calc((100vw - 1180px) / 2));
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--civic-navy);
-  border-bottom: 1px solid var(--civic-navy);
+  background: var(--civic-surface);
+  border-bottom: 1px solid var(--civic-line);
   gap: 20px;
 }
 .record-page-brand {
@@ -348,7 +348,7 @@
   align-items: center;
   gap: 15px;
   text-decoration: none;
-  color: var(--civic-surface);
+  color: var(--civic-blue);
   font-size: 13px;
   font-weight: 800;
 }
@@ -367,13 +367,13 @@
   gap: 24px;
 }
 .record-page-navbar nav a {
-  color: var(--civic-surface);
+  color: var(--civic-muted);
   text-decoration: none;
   font-weight: 700;
   font-size: 12px;
 }
 .record-page-navbar nav a:hover {
-  color: var(--civic-gold);
+  color: var(--civic-navy);
   text-decoration: underline;
 }
 .record-page-breadcrumb a:hover {
@@ -441,8 +441,8 @@
   padding: 38px 44px;
   background: var(--civic-surface);
   border: 1px solid var(--civic-line);
-  border-radius: 9px;
-  box-shadow: none;
+  border-radius: var(--civic-panel-radius);
+  box-shadow: var(--civic-panel-shadow);
   min-width: 0;
 }
 .record-page-body .record-details {
@@ -515,9 +515,9 @@
 }
 .record-page-guide {
   padding: 25px 24px;
-  background: var(--civic-warm);
-  border-radius: 8px;
-  border: 1px solid var(--civic-line);
+  background: var(--civic-navy);
+  color: var(--civic-surface);
+  border-radius: var(--civic-panel-radius);
 }
 .record-page-guide-label {
   font-size: 10px;
@@ -549,7 +549,7 @@
   font-size: 12px;
   text-decoration: none;
   font-weight: 800;
-  color: var(--civic-blue);
+  color: var(--civic-gold);
 }
 .record-page-footer {
   border-top: 1px solid var(--line);
@@ -638,8 +638,8 @@ a.map-record:focus-visible,
 }
 @media (max-width: 730px) {
   .record-page-navbar {
-    padding: 0 5%;
-    height: 69px;
+    padding: 10px 5%;
+    min-height: 69px;
   }
   .record-page-navbar nav {
     gap: 13px;
@@ -666,7 +666,6 @@ a.map-record:focus-visible,
   }
   .record-page-body.modal {
     padding: 24px 20px;
-    border-radius: 7px;
   }
   .record-page-guide {
     padding: 21px;

@@ -102,13 +102,13 @@ export default function CityCouncilApp() {
         <ParticipationView />
       ) : (
         <>
-          <section className={view === 'Home' ? 'hero toronto-hero' : 'hero'}>
+          <section className={view === 'Home' ? 'hero toronto-hero' : 'hero civic-banner'}>
             <div className="eyebrow">
               {t(view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION')}
             </div>
             <h1>
               {view === 'Saved' ? (
-                'Your saved notices.'
+                t('Your saved notices.')
               ) : (
                 <>
                   {t('Your city. ')}
