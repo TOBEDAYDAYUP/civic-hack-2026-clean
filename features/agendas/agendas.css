@@ -29,8 +29,18 @@
   text-underline-offset: 0.2em;
 }
 @media (max-width: 520px) {
+  .agendas-meeting header,
+  .agendas-meeting li {
+    padding-inline: 1rem;
+  }
+
   .agendas-meeting li {
     grid-template-columns: 1fr;
     gap: 0.25rem;
+  }
+
+  .agendas-meeting a {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
   }
 }

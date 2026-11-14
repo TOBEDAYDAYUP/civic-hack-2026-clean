@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { useRef } from 'react';
 import type { View } from './types';
 export default function Shell({
   view,
@@ -17,6 +18,50 @@ export default function Shell({
     ['Participate', '◎', 'Participate'],
     ['Saved', '♡', 'Saved'],
   ];
+  const mobileMenu = useRef<HTMLDetailsElement>(null);
+  const mobileToggle = useRef<HTMLElement>(null);
+
+  function closeMobileMenu() {
+    if (!mobileMenu.current?.open) return;
+    mobileMenu.current.open = false;
+    mobileToggle.current?.focus();
+  }
+
+  const navigation = (
+    <nav aria-label="Main navigation">
+      {nav.map(([key, icon, label]) => (
+        <button
+          key={key}
+          className={`nav ${view === key ? 'active' : ''}`}
+          aria-current={view === key ? 'page' : undefined}
+          onClick={() => {
+            closeMobileMenu();
+            go(key);
+          }}
+        >
+          <span aria-hidden="true">{icon}</span>
+          {label}
+          {key === 'Saved' && <b className="saved-number">{saved}</b>}
+        </button>
+      ))}
+      <Link
+        href="/agendas"
+        className={`nav ${view === 'Agendas' ? 'active' : ''}`}
+        aria-current={view === 'Agendas' ? 'page' : undefined}
+        onClick={closeMobileMenu}
+      >
+        <span aria-hidden="true">▦</span>Upcoming agendas
+      </Link>
+      <Link
+        href="/voting"
+        className={`nav ${view === 'Voting' ? 'active' : ''}`}
+        aria-current={view === 'Voting' ? 'page' : undefined}
+        onClick={closeMobileMenu}
+      >
+        <span aria-hidden="true">✓</span>Voting
+      </Link>
+    </nav>
+  );
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -30,29 +75,7 @@ export default function Shell({
         </div>
         <div className="locale">◉ Toronto, Ontario</div>
         <div className="nav-label">Explore your city</div>
-        <nav>
-          {nav.map(([k, i, l]) => (
-            <button key={k} className={`nav ${view === k ? 'active' : ''}`} onClick={() => go(k)}>
-              <span>{i}</span>
-              {l}
-              {k === 'Saved' && <b className="saved-number">{saved}</b>}
-            </button>
-          ))}
-          <Link
-            href="/agendas"
-            className={`nav ${view === 'Agendas' ? 'active' : ''}`}
-            aria-current={view === 'Agendas' ? 'page' : undefined}
-          >
-            <span aria-hidden="true">▦</span>Upcoming agendas
-          </Link>
-          <Link
-            href="/voting"
-            className={`nav ${view === 'Voting' ? 'active' : ''}`}
-            aria-current={view === 'Voting' ? 'page' : undefined}
-          >
-            <span aria-hidden="true">✓</span>Voting
-          </Link>
-        </nav>
+        {navigation}
         <div className="sidebar-foot">
           INDEPENDENT CIVIC PROTOTYPE
           <br />
@@ -67,6 +90,23 @@ export default function Shell({
           <span className="top-right">
             THE TORONTO EDITION <span className="dot" />
           </span>
+        </header>
+        <header className="mobile-topbar">
+          <Link href="/" className="mobile-brand">
+            Your City Council
+          </Link>
+          <details
+            className="mobile-menu"
+            ref={mobileMenu}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') closeMobileMenu();
+            }}
+          >
+            <summary ref={mobileToggle}>
+              <span aria-hidden="true">☰</span> Menu
+            </summary>
+            {navigation}
+          </details>
         </header>
         <main>{children}</main>
         <footer className="footer">
