@@ -12,6 +12,7 @@ export default function Shell({
 }) {
   const nav: [View, string, string][] = [
     ['Home', '⌂', 'Home'],
+    ['Decisions', '▤', 'Decisions'],
     ['Map', '⌖', 'Map'],
     ['Participate', '◎', 'Participate'],
     ['Saved', '♡', 'Saved'],

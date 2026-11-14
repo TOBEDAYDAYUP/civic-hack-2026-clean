@@ -56,14 +56,19 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
     setLoading(true);
     try {
       const params = new URLSearchParams({
-        page: String(page), limit: String(PAGE_SIZE), q: query, sort, category,
+        page: String(page),
+        limit: String(PAGE_SIZE),
+        q: query,
+        sort,
+        category,
       });
       if (savedOnly) {
         params.set('savedOnly', '1');
         params.set('ids', savedLookup);
       }
       const res = await fetch(`/api/notices?${params}`, {
-        cache: 'no-store', signal: AbortSignal.timeout(25000),
+        cache: 'no-store',
+        signal: AbortSignal.timeout(25000),
       });
       const data = await res.json();
       if (!res.ok || !data.ok)
@@ -82,24 +87,47 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
 
   useEffect(() => {
     void refresh();
-    return () => { generation.current++; };
+    return () => {
+      generation.current++;
+    };
   }, [refresh]);
   useNoticeUpdates(() => void refresh());
 
-  function changeSort(next: 'newest' | 'oldest') { setPage(1); setSort(next); }
-  function changeCategory(next: string) { setPage(1); setCategory(next); }
+  function changeSort(next: 'newest' | 'oldest') {
+    setPage(1);
+    setSort(next);
+  }
+  function changeCategory(next: string) {
+    setPage(1);
+    setCategory(next);
+  }
 
   return (
-    <section className="notice-feed" aria-label={savedOnly ? 'Saved Toronto notices' : 'Shared Toronto notices'}>
+    <section
+      className="notice-feed"
+      aria-label={savedOnly ? 'Saved Toronto notices' : 'Shared Toronto notices'}
+    >
       <div className="live-panel-head">
         <div>
-          <div className="eyebrow">{savedOnly ? 'YOUR BOOKMARKED NOTICES' : 'SHARED OFFICIAL NOTICES'}</div>
+          <div className="eyebrow">
+            {savedOnly ? 'YOUR BOOKMARKED NOTICES' : 'SHARED OFFICIAL NOTICES'}
+          </div>
           <h2>{savedOnly ? 'Saved public notices.' : 'Explore Toronto decisions.'}</h2>
-          <p>Search City of Toronto notices, read explanations and check original sources. Public notices are not necessarily final Council decisions.</p>
+          <p>
+            Search City of Toronto notices, read explanations and check original sources. Public
+            notices are not necessarily final Council decisions.
+          </p>
         </div>
       </div>
 
-      <form className="notice-search-row" onSubmit={(e) => {e.preventDefault();setPage(1);setQuery(input.trim());}}>
+      <form
+        className="notice-search-row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setPage(1);
+          setQuery(input.trim());
+        }}
+      >
         <label className="notice-search-box">
           <span aria-hidden="true">⌕</span>
           <input
@@ -110,7 +138,9 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
             onChange={(e) => setInput(e.target.value)}
           />
         </label>
-        <button className="notice-search-submit" type="submit">Search</button>
+        <button className="notice-search-submit" type="submit">
+          Search
+        </button>
         <button
           className={`notice-filter-toggle ${filtersOpen ? 'is-open' : ''}`}
           type="button"
@@ -125,15 +155,27 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
         <div id="notice-filter-options" className="notice-filter-options">
           <label>
             <span>SORT BY</span>
-            <select aria-label="Sort notices by date" value={sort} onChange={(e) => changeSort(e.target.value as 'newest' | 'oldest')}>
+            <select
+              aria-label="Sort notices by date"
+              value={sort}
+              onChange={(e) => changeSort(e.target.value as 'newest' | 'oldest')}
+            >
               <option value="newest">Newest first</option>
               <option value="oldest">Oldest first</option>
             </select>
           </label>
           <label>
             <span>CATEGORY</span>
-            <select aria-label="Filter notice category" value={category} onChange={(e) => changeCategory(e.target.value)}>
-              {NOTICE_CATEGORIES.map((choice) => <option key={choice.value} value={choice.value}>{choice.label}</option>)}
+            <select
+              aria-label="Filter notice category"
+              value={category}
+              onChange={(e) => changeCategory(e.target.value)}
+            >
+              {NOTICE_CATEGORIES.map((choice) => (
+                <option key={choice.value} value={choice.value}>
+                  {choice.label}
+                </option>
+              ))}
             </select>
           </label>
         </div>
@@ -141,9 +183,17 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
 
       <div className="notice-results-heading" aria-live="polite">
         <h3>{savedOnly ? 'Saved municipal notices' : 'Municipal notices'}</h3>
-        <span>{loading ? 'Updating results…' : `${total} matching ${total === 1 ? 'notice' : 'notices'}`}</span>
+        <span>
+          {loading
+            ? 'Updating results…'
+            : `${total} matching ${total === 1 ? 'notice' : 'notices'}`}
+        </span>
       </div>
-      {unavailable && <p role="alert" className="notice-feed-error">Could not refresh notices. Previously loaded records are still shown.</p>}
+      {unavailable && (
+        <p role="alert" className="notice-feed-error">
+          Could not refresh notices. Previously loaded records are still shown.
+        </p>
+      )}
       <div className="notice-feed-grid">
         {items.map((n) => {
           const marked = savedIds.includes(n.id);
@@ -155,13 +205,21 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
                   {n.displayTitle || (n.aiReady ? n.simple?.plainTitle || n.title : n.title)}
                 </Link>
               </h3>
-              <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0,260)}</p>
+              <p>{(n.aiReady ? n.simple?.whatIsHappening : n.description)?.slice(0, 260)}</p>
               <div className="notice-feed-meta">
-                {n.noticeDate?.slice(0,10) || 'Date not specified'} · {n.aiReady ? 'AI explanation available' : 'Official source'}
+                {n.noticeDate?.slice(0, 10) || 'Date not specified'} ·{' '}
+                {n.aiReady ? 'AI explanation available' : 'Official source'}
               </div>
               <div className="notice-card-actions">
-                <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>Read full notice →</Link>
-                <button type="button" aria-pressed={marked} aria-label={`${marked?'Remove saved notice':'Save notice'}: ${n.title}`} onClick={() => onToggleSaved(n.id)}>
+                <Link className="notice-read-link" href={`/notices/${encodeURIComponent(n.id)}`}>
+                  Read full notice →
+                </Link>
+                <button
+                  type="button"
+                  aria-pressed={marked}
+                  aria-label={`${marked ? 'Remove saved notice' : 'Save notice'}: ${n.title}`}
+                  onClick={() => onToggleSaved(n.id)}
+                >
                   {marked ? '♥ Saved' : '♡ Save'}
                 </button>
               </div>
@@ -171,18 +229,51 @@ export default function NoticeFeed({ savedOnly, savedIds, onToggleSaved }: Props
       </div>
       {!items.length && loading && <p>Loading notices…</p>}
       {!items.length && !loading && !unavailable && (
-        <p>{savedOnly && savedIds.length === 0 ? 'You have not saved any notices yet. Return to Home to bookmark one.' : 'No notices match your search and filters.'}</p>
+        <p>
+          {savedOnly && savedIds.length === 0
+            ? 'You have not saved any notices yet. Return to Home to bookmark one.'
+            : 'No notices match your search and filters.'}
+        </p>
       )}
       <div className="notice-pagination">
-        <button onClick={() => setPage((p) => Math.max(1,p-1))} disabled={loading || page <= 1}>Previous</button>
-        <span>Page {page} of {maxPage}</span>
-        <button onClick={() => setPage((p) => p+1)} disabled={loading || page*PAGE_SIZE >= total}>Next</button>
-        <form className="notice-page-jump" onSubmit={(e) => {
-          e.preventDefault();const requested=Number(jumpPage);
-          if (!loading && Number.isInteger(requested) && requested>=1 && requested<=maxPage) setPage(requested);
-        }}>
-          <label>Go to page <input aria-label="Go to page" type="number" min="1" max={maxPage} step="1" required value={jumpPage} onChange={(e)=>setJumpPage(e.target.value)} disabled={loading || !total}/></label>
-          <button type="submit" disabled={loading || !total}>Go</button>
+        <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={loading || page <= 1}>
+          Previous
+        </button>
+        <span>
+          Page {page} of {maxPage}
+        </span>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          disabled={loading || page * PAGE_SIZE >= total}
+        >
+          Next
+        </button>
+        <form
+          className="notice-page-jump"
+          onSubmit={(e) => {
+            e.preventDefault();
+            const requested = Number(jumpPage);
+            if (!loading && Number.isInteger(requested) && requested >= 1 && requested <= maxPage)
+              setPage(requested);
+          }}
+        >
+          <label>
+            Go to page{' '}
+            <input
+              aria-label="Go to page"
+              type="number"
+              min="1"
+              max={maxPage}
+              step="1"
+              required
+              value={jumpPage}
+              onChange={(e) => setJumpPage(e.target.value)}
+              disabled={loading || !total}
+            />
+          </label>
+          <button type="submit" disabled={loading || !total}>
+            Go
+          </button>
         </form>
       </div>
     </section>

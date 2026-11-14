@@ -5,6 +5,8 @@ import type { View } from '@/components/navigation/types';
 import Shell from '@/components/navigation/Shell';
 import MapView from '@/features/map/MapView';
 import ParticipationView from '@/features/participation/ParticipationView';
+import { decisions } from '@/data/decisions';
+import DecisionArchive from '@/features/decisions/DecisionArchive';
 import NoticeFeed from '@/features/notices/NoticeFeed';
 
 const SAVED_STORAGE_KEY = 'yc-saved-notices';
@@ -12,6 +14,7 @@ const SAVED_STORAGE_KEY = 'yc-saved-notices';
 export default function CityCouncilApp() {
   const [view, setView] = useState<View>('Home');
   const [saved, setSaved] = useState<string[]>([]);
+  const [savedDecisions, setSavedDecisions] = useState<number[]>([]);
   const [savedLoaded, setSavedLoaded] = useState(false);
 
   useEffect(() => {
@@ -19,18 +22,40 @@ export default function CityCouncilApp() {
       const stored: unknown = JSON.parse(localStorage.getItem(SAVED_STORAGE_KEY) || '[]');
       if (Array.isArray(stored)) {
         setSaved(
-          [...new Set(stored.filter((id): id is string => typeof id === 'string' && /^[\w-]{1,128}$/.test(id)))].slice(0, 200),
+          [
+            ...new Set(
+              stored.filter(
+                (id): id is string => typeof id === 'string' && /^[\w-]{1,128}$/.test(id),
+              ),
+            ),
+          ].slice(0, 200),
         );
       }
     } catch {
       // A damaged local bookmark store must not prevent browsing.
     }
+    try {
+      const value: unknown = JSON.parse(localStorage.getItem('yc-saved') || '[]');
+      if (Array.isArray(value))
+        setSavedDecisions([
+          ...new Set(
+            value.filter(
+              (id): id is number => Number.isInteger(id) && decisions.some((d) => d.id === id),
+            ),
+          ),
+        ]);
+    } catch {}
     setSavedLoaded(true);
     const updateView = () => {
       const requested = new URLSearchParams(window.location.search).get('view');
-      // Old Decisions URLs now open the single Home feed instead.
-      if (requested === 'Decisions') window.history.replaceState(null, '', '/');
-      setView(requested === 'Map' || requested === 'Participate' || requested === 'Saved' ? requested : 'Home');
+      setView(
+        requested === 'Decisions' ||
+          requested === 'Map' ||
+          requested === 'Participate' ||
+          requested === 'Saved'
+          ? requested
+          : 'Home',
+      );
     };
     updateView();
     window.addEventListener('popstate', updateView);
@@ -41,10 +66,11 @@ export default function CityCouncilApp() {
     if (!savedLoaded) return;
     try {
       localStorage.setItem(SAVED_STORAGE_KEY, JSON.stringify(saved));
+      localStorage.setItem('yc-saved', JSON.stringify(savedDecisions));
     } catch {
       // Browsing and navigation still work in restricted browser storage modes.
     }
-  }, [saved, savedLoaded]);
+  }, [saved, savedDecisions, savedLoaded]);
 
   function go(next: View) {
     setView(next);
@@ -58,16 +84,26 @@ export default function CityCouncilApp() {
     );
   }
 
+  function toggleDecision(id: number) {
+    setSavedDecisions((current) =>
+      current.includes(id) ? current.filter((value) => value !== id) : [...current, id],
+    );
+  }
+
   return (
-    <Shell view={view} saved={saved.length} go={go}>
-      {view === 'Map' ? (
+    <Shell view={view} saved={saved.length + savedDecisions.length} go={go}>
+      {view === 'Decisions' ? (
+        <DecisionArchive saved={savedDecisions} toggleSaved={toggleDecision} />
+      ) : view === 'Map' ? (
         <MapView />
       ) : view === 'Participate' ? (
         <ParticipationView />
       ) : (
         <>
           <section className="hero">
-            <div className="eyebrow">{view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION'}</div>
+            <div className="eyebrow">
+              {view === 'Saved' ? 'YOUR BOOKMARKS' : 'THE TORONTO EDITION'}
+            </div>
             <h1>
               {view === 'Saved' ? (
                 'Your saved notices.'
@@ -83,11 +119,10 @@ export default function CityCouncilApp() {
                 : 'Find Toronto public notices, understand what is happening, and check the official source.'}
             </p>
           </section>
-          <NoticeFeed
-            savedOnly={view === 'Saved'}
-            savedIds={saved}
-            onToggleSaved={toggleSaved}
-          />
+          <NoticeFeed savedOnly={view === 'Saved'} savedIds={saved} onToggleSaved={toggleSaved} />
+          {view === 'Saved' && (
+            <DecisionArchive savedOnly saved={savedDecisions} toggleSaved={toggleDecision} />
+          )}
         </>
       )}
     </Shell>

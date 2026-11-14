@@ -38,8 +38,21 @@ try {
   assert.ok(home.includes('Search public notices'), 'Home should render notice browsing controls');
   assert.ok(home.includes('Transportation'), 'Category filter options should render');
   assert.ok(!home.includes('Selected Council decisions'), 'Curated static archive must not appear');
-  assert.ok(!home.includes('View all decisions'), 'Old Decisions navigation must be gone');
-  await page('/decisions/3', 404);
+  assert.ok(home.includes('Decisions'), 'Restored archive navigation should render');
+  for (let id = 0; id < 14; id++) {
+    const detail = await page(`/decisions/${id}`);
+    assert.ok(
+      detail.includes('Static curated summary'),
+      'Archive details must disclose static data',
+    );
+    assert.ok(detail.includes('All decisions'), 'Archive details must link back to the library');
+    assert.ok(
+      detail.includes('What should we check next?') || detail.includes('housing'),
+      'Structured detail sections should render',
+    );
+  }
+  await page('/decisions/999', 404);
+  await page('/decisions/not-a-number', 404);
   await page('/notices/nonexistent-notice-smoke-test', 404);
   const response = await fetch(base + '/api/processed-notices');
   assert.equal(response.status, 200);
@@ -61,7 +74,7 @@ try {
     assert.equal(denied.status, 401);
   }
   console.log(
-    'Smoke checks passed: consolidated Home, no curated detail routes, filtered notice API and safe local-mode defaults.',
+    'Smoke checks passed: consolidated Home, all 14 curated detail routes, filtered notice API and safe local-mode defaults.',
   );
 } finally {
   server.kill('SIGTERM');
