@@ -54,6 +54,7 @@ export const french = Object.freeze({
   'Not affiliated with the City of Toronto.': 'Sans affiliation avec la Ville de Toronto.',
   'YOUR CITY COUNCIL': 'VOTRE CONSEIL MUNICIPAL',
   'THE TORONTO EDITION': 'ÉDITION TORONTO',
+  'Image details': 'Détails de l’image',
   'Your City Council · Independent civic information prototype':
     'Votre conseil municipal · Prototype citoyen indépendant',
   'Made for clearer local democracy.': 'Pour une démocratie locale plus claire.',
