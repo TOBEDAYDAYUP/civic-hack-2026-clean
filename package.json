@@ -10,7 +10,7 @@
     "data:update": "node scripts/update-notices.mjs --limit=3",
     "typecheck": "tsc --noEmit",
     "test:smoke": "node scripts/smoke-test.mjs",
-    "check": "npm run format:check && npm run test:sync && npm run test:browse && npm run test:map && npm run test:setup && npm run test:impact && npm run typecheck && npm run build && npm run test:smoke",
+    "check": "npm run format:check && npm run test:sync && npm run test:browse && npm run test:agendas && npm run test:map && npm run test:setup && npm run test:impact && npm run typecheck && npm run build && npm run test:smoke",
     "format": "prettier --write components features app/notices scripts/smoke-test.mjs",
     "format:check": "prettier --check components features app/notices scripts/smoke-test.mjs",
     "data:sync": "node --env-file=.env.local scripts/sync-notices.mjs",
@@ -24,7 +24,9 @@
     "test:setup": "node --test tests/setup-env.test.mjs",
     "test:impact": "node --test tests/impact.test.mjs tests/impact-publish.test.mjs tests/notice-ai-worker.test.mjs",
     "data:analyze": "node --env-file=.env.local scripts/summarize-notices.mjs",
-    "data:watch": "node --env-file=.env.local scripts/watch-notice-ai.mjs"
+    "data:watch": "node --env-file=.env.local scripts/watch-notice-ai.mjs",
+    "test:agendas": "node --test tests/agenda-analysis.test.mjs",
+    "agenda:analyze": "node --env-file=.env.local scripts/analyze-agendas.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.119.0",
