@@ -63,6 +63,67 @@ test('preview groups vote evidence by exact agenda item and retains source failu
   );
 });
 
+test('agendas include only upcoming public items with official no-action status', async () => {
+  const { collectAgendas } = await import('../lib/civic-agent/agendas.mjs');
+  const timestamp = Date.parse('2026-11-17T05:00:00Z');
+  const meeting = {
+    meetingId: 10,
+    meetingDate: timestamp,
+    decisionBodyName: 'Planning Committee',
+    mtgStatusCd: 'SCHDLPRV',
+  };
+  const item = {
+    inCamera: 'N',
+    considerTypeCd: 'ACTION',
+    itemStatusCd: 'NO_ACTN',
+    itemReferenceNumber: '2026.PH2.1A',
+    agendaItemTitle: 'Planning report',
+  };
+  const requests = [];
+  const fetcher = async (url) => {
+    requests.push(url.pathname);
+    if (requests.length === 1)
+      return Response.json({
+        Result: 'OK',
+        Records: [meeting, { ...meeting, meetingId: 11, mtgStatusCd: 'COMPLETE' }],
+      });
+    return Response.json({
+      Result: 'OK',
+      Record: {
+        meeting,
+        sections: [
+          {
+            agendaItems: [
+              item,
+              item,
+              { ...item, itemReferenceNumber: '2026.PH2.2', itemStatusCd: 'ADOPTED' },
+              { ...item, itemReferenceNumber: '2026.PH2.3', inCamera: 'Y' },
+              { ...item, itemReferenceNumber: '2026.PH2.4', considerTypeCd: 'INFO' },
+            ],
+          },
+        ],
+      },
+    });
+  };
+  const records = await collectAgendas(fetcher, new Date('2026-11-17T01:00:00Z'));
+  assert.equal(requests.length, 2);
+  assert.deepEqual(
+    records.map(({ reference, meetingDate }) => [reference, meetingDate]),
+    [['2026.PH2.1A', '2026-11-17']],
+  );
+  assert.equal(new URL(records[0].sourceUrl).searchParams.get('item'), '2026.PH2.1A');
+});
+
+test('agenda collector fails if official meeting details fail', async () => {
+  const { collectAgendas } = await import('../lib/civic-agent/agendas.mjs');
+  const response = await collectAgendas(async () => Response.json({ Result: 'OK', Records: [] }));
+  assert.deepEqual(response, []);
+  await assert.rejects(
+    collectAgendas(async () => new Response(null, { status: 503 })),
+    /HTTP 503/,
+  );
+});
+
 test('official vote tables keep each motion separate and omit voter names', async () => {
   const { parseOfficialMotions } = await import('../lib/civic-agent/official-motions.mjs');
   const vote = (number, body) => `

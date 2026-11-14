@@ -50,3 +50,15 @@ A changed source sends confirmed links back for review. An agenda identifier cor
 ```sh
 node --test tests/civic-agent.test.mjs
 ```
+
+## Upcoming agendas
+
+The site links to /agendas and uses a Supabase snapshot of published Meeting Monitor items whose official status is No Action. The Meeting Monitor lists a subset of Toronto meetings. The page links to the city’s full calendar.
+
+Apply the agenda snapshot migration to Supabase. On a machine that can reach the Toronto Meeting Monitor, configure SUPABASE_URL and SUPABASE_SECRET_KEY through a private environment file, then run:
+
+```sh
+node --env-file=.env.local scripts/civic-agent.mjs --source=agendas --write
+```
+
+Use the same command without --write to check the source. A successful collection replaces the previous snapshot. If the source request fails, the last snapshot stays in Supabase. The website also attempts to read the official feed directly when the snapshot is unavailable or older than two hours. The GitHub-hosted runner received HTTP 403 from the Meeting Monitor, so the agenda collector runs from a machine with verified access.
