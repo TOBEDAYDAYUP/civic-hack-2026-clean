@@ -1,0 +1,49 @@
+name: Toronto source diagnostics
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/toronto-source-diagnostics.yml'
+      - 'scripts/diagnose-toronto-source.mjs'
+      - 'tests/source-diagnostics.test.mjs'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: toronto-diagnostics-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+      - name: Verify diagnostic classification
+        run: node --test tests/source-diagnostics.test.mjs
+      - name: Configure public read-only comparison
+        run: node scripts/setup-env.mjs
+      - name: Compare source and teammate endpoints without database writes
+        id: probe
+        continue-on-error: true
+        run: node --env-file=.env.local scripts/diagnose-toronto-source.mjs --long-timeout-seconds=120 --report=source-diagnostic.json
+      - name: Record probe outcome
+        if: always()
+        env:
+          PROBE_OUTCOME: ${{ steps.probe.outcome }}
+        run: |
+          echo "Diagnostic endpoint outcome: $PROBE_OUTCOME. Inspect the JSON report for each endpoint; an unreachable source is not a successful sync." >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: toronto-source-diagnostic
+          path: source-diagnostic.json
+          if-no-files-found: warn
+          retention-days: 7
