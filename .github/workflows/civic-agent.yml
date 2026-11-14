@@ -41,6 +41,21 @@ jobs:
           node-version-file: .nvmrc
       - name: Test agent
         run: node --test tests/civic-agent.test.mjs
+      - name: Verify official motion pages from GitHub
+        if: github.event_name == 'pull_request'
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          import { getOfficialMotions } from './lib/civic-agent/official-motions.mjs';
+
+          for (const reference of ['2026.BL43.1', '2026.EC27.2', '2026.TTC17.1']) {
+            const motions = await getOfficialMotions(reference, reference);
+            assert.ok(motions.length && motions.some(({ payload }) => payload.motion_text), reference);
+            assert.ok(motions.every(({ payload }) =>
+              ['yes', 'no', 'absent'].every((key) => Number.isInteger(payload[key]))), reference);
+            console.log(reference, motions.length, 'official votes with verified totals');
+          }
+          JS
       - name: Configure public notice access
         run: node scripts/setup-env.mjs
       - name: Collect and validate public records
